@@ -1,8 +1,18 @@
 import * as ExpoDevice from 'expo-device';
 import { useMemo, useState } from 'react';
 import { Platform } from 'react-native';
-import { BleManager, Device, DeviceId } from 'react-native-ble-plx';
+import base64 from 'react-native-base64';
+import {
+  BleError,
+  BleManager,
+  Characteristic,
+  Device,
+  DeviceId,
+} from 'react-native-ble-plx';
 import { PermissionManager } from '../utils/permission-manager';
+
+const SERVICE_UUID = '4fafc201-1fb5-459e-8fcc-c5c9c331914b';
+const CHARACTERISTIC_UUID = 'beb5483e-36e1-4688-b7f5-ea07361b26a8';
 
 interface IUseBLE {
   requestPermissions(): Promise<boolean>;
@@ -89,14 +99,13 @@ export default function useBLE(): IUseBLE {
       setAllDevices(prevDevices =>
         prevDevices.filter(device => device.id !== connectedDevice.id)
       );
-      console.log(await bleManager.isDeviceConnected(deviceId));
+      readFromDevice(connectedDevice);
     } catch (e) {
       console.log('Error connecting to device: ', e);
     }
   }
 
   async function disconnectFromDevice(deviceId: DeviceId): Promise<void> {
-    console.log(await bleManager.isDeviceConnected(deviceId));
     try {
       await bleManager.cancelDeviceConnection(deviceId);
       setConnectedDevices(prevDevices =>
@@ -104,6 +113,34 @@ export default function useBLE(): IUseBLE {
       );
     } catch (e) {
       console.log('Error disconnecting from device: ', e);
+    }
+  }
+
+  function readFromDevice(device: Device): void {
+    if (device) {
+      device.monitorCharacteristicForService(
+        SERVICE_UUID,
+        CHARACTERISTIC_UUID,
+        onReadFromDevice
+      );
+    }
+  }
+
+  function onReadFromDevice(
+    error: BleError | null,
+    characteristic: Characteristic | null
+  ): void {
+    if (error) {
+      console.log('Error reading from device: ', error);
+      return;
+    }
+    if (!characteristic) {
+      console.log('No characteristic');
+      return;
+    }
+
+    if (characteristic.value) {
+      console.log(base64.decode(characteristic.value).charCodeAt(0));
     }
   }
 
