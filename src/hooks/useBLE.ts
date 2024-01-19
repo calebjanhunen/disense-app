@@ -23,6 +23,7 @@ interface IUseBLE {
   allDevices: Device[];
   connectedDevices: Device[];
   isScanning: boolean;
+  temp: string | undefined;
 }
 
 export default function useBLE(): IUseBLE {
@@ -31,6 +32,7 @@ export default function useBLE(): IUseBLE {
   const [allDevices, setAllDevices] = useState<Device[]>([]);
   const [isScanning, setIsScanning] = useState<boolean>(false);
   const [connectedDevices, setConnectedDevices] = useState<Device[]>([]);
+  const [temp, setTemp] = useState<string>();
 
   async function requestAndroid31Permissions(): Promise<boolean> {
     const scanPermission = await permissionManager.requestBLEScanPermission();
@@ -140,7 +142,9 @@ export default function useBLE(): IUseBLE {
     }
 
     if (characteristic.value) {
-      console.log(base64.decode(characteristic.value).charCodeAt(0));
+      // console.log(characteristic.value);
+      console.log(base64.decode(characteristic.value));
+      setTemp(base64.decode(characteristic.value));
     }
   }
 
@@ -158,5 +162,6 @@ export default function useBLE(): IUseBLE {
     connectedDevices,
     connectToDevice,
     disconnectFromDevice,
+    temp,
   };
 }

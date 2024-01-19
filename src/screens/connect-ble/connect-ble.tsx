@@ -16,6 +16,7 @@ export default function ConnectBLE(): React.ReactElement {
     connectToDevice,
     connectedDevices,
     disconnectFromDevice,
+    temp,
   } = useBLE();
 
   async function startOrStopScanning(): Promise<void> {
@@ -32,6 +33,7 @@ export default function ConnectBLE(): React.ReactElement {
   return (
     <PageView>
       <Spacer size="md" />
+      {temp && <Text variant="headline">Temp: {temp}</Text>}
       <Button
         variant="full"
         backgroundColor="primary"
