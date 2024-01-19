@@ -1,0 +1,125 @@
+import * as ExpoDevice from 'expo-device';
+import { useMemo, useState } from 'react';
+import { Platform } from 'react-native';
+import { BleManager, Device, DeviceId } from 'react-native-ble-plx';
+import { PermissionManager } from '../utils/permission-manager';
+
+interface IUseBLE {
+  requestPermissions(): Promise<boolean>;
+  scanForPeripherals(): void;
+  connectToDevice(deviceId: DeviceId): Promise<void>;
+  disconnectFromDevice(deviceId: DeviceId): Promise<void>;
+  stopScanning(): void;
+  allDevices: Device[];
+  connectedDevices: Device[];
+  isScanning: boolean;
+}
+
+export default function useBLE(): IUseBLE {
+  const bleManager = useMemo(() => new BleManager(), []);
+  const permissionManager = useMemo(() => new PermissionManager(), []);
+  const [allDevices, setAllDevices] = useState<Device[]>([]);
+  const [isScanning, setIsScanning] = useState<boolean>(false);
+  const [connectedDevices, setConnectedDevices] = useState<Device[]>([]);
+
+  async function requestAndroid31Permissions(): Promise<boolean> {
+    const scanPermission = await permissionManager.requestBLEScanPermission();
+    const connectPermission =
+      await permissionManager.requestBLEConnectPermission();
+    const fineLocationPermission =
+      await permissionManager.requestFineLocationPermission();
+
+    return scanPermission && connectPermission && fineLocationPermission;
+  }
+
+  async function requestPermissions(): Promise<boolean> {
+    if (Platform.OS === 'android') {
+      if ((ExpoDevice.platformApiLevel ?? -1) < 31) {
+        const fineLocationPermission =
+          await permissionManager.requestFineLocationPermission();
+        return fineLocationPermission;
+      } else {
+        const isAndroid31PermissionsGranted =
+          await requestAndroid31Permissions();
+
+        return isAndroid31PermissionsGranted;
+      }
+    } else {
+      return true;
+    }
+  }
+
+  function scanForPeripherals(): void {
+    bleManager.startDeviceScan(null, null, (error, device: Device | null) => {
+      setIsScanning(true);
+
+      if (error) {
+        console.log('ERROR: ', error);
+      }
+
+      // If device found with 'Disense' name, add to array if it doesn't already exist
+      if (device?.name === 'Disense') {
+        setAllDevices(prevDevices => {
+          if (!deviceAlreadyExists(prevDevices, device)) {
+            return [...prevDevices, device];
+          }
+          return prevDevices;
+        });
+      }
+    });
+  }
+
+  function stopScanning(): void {
+    setIsScanning(false);
+    bleManager.stopDeviceScan();
+  }
+
+  async function connectToDevice(deviceId: DeviceId): Promise<void> {
+    try {
+      const connectedDevice = await bleManager.connectToDevice(deviceId);
+      await bleManager.discoverAllServicesAndCharacteristicsForDevice(deviceId);
+      stopScanning();
+      setConnectedDevices(prevDevices => {
+        if (!deviceAlreadyExists(prevDevices, connectedDevice)) {
+          return [...prevDevices, connectedDevice];
+        }
+        return prevDevices;
+      });
+
+      setAllDevices(prevDevices =>
+        prevDevices.filter(device => device.id !== connectedDevice.id)
+      );
+      console.log(await bleManager.isDeviceConnected(deviceId));
+    } catch (e) {
+      console.log('Error connecting to device: ', e);
+    }
+  }
+
+  async function disconnectFromDevice(deviceId: DeviceId): Promise<void> {
+    console.log(await bleManager.isDeviceConnected(deviceId));
+    try {
+      await bleManager.cancelDeviceConnection(deviceId);
+      setConnectedDevices(prevDevices =>
+        prevDevices.filter(device => device.id !== deviceId)
+      );
+    } catch (e) {
+      console.log('Error disconnecting from device: ', e);
+    }
+  }
+
+  function deviceAlreadyExists(devices: Device[], newDevice: Device): boolean {
+    const result = devices.findIndex(device => device.id === newDevice.id);
+    return result !== -1;
+  }
+
+  return {
+    requestPermissions,
+    scanForPeripherals,
+    stopScanning,
+    allDevices,
+    isScanning,
+    connectedDevices,
+    connectToDevice,
+    disconnectFromDevice,
+  };
+}
