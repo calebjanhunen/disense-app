@@ -8,7 +8,6 @@ import ConnectedDeviceCard from './components/connected-device-card/connected-de
 
 export default function ConnectBLE(): React.ReactElement {
   const {
-    requestPermissions,
     scanForPeripherals,
     allDevices,
     isScanning,
@@ -23,10 +22,7 @@ export default function ConnectBLE(): React.ReactElement {
     if (isScanning) {
       stopScanning();
     } else {
-      const permissionsGranted = await requestPermissions();
-      if (permissionsGranted) {
-        scanForPeripherals();
-      }
+      scanForPeripherals();
     }
   }
 

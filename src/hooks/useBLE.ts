@@ -1,6 +1,4 @@
-import * as ExpoDevice from 'expo-device';
 import { useMemo, useState } from 'react';
-import { Platform } from 'react-native';
 import base64 from 'react-native-base64';
 import {
   BleError,
@@ -15,7 +13,6 @@ const SERVICE_UUID = '4fafc201-1fb5-459e-8fcc-c5c9c331914b';
 const CHARACTERISTIC_UUID = 'beb5483e-36e1-4688-b7f5-ea07361b26a8';
 
 interface IUseBLE {
-  requestPermissions(): Promise<boolean>;
   scanForPeripherals(): void;
   connectToDevice(deviceId: DeviceId): Promise<void>;
   disconnectFromDevice(deviceId: DeviceId): Promise<void>;
@@ -34,34 +31,13 @@ export default function useBLE(): IUseBLE {
   const [connectedDevices, setConnectedDevices] = useState<Device[]>([]);
   const [temp, setTemp] = useState<string>();
 
-  async function requestAndroid31Permissions(): Promise<boolean> {
-    const scanPermission = await permissionManager.requestBLEScanPermission();
-    const connectPermission =
-      await permissionManager.requestBLEConnectPermission();
-    const fineLocationPermission =
-      await permissionManager.requestFineLocationPermission();
-
-    return scanPermission && connectPermission && fineLocationPermission;
-  }
-
-  async function requestPermissions(): Promise<boolean> {
-    if (Platform.OS === 'android') {
-      if ((ExpoDevice.platformApiLevel ?? -1) < 31) {
-        const fineLocationPermission =
-          await permissionManager.requestFineLocationPermission();
-        return fineLocationPermission;
-      } else {
-        const isAndroid31PermissionsGranted =
-          await requestAndroid31Permissions();
-
-        return isAndroid31PermissionsGranted;
-      }
-    } else {
-      return true;
+  async function scanForPeripherals(): Promise<void> {
+    const permissionsGranted = await permissionManager.requestPermissions();
+    if (!permissionsGranted) {
+      console.log('Permissions not granted');
+      return;
     }
-  }
 
-  function scanForPeripherals(): void {
     bleManager.startDeviceScan(null, null, (error, device: Device | null) => {
       setIsScanning(true);
 
@@ -154,7 +130,6 @@ export default function useBLE(): IUseBLE {
   }
 
   return {
-    requestPermissions,
     scanForPeripherals,
     stopScanning,
     allDevices,
