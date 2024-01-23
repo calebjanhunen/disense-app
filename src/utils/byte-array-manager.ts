@@ -2,10 +2,15 @@ import base64 from 'react-native-base64';
 import { Base64 } from 'react-native-ble-plx';
 
 export function decodeByteArray(byteArr: Uint8Array) {
-  const id = byteArr[0];
-  const tempVal =
-    (byteArr[1] << 24) | (byteArr[2] << 16) | (byteArr[3] << 8) | byteArr[4];
-  console.log(id, tempVal);
+  for (let i = 0; i < byteArr.length; i += 5) {
+    const id = byteArr[i];
+    const tempVal =
+      (byteArr[i + 1] << 24) |
+      (byteArr[i + 2] << 16) |
+      (byteArr[i + 3] << 8) |
+      byteArr[i + 4];
+    console.log(id, tempVal);
+  }
 }
 
 export function fromBase64ToByteArr(base64String: Base64): Uint8Array {
@@ -15,6 +20,7 @@ export function fromBase64ToByteArr(base64String: Base64): Uint8Array {
   for (let i = 0; i < decodedString.length; i++) {
     byteArr[i] = decodedString.charCodeAt(i);
   }
+  console.log(byteArr);
 
   return byteArr;
 }
