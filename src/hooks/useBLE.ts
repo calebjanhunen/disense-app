@@ -10,7 +10,8 @@ import {
 import { PermissionManager } from '../utils/permission-manager';
 
 const SERVICE_UUID = '4fafc201-1fb5-459e-8fcc-c5c9c331914b';
-const CHARACTERISTIC_UUID = 'beb5483e-36e1-4688-b7f5-ea07361b26a8';
+const THERMISTOR_CHARACTERISTIC_UUID = 'beb5483e-36e1-4688-b7f5-ea07361b26a8';
+const TEST_CHARACTERISTIC_UUID = '1dba189b-3ce8-4f00-bfa3-789beec575f8';
 
 interface IUseBLE {
   scanForPeripherals(): void;
@@ -37,10 +38,9 @@ export default function useBLE(): IUseBLE {
       console.log('Permissions not granted');
       return;
     }
+    setIsScanning(true);
 
     bleManager.startDeviceScan(null, null, (error, device: Device | null) => {
-      setIsScanning(true);
-
       if (error) {
         console.log('ERROR: ', error);
       }
@@ -64,9 +64,15 @@ export default function useBLE(): IUseBLE {
 
   async function connectToDevice(deviceId: DeviceId): Promise<void> {
     try {
-      const connectedDevice = await bleManager.connectToDevice(deviceId);
-      await bleManager.discoverAllServicesAndCharacteristicsForDevice(deviceId);
+      await bleManager.connectToDevice(deviceId);
+      const connectedDevice =
+        await bleManager.discoverAllServicesAndCharacteristicsForDevice(
+          deviceId
+        );
+
       stopScanning();
+
+      // Add device to connected devices if it doesn't already exist in the array
       setConnectedDevices(prevDevices => {
         if (!deviceAlreadyExists(prevDevices, connectedDevice)) {
           return [...prevDevices, connectedDevice];
@@ -74,10 +80,11 @@ export default function useBLE(): IUseBLE {
         return prevDevices;
       });
 
+      // Remove device from available devices list
       setAllDevices(prevDevices =>
         prevDevices.filter(device => device.id !== connectedDevice.id)
       );
-      readFromDevice(connectedDevice);
+      getDataFromDevice(connectedDevice);
     } catch (e) {
       console.log('Error connecting to device: ', e);
     }
@@ -94,11 +101,29 @@ export default function useBLE(): IUseBLE {
     }
   }
 
-  function readFromDevice(device: Device): void {
-    if (device) {
+  async function getDataFromDevice(device: Device): Promise<void> {
+    // if (device) {
+    //   device.monitorCharacteristicForService(
+    //     SERVICE_UUID,
+    //     THERMISTOR_CHARACTERISTIC_UUID,
+    //     onReadFromDevice
+    //   );
+    // }
+
+    const services = await device.services();
+    const service = services.find(s => s.uuid === SERVICE_UUID);
+    if (!service) {
+      console.log('Service not found');
+      return;
+    }
+    const characteristics = await service.characteristics();
+    console.log(characteristics);
+    for (const characteristic of characteristics) {
+      //   // console.log(characteristic);
+      // console.log(characteristic.uuid, characteristic.value);
       device.monitorCharacteristicForService(
         SERVICE_UUID,
-        CHARACTERISTIC_UUID,
+        characteristic.uuid,
         onReadFromDevice
       );
     }
@@ -119,7 +144,12 @@ export default function useBLE(): IUseBLE {
 
     if (characteristic.value) {
       // console.log(characteristic.value);
-      console.log(base64.decode(characteristic.value));
+      console.log(
+        'ID: ' +
+          characteristic.uuid +
+          'val: ' +
+          base64.decode(characteristic.value)
+      );
       setTemp(base64.decode(characteristic.value));
     }
   }
