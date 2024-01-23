@@ -7,6 +7,10 @@ import {
   Device,
   DeviceId,
 } from 'react-native-ble-plx';
+import {
+  decodeByteArray,
+  fromBase64ToByteArr,
+} from '../utils/byte-array-manager';
 import { PermissionManager } from '../utils/permission-manager';
 
 const SERVICE_UUID = '4fafc201-1fb5-459e-8fcc-c5c9c331914b';
@@ -144,13 +148,15 @@ export default function useBLE(): IUseBLE {
 
     if (characteristic.value) {
       // console.log(characteristic.value);
-      console.log(
-        'ID: ' +
-          characteristic.uuid +
-          'val: ' +
-          base64.decode(characteristic.value)
-      );
-      setTemp(base64.decode(characteristic.value));
+      // console.log(
+      //   'ID: ' +
+      //     characteristic.uuid +
+      //     'val: ' +
+      //     base64.decode(characteristic.value)
+      // );
+      // setTemp(base64.decode(characteristic.value));
+      const byteArr = fromBase64ToByteArr(characteristic.value);
+      decodeByteArray(byteArr);
     }
   }
 
