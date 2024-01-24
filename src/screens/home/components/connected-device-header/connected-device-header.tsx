@@ -1,14 +1,14 @@
 import React from 'react';
 import { Device, DeviceId } from 'react-native-ble-plx';
 import { Button, Text } from '../../../../components';
-import { Container, DeviceInfo } from './connected-device-card.styles';
+import { Container, DeviceInfo } from './connected-device-header.styles';
 
 interface AvailableDeviceCardProps {
   device: Device;
   disconnectFromDevice(deviceId: DeviceId): Promise<void>;
 }
 
-export default function ConnectedDeviceCard({
+export default function ConnectedDeviceHeader({
   device,
   disconnectFromDevice,
 }: AvailableDeviceCardProps): React.ReactElement {

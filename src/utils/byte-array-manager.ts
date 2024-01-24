@@ -14,7 +14,7 @@ export function decodeByteArray(byteArr: Uint8Array) {
       (byteArr[i + 2] << 16) |
       (byteArr[i + 3] << 8) |
       byteArr[i + 4];
-    console.log(id, tempVal);
+    // console.log(id, tempVal);
   }
 }
 
@@ -30,7 +30,7 @@ export function fromBase64ToByteArr(base64String: Base64): Uint8Array {
   for (let i = 0; i < decodedString.length; i++) {
     byteArr[i] = decodedString.charCodeAt(i);
   }
-  console.log(byteArr);
+  // console.log(byteArr);
 
   return byteArr;
 }

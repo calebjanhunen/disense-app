@@ -1,5 +1,4 @@
 import { useMemo, useState } from 'react';
-import base64 from 'react-native-base64';
 import {
   BleError,
   BleManager,
@@ -14,8 +13,6 @@ import {
 import { PermissionManager } from '../utils/permission-manager';
 
 const SERVICE_UUID = '4fafc201-1fb5-459e-8fcc-c5c9c331914b';
-const THERMISTOR_CHARACTERISTIC_UUID = 'beb5483e-36e1-4688-b7f5-ea07361b26a8';
-const TEST_CHARACTERISTIC_UUID = '1dba189b-3ce8-4f00-bfa3-789beec575f8';
 
 interface IUseBLE {
   scanForPeripherals(): void;
@@ -23,9 +20,8 @@ interface IUseBLE {
   disconnectFromDevice(deviceId: DeviceId): Promise<void>;
   stopScanning(): void;
   allDevices: Device[];
-  connectedDevices: Device[];
+  connectedDevice: Device | null;
   isScanning: boolean;
-  temp: string | undefined;
 }
 
 export default function useBLE(): IUseBLE {
@@ -33,8 +29,7 @@ export default function useBLE(): IUseBLE {
   const permissionManager = useMemo(() => new PermissionManager(), []);
   const [allDevices, setAllDevices] = useState<Device[]>([]);
   const [isScanning, setIsScanning] = useState<boolean>(false);
-  const [connectedDevices, setConnectedDevices] = useState<Device[]>([]);
-  const [temp, setTemp] = useState<string>();
+  const [connectedDevice, setConnectedDevice] = useState<Device | null>(null);
 
   async function scanForPeripherals(): Promise<void> {
     const permissionsGranted = await permissionManager.requestPermissions();
@@ -76,13 +71,7 @@ export default function useBLE(): IUseBLE {
 
       stopScanning();
 
-      // Add device to connected devices if it doesn't already exist in the array
-      setConnectedDevices(prevDevices => {
-        if (!deviceAlreadyExists(prevDevices, connectedDevice)) {
-          return [...prevDevices, connectedDevice];
-        }
-        return prevDevices;
-      });
+      setConnectedDevice(connectedDevice);
 
       // Remove device from available devices list
       setAllDevices(prevDevices =>
@@ -97,23 +86,13 @@ export default function useBLE(): IUseBLE {
   async function disconnectFromDevice(deviceId: DeviceId): Promise<void> {
     try {
       await bleManager.cancelDeviceConnection(deviceId);
-      setConnectedDevices(prevDevices =>
-        prevDevices.filter(device => device.id !== deviceId)
-      );
+      setConnectedDevice(null);
     } catch (e) {
       console.log('Error disconnecting from device: ', e);
     }
   }
 
   async function getDataFromDevice(device: Device): Promise<void> {
-    // if (device) {
-    //   device.monitorCharacteristicForService(
-    //     SERVICE_UUID,
-    //     THERMISTOR_CHARACTERISTIC_UUID,
-    //     onReadFromDevice
-    //   );
-    // }
-
     const services = await device.services();
     const service = services.find(s => s.uuid === SERVICE_UUID);
     if (!service) {
@@ -121,10 +100,7 @@ export default function useBLE(): IUseBLE {
       return;
     }
     const characteristics = await service.characteristics();
-    console.log(characteristics);
     for (const characteristic of characteristics) {
-      //   // console.log(characteristic);
-      // console.log(characteristic.uuid, characteristic.value);
       device.monitorCharacteristicForService(
         SERVICE_UUID,
         characteristic.uuid,
@@ -147,14 +123,6 @@ export default function useBLE(): IUseBLE {
     }
 
     if (characteristic.value) {
-      // console.log(characteristic.value);
-      // console.log(
-      //   'ID: ' +
-      //     characteristic.uuid +
-      //     'val: ' +
-      //     base64.decode(characteristic.value)
-      // );
-      // setTemp(base64.decode(characteristic.value));
       const byteArr = fromBase64ToByteArr(characteristic.value);
       decodeByteArray(byteArr);
     }
@@ -170,9 +138,8 @@ export default function useBLE(): IUseBLE {
     stopScanning,
     allDevices,
     isScanning,
-    connectedDevices,
+    connectedDevice,
     connectToDevice,
     disconnectFromDevice,
-    temp,
   };
 }
