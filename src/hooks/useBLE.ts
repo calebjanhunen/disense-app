@@ -6,6 +6,8 @@ import {
   Device,
   DeviceId,
 } from 'react-native-ble-plx';
+import { Sensors } from '../interfaces/Sensor';
+import { SensorType } from '../types/sensor-types';
 import {
   decodeByteArray,
   fromBase64ToByteArr,
@@ -13,6 +15,9 @@ import {
 import { PermissionManager } from '../utils/permission-manager';
 
 const SERVICE_UUID = '4fafc201-1fb5-459e-8fcc-c5c9c331914b';
+const THERMISTORS_CHARACTERISTIC_UUID = 'beb5483e-36e1-4688-b7f5-ea07361b26a8';
+const FSR_CHARACTERISTIC_UUID = 'f00a075c-948e-4f01-9cb6-7d876cf96683';
+const SPO2_CHARACTERISTIC_UUID = '9f7d8c4f-b3d4-4d72-8787-8386e5f13195';
 
 interface IUseBLE {
   scanForPeripherals(): void;
@@ -22,6 +27,7 @@ interface IUseBLE {
   allDevices: Device[];
   connectedDevice: Device | null;
   isScanning: boolean;
+  thermistorData: Sensors | undefined;
 }
 
 export default function useBLE(): IUseBLE {
@@ -30,6 +36,7 @@ export default function useBLE(): IUseBLE {
   const [allDevices, setAllDevices] = useState<Device[]>([]);
   const [isScanning, setIsScanning] = useState<boolean>(false);
   const [connectedDevice, setConnectedDevice] = useState<Device | null>(null);
+  const [thermistorData, setThermistorData] = useState<Sensors>();
 
   async function scanForPeripherals(): Promise<void> {
     const permissionsGranted = await permissionManager.requestPermissions();
@@ -104,12 +111,12 @@ export default function useBLE(): IUseBLE {
       device.monitorCharacteristicForService(
         SERVICE_UUID,
         characteristic.uuid,
-        onReadFromDevice
+        onReadCharacteristic
       );
     }
   }
 
-  function onReadFromDevice(
+  function onReadCharacteristic(
     error: BleError | null,
     characteristic: Characteristic | null
   ): void {
@@ -124,13 +131,34 @@ export default function useBLE(): IUseBLE {
 
     if (characteristic.value) {
       const byteArr = fromBase64ToByteArr(characteristic.value);
-      decodeByteArray(byteArr);
+      const sensorType = getSensorType(characteristic.uuid);
+      if (!sensorType) {
+        console.log('Characeristic does not exist');
+        return;
+      }
+
+      const sensorData = decodeByteArray(byteArr, sensorType);
+      if (sensorData.type === 'thermistor') {
+        setThermistorData(sensorData);
+      }
     }
   }
 
   function deviceAlreadyExists(devices: Device[], newDevice: Device): boolean {
     const result = devices.findIndex(device => device.id === newDevice.id);
     return result !== -1;
+  }
+
+  function getSensorType(characteristicUuid: string): SensorType | null {
+    if (characteristicUuid === THERMISTORS_CHARACTERISTIC_UUID) {
+      return 'thermistor';
+    } else if (characteristicUuid === SPO2_CHARACTERISTIC_UUID) {
+      return 'spo2';
+    } else if (characteristicUuid === FSR_CHARACTERISTIC_UUID) {
+      return 'fsr';
+    } else {
+      return null;
+    }
   }
 
   return {
@@ -141,5 +169,6 @@ export default function useBLE(): IUseBLE {
     connectedDevice,
     connectToDevice,
     disconnectFromDevice,
+    thermistorData,
   };
 }

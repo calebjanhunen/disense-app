@@ -12,12 +12,14 @@ export default function Home(): React.ReactElement {
     connectToDevice,
     disconnectFromDevice,
     connectedDevice,
+    thermistorData,
   } = useBLE();
 
   return connectedDevice ? (
     <DeviceConnected
       device={connectedDevice}
       disconnect={disconnectFromDevice}
+      thermistorData={thermistorData}
     />
   ) : (
     <ConnectDevice

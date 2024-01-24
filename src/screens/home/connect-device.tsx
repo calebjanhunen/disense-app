@@ -29,22 +29,22 @@ export default function ConnectDevice({
   }
   return (
     <PageView>
-      <Spacer size="md" />
-      <Text variant="smallTitle" textAlign="center">
+      <Spacer size='md' />
+      <Text variant='smallTitle' textAlign='center'>
         Disense Device not Connected
       </Text>
-      <Spacer size="md" />
+      <Spacer size='md' />
       <Button
-        variant="full"
-        backgroundColor="primary"
-        textColor="white"
+        variant='full'
+        backgroundColor='primary'
+        textColor='white'
         onPress={startOrStopScanning}
       >
         {isScanning ? 'Stop scanning' : 'Scan for devices'}
       </Button>
-      <Spacer size="lg" />
-      <Text variant="title">Available Devices</Text>
-      <Spacer size="sm" />
+      <Spacer size='lg' />
+      <Text variant='title'>Available Devices</Text>
+      <Spacer size='sm' />
 
       <FlatList
         style={{ width: '100%', flex: 1 }}
@@ -55,7 +55,7 @@ export default function ConnectDevice({
             connectToDevice={connectToDevice}
           />
         )}
-        ItemSeparatorComponent={() => <Spacer size="md" />}
+        ItemSeparatorComponent={() => <Spacer size='md' />}
       />
     </PageView>
   );

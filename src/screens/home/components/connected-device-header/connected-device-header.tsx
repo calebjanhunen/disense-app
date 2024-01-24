@@ -15,8 +15,7 @@ export default function ConnectedDeviceHeader({
   return (
     <Container>
       <DeviceInfo>
-        <Text variant="body">Name: {device.name}</Text>
-        <Text variant="body">ID: {device.id}</Text>
+        <Text variant="title">Disense Socks</Text>
       </DeviceInfo>
       <Button
         variant="small"
