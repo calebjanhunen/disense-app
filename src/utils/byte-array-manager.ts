@@ -1,6 +1,11 @@
 import base64 from 'react-native-base64';
 import { Base64 } from 'react-native-ble-plx';
 
+/**
+ * Decodes byte array into readable numbers (sensor id & sensor reading)
+ * @param byteArr - Byte array read by BLE
+ *
+ */
 export function decodeByteArray(byteArr: Uint8Array) {
   for (let i = 0; i < byteArr.length; i += 5) {
     const id = byteArr[i];
@@ -13,6 +18,11 @@ export function decodeByteArray(byteArr: Uint8Array) {
   }
 }
 
+/**
+ * Converts base64 string read by react-native-ble-plx characteristic into byte array
+ * @param base64String - Base64 string
+ * @returns The byte array
+ */
 export function fromBase64ToByteArr(base64String: Base64): Uint8Array {
   const decodedString = base64.decode(base64String);
   const byteArr = new Uint8Array(new ArrayBuffer(decodedString.length));

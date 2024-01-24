@@ -6,7 +6,7 @@ import useBLE from '../../hooks/useBLE';
 import AvailableDeviceCard from './components/available-device-card/available-device-card';
 import ConnectedDeviceCard from './components/connected-device-card/connected-device-card';
 
-export default function ConnectBLE(): React.ReactElement {
+export default function Home(): React.ReactElement {
   const {
     scanForPeripherals,
     allDevices,
