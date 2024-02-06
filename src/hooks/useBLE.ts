@@ -6,9 +6,10 @@ import {
   Device,
   DeviceId,
 } from 'react-native-ble-plx';
-import { Sensors } from '../interfaces/Sensor';
+import { SPO2Sensors, Sensors } from '../interfaces/Sensor';
 import { SensorType } from '../types/sensor-types';
 import {
+  decodeByteArrForSPO2,
   decodeByteArray,
   fromBase64ToByteArr,
 } from '../utils/byte-array-manager';
@@ -29,6 +30,7 @@ interface IUseBLE {
   isScanning: boolean;
   thermistorData: Sensors | undefined;
   fsrData: Sensors | undefined;
+  spo2Data: SPO2Sensors | undefined;
 }
 
 export default function useBLE(): IUseBLE {
@@ -39,6 +41,7 @@ export default function useBLE(): IUseBLE {
   const [connectedDevice, setConnectedDevice] = useState<Device | null>(null);
   const [thermistorData, setThermistorData] = useState<Sensors>();
   const [fsrData, setFsrData] = useState<Sensors>();
+  const [spo2Data, setSpo2Data] = useState<SPO2Sensors>();
 
   async function scanForPeripherals(): Promise<void> {
     const permissionsGranted = await permissionManager.requestPermissions();
@@ -137,14 +140,33 @@ export default function useBLE(): IUseBLE {
         console.log('Characeristic does not exist');
         return;
       }
+
       const byteArr = fromBase64ToByteArr(characteristic.value);
-      const sensorData = decodeByteArray(byteArr, sensorType);
-      // console.log('sensorData: ', sensorData);
-      if (sensorType === 'thermistor') {
-        setThermistorData(sensorData);
-      } else if (sensorType === 'fsr') {
-        setFsrData(sensorData);
+      if (sensorType === 'thermistor' || sensorType === 'fsr') {
+        const sensorData = decodeByteArray(byteArr, sensorType);
+        if (sensorType === 'thermistor') {
+          setThermistorData(sensorData);
+        } else {
+          setFsrData(sensorData);
+        }
+      } else {
+        const sensorData = decodeByteArrForSPO2(byteArr);
+        setSpo2Data(sensorData);
       }
+
+      // const byteArr = fromBase64ToByteArr(characteristic.value);
+      // let sensorData;
+      // if (sensorType === 'spo2') {
+      //   sensorData = decodeByteArrForSPO2(byteArr);
+      // } else {
+      //   sensorData = decodeByteArray(byteArr, sensorType);
+      // }
+      // // console.log('sensorData: ', sensorData);
+      // if (sensorType === 'thermistor') {
+      //   setThermistorData(sensorData);
+      // } else if (sensorType === 'fsr') {
+      //   setFsrData(sensorData);
+      // }
     }
   }
 
@@ -175,5 +197,6 @@ export default function useBLE(): IUseBLE {
     disconnectFromDevice,
     thermistorData,
     fsrData,
+    spo2Data,
   };
 }

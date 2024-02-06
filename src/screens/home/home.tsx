@@ -14,6 +14,7 @@ export default function Home(): React.ReactElement {
     connectedDevice,
     thermistorData,
     fsrData,
+    spo2Data,
   } = useBLE();
 
   return connectedDevice ? (
@@ -22,6 +23,7 @@ export default function Home(): React.ReactElement {
       disconnect={disconnectFromDevice}
       thermistorData={thermistorData}
       fsrData={fsrData}
+      spo2Data={spo2Data}
     />
   ) : (
     <ConnectDevice

@@ -1,6 +1,6 @@
 import base64 from 'react-native-base64';
 import { Base64 } from 'react-native-ble-plx';
-import { Sensors } from '../interfaces/Sensor';
+import { SPO2Sensors, Sensors } from '../interfaces/Sensor';
 import { SensorType } from '../types/sensor-types';
 
 /**
@@ -32,6 +32,25 @@ export function decodeByteArray(
   }
 
   return sensorData;
+}
+
+export function decodeByteArrForSPO2(byteArr: Uint8Array): SPO2Sensors {
+  const spo2Data: SPO2Sensors = {
+    sensors: [],
+  };
+
+  for (let i = 0; i < byteArr.length; i += 5) {
+    const id = byteArr[i];
+    const heartRate = byteArr[i + 1] | byteArr[i + 2];
+    const bloodOxygen = byteArr[i + 3] | byteArr[i + 4];
+    spo2Data.sensors.push({
+      id,
+      heartRate,
+      bloodOxygen,
+    });
+  }
+
+  return spo2Data;
 }
 
 /**
