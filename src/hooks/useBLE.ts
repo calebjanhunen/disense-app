@@ -28,6 +28,7 @@ interface IUseBLE {
   connectedDevice: Device | null;
   isScanning: boolean;
   thermistorData: Sensors | undefined;
+  fsrData: Sensors | undefined;
 }
 
 export default function useBLE(): IUseBLE {
@@ -37,6 +38,7 @@ export default function useBLE(): IUseBLE {
   const [isScanning, setIsScanning] = useState<boolean>(false);
   const [connectedDevice, setConnectedDevice] = useState<Device | null>(null);
   const [thermistorData, setThermistorData] = useState<Sensors>();
+  const [fsrData, setFsrData] = useState<Sensors>();
 
   async function scanForPeripherals(): Promise<void> {
     const permissionsGranted = await permissionManager.requestPermissions();
@@ -130,16 +132,18 @@ export default function useBLE(): IUseBLE {
     }
 
     if (characteristic.value) {
-      const byteArr = fromBase64ToByteArr(characteristic.value);
       const sensorType = getSensorType(characteristic.uuid);
       if (!sensorType) {
         console.log('Characeristic does not exist');
         return;
       }
-
+      const byteArr = fromBase64ToByteArr(characteristic.value);
       const sensorData = decodeByteArray(byteArr, sensorType);
-      if (sensorData.type === 'thermistor') {
+      // console.log('sensorData: ', sensorData);
+      if (sensorType === 'thermistor') {
         setThermistorData(sensorData);
+      } else if (sensorType === 'fsr') {
+        setFsrData(sensorData);
       }
     }
   }
@@ -170,5 +174,6 @@ export default function useBLE(): IUseBLE {
     connectToDevice,
     disconnectFromDevice,
     thermistorData,
+    fsrData,
   };
 }

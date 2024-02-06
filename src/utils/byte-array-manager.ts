@@ -19,7 +19,7 @@ export function decodeByteArray(
 
   for (let i = 0; i < byteArr.length; i += 5) {
     const id = byteArr[i];
-    const tempVal =
+    const decodedVal =
       (byteArr[i + 1] << 24) |
       (byteArr[i + 2] << 16) |
       (byteArr[i + 3] << 8) |
@@ -27,7 +27,7 @@ export function decodeByteArray(
 
     sensorData.sensors.push({
       id,
-      temp: tempVal / 10, // divide by 10 since value is sent as integer (val * 10)
+      value: decodedVal / 10, // divide by 10 since value is sent as integer (val * 10)
     });
   }
 

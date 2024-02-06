@@ -2,7 +2,7 @@ import { SensorType } from '../types/sensor-types';
 
 export interface Sensor {
   id: number;
-  temp: number;
+  value: number;
 }
 
 export interface Sensors {
