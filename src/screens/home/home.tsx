@@ -5,32 +5,23 @@ import DeviceConnected from './device-connected';
 
 export default function Home(): React.ReactElement {
   const {
-    scanForPeripherals,
-    allDevices,
-    isScanning,
-    stopScanning,
     connectToDevice,
     disconnectFromDevice,
     connectedDevice,
-    thermistorData,
-    fsrData,
-    spo2Data,
+    isConnecting,
   } = useBLE();
 
   return connectedDevice ? (
     <DeviceConnected
       device={connectedDevice}
       disconnect={disconnectFromDevice}
-      thermistorData={thermistorData}
-      fsrData={fsrData}
-      spo2Data={spo2Data}
+      thermistorData={undefined}
+      fsrData={undefined}
+      spo2Data={undefined}
     />
   ) : (
     <ConnectDevice
-      scanForPeripherals={scanForPeripherals}
-      allDevices={allDevices}
-      isScanning={isScanning}
-      stopScanning={stopScanning}
+      isConnecting={isConnecting}
       connectToDevice={connectToDevice}
     />
   );
