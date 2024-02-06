@@ -6,6 +6,7 @@ import {
   Device,
   DeviceId,
 } from 'react-native-ble-plx';
+import { PermissionManager } from '../ble/permission-manager';
 import { SPO2Sensors, Sensors } from '../interfaces/Sensor';
 import { SensorType } from '../types/sensor-types';
 import {
@@ -13,7 +14,6 @@ import {
   decodeByteArray,
   fromBase64ToByteArr,
 } from '../utils/byte-array-manager';
-import { PermissionManager } from '../utils/permission-manager';
 
 const SERVICE_UUID = '4fafc201-1fb5-459e-8fcc-c5c9c331914b';
 const THERMISTORS_CHARACTERISTIC_UUID = 'beb5483e-36e1-4688-b7f5-ea07361b26a8';
