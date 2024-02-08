@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 // import { StatusBar } from 'expo-status-bar';
 import {
   Inter_400Regular,
@@ -10,6 +10,7 @@ import { Platform, SafeAreaView, StatusBar, StyleSheet } from 'react-native';
 import { ThemeProvider } from 'styled-components';
 import AppNavigation from './src/navigation/app-navigation';
 import { theme } from './src/theme/theme';
+import { connectToDb } from './src/db/db';
 
 export default function App(): React.ReactElement | null {
   const [fontLoaded] = useFonts({
@@ -17,10 +18,18 @@ export default function App(): React.ReactElement | null {
     Inter_600SemiBold,
     Inter_700Bold,
   });
+  useEffect(() => {
+    initDb();
+  }, [initDb]);
 
   if (!fontLoaded) {
     return null;
   }
+
+  async function initDb() {
+    await connectToDb();
+  }
+
   return (
     <ThemeProvider theme={theme}>
       <SafeAreaView style={styles.AndroidSafeArea}>
