@@ -18,7 +18,6 @@ export const StopwatchContext = createContext<IStopwatchContext>(
 );
 
 export function StopwatchProvider({ children }: Props) {
-  console.log('rendereds');
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [elapsedTime, setElapsedTime] = useState<number>(0);
   const [timerId, setTimerId] = useState<NodeJS.Timeout | null>(null);

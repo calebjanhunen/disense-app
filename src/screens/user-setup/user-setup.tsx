@@ -20,15 +20,17 @@ export default function UserSetup() {
     useContext(TestInfoContext);
   const { startTestStopwatch, stopTestStopwatch, timerDisplay } =
     useContext(StopwatchContext);
-  const [weight, setWeight] = useState<number>();
-  const [height, setHeight] = useState<number>();
-  const [shoeSize, setShoeSize] = useState<number>();
+  const [weight, setWeight] = useState<number | undefined>();
+  const [height, setHeight] = useState<number | undefined>();
+  const [shoeSize, setShoeSize] = useState<number | undefined>();
 
   function startTest() {
-    console.log('user: ', user);
-    console.log('weight: ', weight);
-    console.log('height: ', height);
-    console.log('shoeSize: ', shoeSize);
+    // TODO: save user data to db
+    setUser(0);
+    setWeight(undefined);
+    setHeight(undefined);
+    setShoeSize(undefined);
+    setIsTestRunning(true);
     startTestStopwatch();
   }
 
@@ -43,7 +45,10 @@ export default function UserSetup() {
         },
         {
           text: 'Yes',
-          onPress: () => stopTestStopwatch(),
+          onPress: () => {
+            setIsTestRunning(false);
+            stopTestStopwatch();
+          },
         },
       ]
     );
