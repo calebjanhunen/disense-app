@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 // import { StatusBar } from 'expo-status-bar';
 import {
   Inter_400Regular,
@@ -11,6 +11,7 @@ import { PaperProvider } from 'react-native-paper';
 import { ThemeProvider } from 'styled-components';
 import { StopwatchProvider } from './src/context/stopwatch';
 import { TestInfoProvider } from './src/context/test-info-context';
+import { connectToDB, createTables } from './src/db/db';
 import AppNavigation from './src/navigation/app-navigation';
 import { theme } from './src/theme/theme';
 
@@ -20,9 +21,17 @@ export default function App(): React.ReactElement | null {
     Inter_600SemiBold,
     Inter_700Bold,
   });
+  useEffect(() => {
+    initDB();
+  }, []);
 
   if (!fontLoaded) {
     return null;
+  }
+
+  async function initDB() {
+    const db = connectToDB();
+    await createTables(db);
   }
   return (
     <StopwatchProvider>
