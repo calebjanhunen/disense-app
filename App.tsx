@@ -9,6 +9,7 @@ import {
 import { Platform, SafeAreaView, StatusBar, StyleSheet } from 'react-native';
 import { PaperProvider } from 'react-native-paper';
 import { ThemeProvider } from 'styled-components';
+import { UserProvider } from './src/context/user-context';
 import AppNavigation from './src/navigation/app-navigation';
 import { theme } from './src/theme/theme';
 
@@ -23,14 +24,16 @@ export default function App(): React.ReactElement | null {
     return null;
   }
   return (
-    <PaperProvider>
-      <ThemeProvider theme={theme}>
-        <SafeAreaView style={styles.AndroidSafeArea}>
-          <AppNavigation />
-          {/* <StatusBar barStyle="light-content" /> */}
-        </SafeAreaView>
-      </ThemeProvider>
-    </PaperProvider>
+    <UserProvider>
+      <PaperProvider>
+        <ThemeProvider theme={theme}>
+          <SafeAreaView style={styles.AndroidSafeArea}>
+            <AppNavigation />
+            {/* <StatusBar barStyle="light-content" /> */}
+          </SafeAreaView>
+        </ThemeProvider>
+      </PaperProvider>
+    </UserProvider>
   );
 }
 

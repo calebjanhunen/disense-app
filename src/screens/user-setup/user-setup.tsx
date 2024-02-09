@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { Dropdown } from 'react-native-element-dropdown';
 import { Text, TextInput } from 'react-native-paper';
 import { Button, PageView, Spacer } from '../../components';
+import { UserContext } from '../../context/user-context';
 
 const data = [
   { label: 'User 1', value: 1 },
@@ -12,7 +13,8 @@ const data = [
 ];
 
 export default function UserSetup() {
-  const [user, setUser] = useState<number>();
+  // const [user, setUser] = useState<number>();
+  const { user, setUser } = useContext(UserContext);
   const [weight, setWeight] = useState<number>();
   const [height, setHeight] = useState<number>();
   const [shoeSize, setShoeSize] = useState<number>();
@@ -46,7 +48,7 @@ export default function UserSetup() {
       <TextInput
         keyboardType='number-pad'
         label='Enter your height in meters'
-        onChangeText={height => setHeight(parseFloat(height) * 100)} //convert to cm
+        onChangeText={height => setHeight(parseInt(parseFloat(height) * 100))} //convert to cm
       />
       <Spacer size='lg' />
       <TextInput
