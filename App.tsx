@@ -9,7 +9,8 @@ import {
 import { Platform, SafeAreaView, StatusBar, StyleSheet } from 'react-native';
 import { PaperProvider } from 'react-native-paper';
 import { ThemeProvider } from 'styled-components';
-import { UserProvider } from './src/context/user-context';
+import { StopwatchProvider } from './src/context/stopwatch';
+import { TestInfoProvider } from './src/context/test-info-context';
 import AppNavigation from './src/navigation/app-navigation';
 import { theme } from './src/theme/theme';
 
@@ -24,16 +25,18 @@ export default function App(): React.ReactElement | null {
     return null;
   }
   return (
-    <UserProvider>
-      <PaperProvider>
-        <ThemeProvider theme={theme}>
-          <SafeAreaView style={styles.AndroidSafeArea}>
-            <AppNavigation />
-            {/* <StatusBar barStyle="light-content" /> */}
-          </SafeAreaView>
-        </ThemeProvider>
-      </PaperProvider>
-    </UserProvider>
+    <StopwatchProvider>
+      <TestInfoProvider>
+        <PaperProvider>
+          <ThemeProvider theme={theme}>
+            <SafeAreaView style={styles.AndroidSafeArea}>
+              <AppNavigation />
+              {/* <StatusBar barStyle="light-content" /> */}
+            </SafeAreaView>
+          </ThemeProvider>
+        </PaperProvider>
+      </TestInfoProvider>
+    </StopwatchProvider>
   );
 }
 
