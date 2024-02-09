@@ -7,6 +7,7 @@ import {
   useFonts,
 } from '@expo-google-fonts/inter';
 import { Platform, SafeAreaView, StatusBar, StyleSheet } from 'react-native';
+import { PaperProvider } from 'react-native-paper';
 import { ThemeProvider } from 'styled-components';
 import AppNavigation from './src/navigation/app-navigation';
 import { theme } from './src/theme/theme';
@@ -22,12 +23,14 @@ export default function App(): React.ReactElement | null {
     return null;
   }
   return (
-    <ThemeProvider theme={theme}>
-      <SafeAreaView style={styles.AndroidSafeArea}>
-        <AppNavigation />
-        {/* <StatusBar barStyle="light-content" /> */}
-      </SafeAreaView>
-    </ThemeProvider>
+    <PaperProvider>
+      <ThemeProvider theme={theme}>
+        <SafeAreaView style={styles.AndroidSafeArea}>
+          <AppNavigation />
+          {/* <StatusBar barStyle="light-content" /> */}
+        </SafeAreaView>
+      </ThemeProvider>
+    </PaperProvider>
   );
 }
 
