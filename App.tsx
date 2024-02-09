@@ -7,7 +7,10 @@ import {
   useFonts,
 } from '@expo-google-fonts/inter';
 import { Platform, SafeAreaView, StatusBar, StyleSheet } from 'react-native';
+import { PaperProvider } from 'react-native-paper';
 import { ThemeProvider } from 'styled-components';
+import { StopwatchProvider } from './src/context/stopwatch';
+import { TestInfoProvider } from './src/context/test-info-context';
 import AppNavigation from './src/navigation/app-navigation';
 import { theme } from './src/theme/theme';
 
@@ -22,12 +25,18 @@ export default function App(): React.ReactElement | null {
     return null;
   }
   return (
-    <ThemeProvider theme={theme}>
-      <SafeAreaView style={styles.AndroidSafeArea}>
-        <AppNavigation />
-        {/* <StatusBar barStyle="light-content" /> */}
-      </SafeAreaView>
-    </ThemeProvider>
+    <StopwatchProvider>
+      <TestInfoProvider>
+        <PaperProvider>
+          <ThemeProvider theme={theme}>
+            <SafeAreaView style={styles.AndroidSafeArea}>
+              <AppNavigation />
+              {/* <StatusBar barStyle="light-content" /> */}
+            </SafeAreaView>
+          </ThemeProvider>
+        </PaperProvider>
+      </TestInfoProvider>
+    </StopwatchProvider>
   );
 }
 
