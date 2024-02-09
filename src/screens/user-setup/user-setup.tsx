@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Dropdown } from 'react-native-element-dropdown';
 import { Text, TextInput } from 'react-native-paper';
 import { Button, PageView, Spacer } from '../../components';
@@ -12,6 +12,18 @@ const data = [
 ];
 
 export default function UserSetup() {
+  const [user, setUser] = useState<number>();
+  const [weight, setWeight] = useState<number>();
+  const [height, setHeight] = useState<number>();
+  const [shoeSize, setShoeSize] = useState<number>();
+
+  function submitUserInfo() {
+    console.log('user: ', user);
+    console.log('weight: ', weight);
+    console.log('height: ', height);
+    console.log('shoeSize: ', shoeSize);
+  }
+
   return (
     <PageView>
       <Spacer size='xl' />
@@ -22,23 +34,32 @@ export default function UserSetup() {
         labelField='label'
         placeholder='Select User'
         data={data}
-        onChange={() => {}}
+        onChange={data => setUser(data.value)}
       />
       <Spacer size='xl' />
-      <TextInput keyboardType='number-pad' label='Enter your weight in kg' />
+      <TextInput
+        keyboardType='number-pad'
+        label='Enter your weight in kg'
+        onChangeText={weight => setWeight(parseInt(weight))}
+      />
       <Spacer size='lg' />
       <TextInput
         keyboardType='number-pad'
         label='Enter your height in meters'
+        onChangeText={height => setHeight(parseFloat(height) * 100)} //convert to cm
       />
       <Spacer size='lg' />
-      <TextInput keyboardType='number-pad' label='Enter your shoe size' />
+      <TextInput
+        keyboardType='number-pad'
+        label='Enter your shoe size'
+        onChangeText={size => setShoeSize(parseInt(size))}
+      />
       <Spacer size='lg' />
       <Button
         variant='full'
         backgroundColor='secondary'
         textColor='primary'
-        onPress={() => {}}
+        onPress={submitUserInfo}
       >
         Start Test
       </Button>
