@@ -11,7 +11,7 @@ import { PaperProvider } from 'react-native-paper';
 import { ThemeProvider } from 'styled-components';
 import { StopwatchProvider } from './src/context/stopwatch';
 import { TestInfoProvider } from './src/context/test-info-context';
-import { connectToDB, createTables } from './src/db/db';
+import { createTables } from './src/db/db';
 import AppNavigation from './src/navigation/app-navigation';
 import { theme } from './src/theme/theme';
 import { BLEContextProvider } from './src/context/ble-context';
@@ -31,8 +31,7 @@ export default function App(): React.ReactElement | null {
   }
 
   async function initDB() {
-    const db = connectToDB();
-    await createTables(db);
+    await createTables();
   }
   return (
     <BLEContextProvider>
