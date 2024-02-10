@@ -10,6 +10,7 @@ import { Platform, SafeAreaView, StatusBar, StyleSheet } from 'react-native';
 import { ThemeProvider } from 'styled-components';
 import AppNavigation from './src/navigation/app-navigation';
 import { theme } from './src/theme/theme';
+import { BLEContextProvider } from './src/context/ble-context';
 
 export default function App(): React.ReactElement | null {
   const [fontLoaded] = useFonts({
@@ -23,10 +24,12 @@ export default function App(): React.ReactElement | null {
   }
   return (
     <ThemeProvider theme={theme}>
-      <SafeAreaView style={styles.AndroidSafeArea}>
-        <AppNavigation />
-        {/* <StatusBar barStyle="light-content" /> */}
-      </SafeAreaView>
+      <BLEContextProvider>
+        <SafeAreaView style={styles.AndroidSafeArea}>
+          <AppNavigation />
+          {/* <StatusBar barStyle="light-content" /> */}
+        </SafeAreaView>
+      </BLEContextProvider>
     </ThemeProvider>
   );
 }

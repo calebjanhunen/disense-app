@@ -1,4 +1,4 @@
-import { BleError, BleManager, Device, DeviceId } from 'react-native-ble-plx';
+import { BleError, BleManager, Device } from 'react-native-ble-plx';
 import { PermissionManager } from './permission-manager';
 
 export class MyBleManager {
@@ -15,7 +15,7 @@ export class MyBleManager {
   }
 
   /**
-   * Scans for ble devices
+   * Scans and connected to disense devices
    */
   async connect(onDevicesConnected: (device1: Device) => void): Promise<void> {
     let foundDevice1: Device | null = null;
@@ -26,7 +26,6 @@ export class MyBleManager {
     if (!permissionsGranted) {
       throw new Error('Permissions not granted');
     }
-
     this.bleManager.startDeviceScan(
       null,
       null,
@@ -95,7 +94,11 @@ export class MyBleManager {
   /**
    * Stops scanning for ble devices
    */
-  private stopScanning(): void {
+  stopScanning(): void {
     this.bleManager.stopDeviceScan();
+  }
+
+  getConnectedDevice1() {
+    return this.connectedDevice1;
   }
 }
