@@ -26,7 +26,7 @@ export default function UserSetup() {
 
   function startTest() {
     // TODO: save user data to db
-    setUser(0);
+    // setUser(0);
     setWeight(undefined);
     setHeight(undefined);
     setShoeSize(undefined);

@@ -11,7 +11,7 @@ import { PaperProvider } from 'react-native-paper';
 import { ThemeProvider } from 'styled-components';
 import { StopwatchProvider } from './src/context/stopwatch';
 import { TestInfoProvider } from './src/context/test-info-context';
-import { connectToDB, createTables } from './src/db/db';
+import { createTables } from './src/db/db';
 import AppNavigation from './src/navigation/app-navigation';
 import { theme } from './src/theme/theme';
 
@@ -30,12 +30,11 @@ export default function App(): React.ReactElement | null {
   }
 
   async function initDB() {
-    const db = connectToDB();
-    await createTables(db);
+    await createTables();
   }
   return (
-    <StopwatchProvider>
-      <TestInfoProvider>
+    <TestInfoProvider>
+      <StopwatchProvider>
         <PaperProvider>
           <ThemeProvider theme={theme}>
             <SafeAreaView style={styles.AndroidSafeArea}>
@@ -44,8 +43,8 @@ export default function App(): React.ReactElement | null {
             </SafeAreaView>
           </ThemeProvider>
         </PaperProvider>
-      </TestInfoProvider>
-    </StopwatchProvider>
+      </StopwatchProvider>
+    </TestInfoProvider>
   );
 }
 

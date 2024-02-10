@@ -1,10 +1,8 @@
-import { SQLiteDatabase, openDatabase } from 'expo-sqlite';
+import { openDatabase } from 'expo-sqlite';
 
-export function connectToDB() {
-  return openDatabase('disense.db');
-}
+export const db = openDatabase('disense.db');
 
-export async function createTables(db: SQLiteDatabase) {
+export async function createTables() {
   try {
     const userTableResult = await db.execAsync(
       [
@@ -25,7 +23,8 @@ export async function createTables(db: SQLiteDatabase) {
         {
           sql: `CREATE TABLE IF NOT EXISTS thermistor_data (
                   id INTEGER PRIMARY KEY AUTOINCREMENT,
-                  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, 
+                  sensor_id INTEGER,
+                  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                   temperature INTEGER,
                   user INTEGER,
                   FOREIGN KEY (user) REFERENCES users(id)
@@ -42,6 +41,7 @@ export async function createTables(db: SQLiteDatabase) {
         {
           sql: `CREATE TABLE IF NOT EXISTS fsr_data (
                   id INTEGER PRIMARY KEY AUTOINCREMENT,
+                  sensor_id INTEGER,
                   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, 
                   force INTEGER,
                   user INTEGER,
@@ -59,6 +59,7 @@ export async function createTables(db: SQLiteDatabase) {
         {
           sql: `CREATE TABLE IF NOT EXISTS spo2_data (
                   id INTEGER PRIMARY KEY AUTOINCREMENT,
+                  sensor_id INTEGER,
                   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, 
                   force INTEGER,
                   user INTEGER,

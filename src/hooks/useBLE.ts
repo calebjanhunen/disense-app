@@ -14,6 +14,7 @@ import {
   fromBase64ToByteArr,
 } from '../utils/byte-array-manager';
 import { PermissionManager } from '../utils/permission-manager';
+import { useThermistorData } from './useThermistorData';
 
 const SERVICE_UUID = '4fafc201-1fb5-459e-8fcc-c5c9c331914b';
 const THERMISTORS_CHARACTERISTIC_UUID = 'beb5483e-36e1-4688-b7f5-ea07361b26a8';
@@ -28,7 +29,6 @@ interface IUseBLE {
   allDevices: Device[];
   connectedDevice: Device | null;
   isScanning: boolean;
-  thermistorData: Sensors | undefined;
   fsrData: Sensors | undefined;
   spo2Data: SPO2Sensors | undefined;
 }
@@ -39,9 +39,9 @@ export default function useBLE(): IUseBLE {
   const [allDevices, setAllDevices] = useState<Device[]>([]);
   const [isScanning, setIsScanning] = useState<boolean>(false);
   const [connectedDevice, setConnectedDevice] = useState<Device | null>(null);
-  const [thermistorData, setThermistorData] = useState<Sensors>();
   const [fsrData, setFsrData] = useState<Sensors>();
   const [spo2Data, setSpo2Data] = useState<SPO2Sensors>();
+  const { setThermistorData } = useThermistorData();
 
   async function scanForPeripherals(): Promise<void> {
     const permissionsGranted = await permissionManager.requestPermissions();
@@ -195,7 +195,6 @@ export default function useBLE(): IUseBLE {
     connectedDevice,
     connectToDevice,
     disconnectFromDevice,
-    thermistorData,
     fsrData,
     spo2Data,
   };

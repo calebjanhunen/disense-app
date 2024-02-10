@@ -2,8 +2,10 @@ import React from 'react';
 import useBLE from '../../hooks/useBLE';
 import ConnectDevice from './connect-device';
 import DeviceConnected from './device-connected';
+import { useThermistorData } from '../../hooks/useThermistorData';
 
 export default function Home(): React.ReactElement {
+  const { thermistorData } = useThermistorData();
   const {
     scanForPeripherals,
     allDevices,
@@ -12,7 +14,6 @@ export default function Home(): React.ReactElement {
     connectToDevice,
     disconnectFromDevice,
     connectedDevice,
-    thermistorData,
     fsrData,
     spo2Data,
   } = useBLE();

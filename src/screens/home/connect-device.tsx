@@ -4,7 +4,6 @@ import { Device, DeviceId } from 'react-native-ble-plx';
 import { Button, PageView, Text } from '../../components';
 import Spacer from '../../components/spacer/spacer';
 import AvailableDeviceCard from './components/available-device-card/available-device-card';
-import { insertIntoThermistorTable } from '../../db/thermistor-queries';
 
 interface Props {
   scanForPeripherals(): void;
@@ -30,16 +29,6 @@ export default function ConnectDevice({
   }
   return (
     <PageView>
-      <Button
-        variant='full'
-        backgroundColor='secondary'
-        textColor='primary'
-        onPress={async () => {
-          // await insertIntoThermistorTable(123, 1);
-        }}
-      >
-        INSERT
-      </Button>
       <Spacer size='md' />
       <Text variant='smallTitle' textAlign='center'>
         Disense Device not Connected
