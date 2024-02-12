@@ -15,9 +15,6 @@ export default function Home(): React.ReactElement {
     <DeviceConnected
       device={connectedDevice}
       disconnect={disconnectFromDevice}
-      thermistorData={undefined}
-      fsrData={undefined}
-      spo2Data={undefined}
     />
   ) : (
     <ConnectDevice

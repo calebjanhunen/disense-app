@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useMemo, useState } from 'react';
 import { MyBleManager } from '../ble/ble-manager';
 import { Device } from 'react-native-ble-plx';
+import { FSR, SPO2Sensor, Thermistor } from '../interfaces/Sensor';
 
 interface IBLEContext {
   connectToDevice(): Promise<void>;
@@ -8,6 +9,9 @@ interface IBLEContext {
   stopConnecting(): void;
   connectedDevice: Device | null;
   isConnecting: boolean;
+  thermistorData: Thermistor[] | undefined;
+  fsrData: FSR[] | undefined;
+  spo2Data: SPO2Sensor[] | undefined;
 }
 
 interface Props {
@@ -19,13 +23,35 @@ export const useBLE = () => useContext(BleContext);
 
 export function BLEContextProvider({ children }: Props) {
   const bleManager = useMemo(() => new MyBleManager(), []);
+  const sensorService = useMemo(() => bleManager.getSensorService(), []);
   const [connectedDevice, setConnectedDevice] = useState<Device | null>(null);
   const [isConnecting, setIsConnecting] = useState<boolean>(false);
+  const [thermistorData, setThermistorData] = useState<Thermistor[]>();
+  const [fsrData, setFSRData] = useState<FSR[]>();
+  const [spo2Data, setSPO2Data] = useState<SPO2Sensor[]>();
 
   // TODO: Implement for 2nd sock when set up
   function onDeviceConnected(device1: Device): void {
     setConnectedDevice(device1);
     setIsConnecting(false);
+    sensorService.readSensorData(
+      device1,
+      onReadThermistor,
+      onReadFSR,
+      onReadSPO2
+    );
+  }
+
+  function onReadThermistor(thermistoData: Thermistor[]) {
+    setThermistorData(thermistoData);
+  }
+
+  function onReadFSR(fsrData: FSR[]) {
+    setFSRData(fsrData);
+  }
+
+  function onReadSPO2(spo2Data: SPO2Sensor[]) {
+    setSPO2Data(spo2Data);
   }
 
   async function connectToDevice(): Promise<void> {
@@ -62,6 +88,9 @@ export function BLEContextProvider({ children }: Props) {
         connectToDevice,
         disconnectFromDevice,
         isConnecting,
+        thermistorData,
+        fsrData,
+        spo2Data,
       }}
     >
       {children}

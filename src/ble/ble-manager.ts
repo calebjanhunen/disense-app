@@ -5,17 +5,20 @@ import {
   Subscription,
 } from 'react-native-ble-plx';
 import { PermissionManager } from './permission-manager';
+import { SensorService } from './sensor-service';
 
 export class MyBleManager {
   private bleManager: BleManager;
+  private sensorService: SensorService;
   private permissionManager: PermissionManager;
   private connectedDevice1: Device | null;
   private connectedDevice2: Device | null;
   private onDeviceDisconnectSubscription: Subscription | null;
+  private onDeviceConnectCallback;
 
   constructor() {
     this.bleManager = new BleManager();
-    this.bleManager.stopDeviceScan();
+    this.sensorService = new SensorService();
     this.permissionManager = new PermissionManager();
     this.connectedDevice1 = null;
     this.connectedDevice2 = null;
@@ -26,6 +29,7 @@ export class MyBleManager {
    * Scans and connected to disense devices
    */
   async connect(onDevicesConnected: (device1: Device) => void): Promise<void> {
+    this.onDeviceConnectCallback = onDevicesConnected;
     this.connectedDevice1 = null;
     const permissionsGranted =
       await this.permissionManager.requestPermissions();
@@ -60,6 +64,38 @@ export class MyBleManager {
   }
 
   /**
+   * Disconnects from a ble device
+   * @param deviceId - Id of the device to disconnect from
+   */
+  async disconnectFromDevice(): Promise<void> {
+    // TODO: Implement disconnecting from 2nd sock
+    this.onDeviceDisconnectSubscription?.remove();
+    this.sensorService.removeReadCharacteristicCallbackSubscription();
+    if (!this.connectedDevice1) {
+      console.log('device already disconnected');
+      return;
+    }
+    try {
+      await this.bleManager.cancelDeviceConnection(this.connectedDevice1.id);
+      this.connectedDevice1 = null;
+      console.log('disconnected');
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
+  /**
+   * Stops scanning for ble devices
+   */
+  stopScanning(): void {
+    this.bleManager.stopDeviceScan();
+  }
+
+  getSensorService(): SensorService {
+    return this.sensorService;
+  }
+
+  /**
    * Connects to a ble device
    * @param deviceId - id of the device to connect to
    * @returns The connected device
@@ -87,37 +123,6 @@ export class MyBleManager {
     }
   }
 
-  /**
-   * Disconnects from a ble device
-   * @param deviceId - Id of the device to disconnect from
-   */
-  async disconnectFromDevice(): Promise<void> {
-    // TODO: Implement disconnecting from 2nd sock
-    this.onDeviceDisconnectSubscription?.remove();
-    if (!this.connectedDevice1) {
-      console.log('device already disconnected');
-      return;
-    }
-    try {
-      await this.bleManager.cancelDeviceConnection(this.connectedDevice1.id);
-      this.connectedDevice1 = null;
-      console.log('disconnected');
-    } catch (e) {
-      console.log(e);
-    }
-  }
-
-  /**
-   * Stops scanning for ble devices
-   */
-  stopScanning(): void {
-    this.bleManager.stopDeviceScan();
-  }
-
-  getConnectedDevice1() {
-    return this.connectedDevice1;
-  }
-
   private setupDisconnectionListener(device: Device): void {
     this.onDeviceDisconnectSubscription = this.bleManager.onDeviceDisconnected(
       device.id,
@@ -138,6 +143,10 @@ export class MyBleManager {
     let currAttempt = 0;
 
     const retryConnect = async () => {
+      if (await this.bleManager.isDeviceConnected(device.id)) {
+        console.log('device already connected');
+        return;
+      }
       try {
         await this.bleManager.connectToDevice(device.id);
         this.connectedDevice1 =
@@ -145,11 +154,16 @@ export class MyBleManager {
             device.id
           );
         console.log('device reconnected');
+        this.onDeviceConnectCallback(this.connectedDevice1);
+        currAttempt = 0;
       } catch (e) {
         console.log('Error reconnecting to device: ', e);
         currAttempt++;
+        console.log(currAttempt);
         if (currAttempt < numAttempts) {
           setTimeout(retryConnect, 200);
+        } else {
+          this.disconnectFromDevice();
         }
       }
     };
