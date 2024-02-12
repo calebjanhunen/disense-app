@@ -21,7 +21,6 @@ export function useThermistorData(): IUseThermistorData {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    console.log('user in thermistor data hook: ', user);
     if (thermistorData) {
       insert(thermistorData.sensors);
     }
