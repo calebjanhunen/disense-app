@@ -1,11 +1,11 @@
 import React, { createContext, useContext, useMemo, useState } from 'react';
 import { MyBleManager } from '../ble/ble-manager';
-import { Alert } from 'react-native';
 import { Device } from 'react-native-ble-plx';
 
 interface IBLEContext {
   connectToDevice(): Promise<void>;
   disconnectFromDevice(): Promise<void>;
+  stopConnecting(): void;
   connectedDevice: Device | null;
   isConnecting: boolean;
 }
@@ -29,37 +29,35 @@ export function BLEContextProvider({ children }: Props) {
   }
 
   async function connectToDevice(): Promise<void> {
-    setTimeout(() => {
-      if (!bleManager.getConnectedDevice1()) {
-        bleManager.stopScanning();
-        setIsConnecting(false);
-        Alert.alert('Device not found', 'Disense socks could not be found', [
-          { text: 'ok' },
-        ]);
-      }
-    }, 10000);
+    // setTimeout(() => {
+    //   if (!bleManager.getConnectedDevice1()) {
+    //     bleManager.stopScanning();
+    //     setIsConnecting(false);
+    //     Alert.alert('Device not found', 'Disense socks could not be found', [
+    //       { text: 'ok' },
+    //     ]);
+    //   }
+    // }, 10000);
 
     setIsConnecting(true);
-    try {
-      await bleManager.connect(onDeviceConnected);
-    } catch (e) {
-      console.log('ERRORRRR CONNECTING: ', e);
-    }
+    await bleManager.connect(onDeviceConnected);
   }
 
   async function disconnectFromDevice(): Promise<void> {
-    try {
-      // TODO: Implement disconnecting from 2nd sock when set up
-      setConnectedDevice(null);
-      await bleManager.disconnectFromDevice();
-    } catch (e) {
-      console.log(e);
-    }
+    // TODO: Implement disconnecting from 2nd sock when set up
+    setConnectedDevice(null);
+    await bleManager.disconnectFromDevice();
+  }
+
+  function stopConnecting(): void {
+    setIsConnecting(false);
+    bleManager.stopScanning();
   }
 
   return (
     <BleContext.Provider
       value={{
+        stopConnecting,
         connectedDevice,
         connectToDevice,
         disconnectFromDevice,

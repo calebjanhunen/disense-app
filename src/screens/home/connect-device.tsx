@@ -4,6 +4,7 @@ import { Device, DeviceId } from 'react-native-ble-plx';
 import { Button, PageView, Text } from '../../components';
 import Spacer from '../../components/spacer/spacer';
 import AvailableDeviceCard from './components/available-device-card/available-device-card';
+import { useBLE } from '../../context/ble-context';
 
 interface Props {
   connectToDevice(): Promise<void>;
@@ -14,6 +15,7 @@ export default function ConnectDevice({
   connectToDevice,
   isConnecting,
 }: Props) {
+  const { stopConnecting } = useBLE();
   return (
     <PageView>
       <Spacer size='md' />
@@ -25,9 +27,9 @@ export default function ConnectDevice({
         variant='full'
         backgroundColor='primary'
         textColor='white'
-        onPress={async () => connectToDevice()}
+        onPress={isConnecting ? stopConnecting : async () => connectToDevice()}
       >
-        {isConnecting ? <ActivityIndicator /> : 'Connect to Socks'}
+        {isConnecting ? 'Stop Connecting' : 'Connect to Socks'}
       </Button>
     </PageView>
   );
