@@ -14,15 +14,21 @@ export class MyBleManager {
   private connectedDevice1: Device | null;
   private connectedDevice2: Device | null;
   private onDeviceDisconnectSubscription: Subscription | null;
-  private onDeviceConnectCallback;
+  private onDeviceConnectCallback: ((device1: Device) => void) | null;
+  private shouldReconnect: boolean;
 
   constructor() {
+    // TODO maybe sometime later:
+    // Save connectedDevice to async storage so on app reload it gets it from storage if it exists and wont need to reconnect
+    console.log('rerendered');
     this.bleManager = new BleManager();
     this.sensorService = new SensorService();
     this.permissionManager = new PermissionManager();
     this.connectedDevice1 = null;
     this.connectedDevice2 = null;
     this.onDeviceDisconnectSubscription = null;
+    this.onDeviceConnectCallback = null;
+    this.shouldReconnect = false;
   }
 
   /**
@@ -31,6 +37,7 @@ export class MyBleManager {
   async connect(onDevicesConnected: (device1: Device) => void): Promise<void> {
     this.onDeviceConnectCallback = onDevicesConnected;
     this.connectedDevice1 = null;
+    this.shouldReconnect = true;
     const permissionsGranted =
       await this.permissionManager.requestPermissions();
     if (!permissionsGranted) {
@@ -69,8 +76,9 @@ export class MyBleManager {
    */
   async disconnectFromDevice(): Promise<void> {
     // TODO: Implement disconnecting from 2nd sock
-    this.onDeviceDisconnectSubscription?.remove();
     this.sensorService.removeReadCharacteristicCallbackSubscription();
+    this.onDeviceDisconnectSubscription?.remove();
+    this.shouldReconnect = false;
     if (!this.connectedDevice1) {
       console.log('device already disconnected');
       return;
@@ -133,7 +141,10 @@ export class MyBleManager {
         this.connectedDevice1 = null;
         // this.disconnectFromDevice();
         console.log('Device disconnected: ', device?.id);
-        if (device) this.attemptReconnect(device);
+        if (device && this.shouldReconnect) {
+          console.log('Attempting reconnection');
+          this.attemptReconnect(device);
+        }
       }
     );
   }
@@ -154,7 +165,8 @@ export class MyBleManager {
             device.id
           );
         console.log('device reconnected');
-        this.onDeviceConnectCallback(this.connectedDevice1);
+        if (this.onDeviceConnectCallback)
+          this.onDeviceConnectCallback(this.connectedDevice1);
         currAttempt = 0;
       } catch (e) {
         console.log('Error reconnecting to device: ', e);
