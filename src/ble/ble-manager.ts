@@ -74,7 +74,7 @@ export class MyBleManager {
    */
   async disconnectFromDevice(): Promise<void> {
     // TODO: Implement disconnecting from 2nd sock
-    this.sensorService.removeReadCharacteristicCallbackSubscription();
+    this.sensorService.removeReadCharacteristicCallbackSubscriptions();
     this.onDeviceDisconnectSubscription?.remove();
     this.shouldReconnect = false;
     if (!this.connectedDevice1) {
@@ -136,7 +136,7 @@ export class MyBleManager {
         if (error) {
           console.log('Error on device disconnect: ', error);
         }
-        this.sensorService.removeReadCharacteristicCallbackSubscription();
+        this.sensorService.removeReadCharacteristicCallbackSubscriptions();
         this.connectedDevice1 = null;
         // this.disconnectFromDevice();
         console.log('Device disconnected: ', device?.id);

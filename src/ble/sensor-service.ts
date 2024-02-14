@@ -21,7 +21,7 @@ export class SensorService {
   readonly spo2CharUuid = '9f7d8c4f-b3d4-4d72-8787-8386e5f13195';
   readonly acknowledgmentCharUuid = '1b384bed-4282-41e1-8ef9-466bc94fa5ed';
 
-  private readCharacteristicCallback: Subscription | null;
+  private readCharacteristicCallbacks: Subscription[];
   private acknowledgmentCharacteristic: Characteristic | undefined;
   private onReadThermistor: (thermistorData: Thermistor[]) => void;
   private onReadFsr: (fsrData: FSR[]) => void;
@@ -32,7 +32,7 @@ export class SensorService {
     onReadFsr: (fsrData: FSR[]) => void,
     onReadSPO2: (spo2Data: SPO2Sensor[]) => void
   ) {
-    this.readCharacteristicCallback = null;
+    this.readCharacteristicCallbacks = new Array(3);
     this.acknowledgmentCharacteristic = undefined;
     this.onReadThermistor = onReadThermistor;
     this.onReadFsr = onReadFsr;
@@ -61,9 +61,10 @@ export class SensorService {
     );
 
     // Loop through characteristics and read data from sensor characteristics
+    let i = 0;
     for (const characteristic of characteristics) {
       if (characteristic.isNotifiable) {
-        this.readCharacteristicCallback =
+        this.readCharacteristicCallbacks[i] =
           device.monitorCharacteristicForService(
             sensorService.uuid,
             characteristic.uuid,
@@ -98,12 +99,15 @@ export class SensorService {
               }
             }
           );
+        i++;
       }
     }
   }
 
-  removeReadCharacteristicCallbackSubscription(): void {
-    this.readCharacteristicCallback?.remove();
+  removeReadCharacteristicCallbackSubscriptions(): void {
+    for (const callback of this.readCharacteristicCallbacks) {
+      callback.remove();
+    }
   }
 
   private async writeToAcknowledgeCharacteristic(value: string): Promise<void> {
