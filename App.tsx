@@ -15,6 +15,7 @@ import { createTables } from './src/db/db';
 import AppNavigation from './src/navigation/app-navigation';
 import { theme } from './src/theme/theme';
 import { BLEContextProvider } from './src/context/ble-context';
+import { SensorContextProvider } from './src/context/sensor-context';
 
 export default function App(): React.ReactElement | null {
   const [fontLoaded] = useFonts({
@@ -34,20 +35,22 @@ export default function App(): React.ReactElement | null {
     await createTables();
   }
   return (
-    <BLEContextProvider>
-      <StopwatchProvider>
-        <TestInfoProvider>
-          <PaperProvider>
-            <ThemeProvider theme={theme}>
-              <SafeAreaView style={styles.AndroidSafeArea}>
-                <AppNavigation />
-                {/* <StatusBar barStyle="light-content" /> */}
-              </SafeAreaView>
-            </ThemeProvider>
-          </PaperProvider>
-        </TestInfoProvider>
-      </StopwatchProvider>
-    </BLEContextProvider>
+    <SensorContextProvider>
+      <BLEContextProvider>
+        <StopwatchProvider>
+          <TestInfoProvider>
+            <PaperProvider>
+              <ThemeProvider theme={theme}>
+                <SafeAreaView style={styles.AndroidSafeArea}>
+                  <AppNavigation />
+                  {/* <StatusBar barStyle="light-content" /> */}
+                </SafeAreaView>
+              </ThemeProvider>
+            </PaperProvider>
+          </TestInfoProvider>
+        </StopwatchProvider>
+      </BLEContextProvider>
+    </SensorContextProvider>
   );
 }
 

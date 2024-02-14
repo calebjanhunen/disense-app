@@ -9,6 +9,7 @@ import ThermistorDisplay from './components/thermistor-display/thermistor-displa
 import FSRDisplay from './components/fsr-display/fsr-display';
 import { useFSRData } from '../../hooks/useFSRData';
 import { useThermistorData } from '../../hooks/useThermistorData';
+import { useSensorData } from '../../context/sensor-context';
 
 interface Props {
   device: Device;
@@ -19,11 +20,7 @@ export default function DeviceConnected({
   device,
   disconnect,
 }: Props): React.ReactElement {
-  const { thermistorData } = useThermistorData();
-  const { fsrData } = useFSRData();
-  const { spo2Data } = useBLE();
-
-  console.log('Thermistor data in component: ', thermistorData);
+  const { thermistorData, fsrData, spo2Data } = useSensorData();
 
   return (
     <PageView>
