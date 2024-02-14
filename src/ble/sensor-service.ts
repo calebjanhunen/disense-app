@@ -15,44 +15,54 @@ import base64 from 'react-native-base64';
 
 export class SensorService {
   // Constants
-  readonly SERVICE_UUID = '4fafc201-1fb5-459e-8fcc-c5c9c331914b';
-  readonly THERMISTORS_CHARACTERISTIC_UUID =
-    'beb5483e-36e1-4688-b7f5-ea07361b26a8';
-  readonly FSR_CHARACTERISTIC_UUID = 'f00a075c-948e-4f01-9cb6-7d876cf96683';
-  readonly SPO2_CHARACTERISTIC_UUID = '9f7d8c4f-b3d4-4d72-8787-8386e5f13195';
-  readonly ACK_CHARACTERISTIC_UUID = '1b384bed-4282-41e1-8ef9-466bc94fa5ed';
+  readonly serviceUuid = '4fafc201-1fb5-459e-8fcc-c5c9c331914b';
+  readonly thermistorCharUuid = 'beb5483e-36e1-4688-b7f5-ea07361b26a8';
+  readonly fsrCharUuid = 'f00a075c-948e-4f01-9cb6-7d876cf96683';
+  readonly spo2CharUuid = '9f7d8c4f-b3d4-4d72-8787-8386e5f13195';
+  readonly acknowledgmentCharUuid = '1b384bed-4282-41e1-8ef9-466bc94fa5ed';
 
   private readCharacteristicCallback: Subscription | null;
   private acknowledgmentCharacteristic: Characteristic | undefined;
+  private onReadThermistor: (thermistorData: Thermistor[]) => void;
+  private onReadFsr: (fsrData: FSR[]) => void;
+  private onReadSPO2: (spo2Data: SPO2Sensor[]) => void;
 
-  constructor() {
-    this.readCharacteristicCallback = null;
-    this.acknowledgmentCharacteristic = undefined;
-  }
-
-  async readSensorData(
-    device: Device,
+  constructor(
     onReadThermistor: (thermistorData: Thermistor[]) => void,
-    onReadFSR: (fsrData: FSR[]) => void,
+    onReadFsr: (fsrData: FSR[]) => void,
     onReadSPO2: (spo2Data: SPO2Sensor[]) => void
   ) {
+    this.readCharacteristicCallback = null;
+    this.acknowledgmentCharacteristic = undefined;
+    this.onReadThermistor = onReadThermistor;
+    this.onReadFsr = onReadFsr;
+    this.onReadSPO2 = onReadSPO2;
+  }
+
+  async readSensorData(device: Device) {
+    // Set callbacks for when sensor data is read
+
+    // Get services from device
     const services = await device.services();
+
+    // Get sensor service
     const sensorService = services.find(
-      service => service.uuid === this.SERVICE_UUID
+      service => service.uuid === this.serviceUuid
     );
     if (!sensorService) {
       console.log('Service does not exist');
       return;
     }
 
+    // Get characteristics from sensor service
     const characteristics = await sensorService.characteristics();
     this.acknowledgmentCharacteristic = characteristics.find(
-      characteristic => characteristic.uuid === this.ACK_CHARACTERISTIC_UUID
+      characteristic => characteristic.uuid === this.acknowledgmentCharUuid
     );
 
+    // Loop through characteristics and read data from sensor characteristics
     for (const characteristic of characteristics) {
       if (characteristic.isNotifiable) {
-        console.log(characteristic.uuid);
         this.readCharacteristicCallback =
           device.monitorCharacteristicForService(
             sensorService.uuid,
@@ -71,22 +81,20 @@ export class SensorService {
               }
 
               const byteArr = fromBase64ToByteArr(characteristic.value);
-              if (
-                characteristic.uuid === this.THERMISTORS_CHARACTERISTIC_UUID
-              ) {
+
+              if (characteristic.uuid === this.thermistorCharUuid) {
                 const thermistorData = decodeByteArrayForThermistor(byteArr);
                 console.log(thermistorData);
-                onReadThermistor(thermistorData);
+                this.onReadThermistor(thermistorData);
                 await this.writeToAcknowledgeCharacteristic('thermistor');
-              } else if (characteristic.uuid === this.FSR_CHARACTERISTIC_UUID) {
+              } else if (characteristic.uuid === this.fsrCharUuid) {
                 const fsrData = decodeByteArrayForFSR(byteArr);
-                onReadFSR(fsrData);
+                console.log(fsrData);
+                this.onReadFsr(fsrData);
                 await this.writeToAcknowledgeCharacteristic('fsr');
-              } else if (
-                characteristic.uuid === this.SPO2_CHARACTERISTIC_UUID
-              ) {
+              } else if (characteristic.uuid === this.spo2CharUuid) {
                 const spo2Data = decodeByteArrForSPO2(byteArr);
-                onReadSPO2(spo2Data);
+                this.onReadSPO2(spo2Data);
               }
             }
           );
@@ -107,7 +115,6 @@ export class SensorService {
       await this.acknowledgmentCharacteristic.writeWithoutResponse(
         base64.encode(value)
       );
-      console.log('wrote to acknowledgment characteristic');
     } catch (e) {
       console.log('Error writing characteristic', e);
     }

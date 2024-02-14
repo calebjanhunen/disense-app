@@ -2,6 +2,7 @@ import React, { createContext, useContext, useMemo, useState } from 'react';
 import { MyBleManager } from '../ble/ble-manager';
 import { Device } from 'react-native-ble-plx';
 import { FSR, SPO2Sensor, Thermistor } from '../interfaces/Sensor';
+import { SensorService } from '../ble/sensor-service';
 
 interface IBLEContext {
   connectToDevice(): Promise<void>;
@@ -22,8 +23,11 @@ const BleContext = createContext<IBLEContext>({} as IBLEContext);
 export const useBLE = () => useContext(BleContext);
 
 export function BLEContextProvider({ children }: Props) {
-  const bleManager = useMemo(() => new MyBleManager(), []);
-  const sensorService = useMemo(() => bleManager.getSensorService(), []);
+  const sensorService = useMemo(
+    () => new SensorService(onReadThermistor, onReadFSR, onReadSPO2),
+    []
+  );
+  const bleManager = useMemo(() => new MyBleManager(sensorService), []);
   const [connectedDevice, setConnectedDevice] = useState<Device | null>(null);
   const [isConnecting, setIsConnecting] = useState<boolean>(false);
   const [thermistorData, setThermistorData] = useState<Thermistor[]>();
@@ -34,12 +38,7 @@ export function BLEContextProvider({ children }: Props) {
   function onDeviceConnected(device1: Device): void {
     setConnectedDevice(device1);
     setIsConnecting(false);
-    sensorService.readSensorData(
-      device1,
-      onReadThermistor,
-      onReadFSR,
-      onReadSPO2
-    );
+    sensorService.readSensorData(device1);
   }
 
   function onReadThermistor(thermistoData: Thermistor[]) {

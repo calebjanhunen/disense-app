@@ -8,24 +8,22 @@ import { PermissionManager } from './permission-manager';
 import { SensorService } from './sensor-service';
 
 export class MyBleManager {
+  // private connectedDevice2: Device | null;
   private bleManager: BleManager;
   private sensorService: SensorService;
   private permissionManager: PermissionManager;
   private connectedDevice1: Device | null;
-  private connectedDevice2: Device | null;
   private onDeviceDisconnectSubscription: Subscription | null;
   private onDeviceConnectCallback: ((device1: Device) => void) | null;
   private shouldReconnect: boolean;
 
-  constructor() {
+  constructor(sensorService: SensorService) {
     // TODO maybe sometime later:
     // Save connectedDevice to async storage so on app reload it gets it from storage if it exists and wont need to reconnect
-    console.log('rerendered');
     this.bleManager = new BleManager();
-    this.sensorService = new SensorService();
+    this.sensorService = sensorService;
     this.permissionManager = new PermissionManager();
     this.connectedDevice1 = null;
-    this.connectedDevice2 = null;
     this.onDeviceDisconnectSubscription = null;
     this.onDeviceConnectCallback = null;
     this.shouldReconnect = false;
@@ -138,11 +136,11 @@ export class MyBleManager {
         if (error) {
           console.log('Error on device disconnect: ', error);
         }
+        this.sensorService.removeReadCharacteristicCallbackSubscription();
         this.connectedDevice1 = null;
         // this.disconnectFromDevice();
         console.log('Device disconnected: ', device?.id);
-        if (device && this.shouldReconnect) {
-          console.log('Attempting reconnection');
+        if (device) {
           this.attemptReconnect(device);
         }
       }
@@ -154,10 +152,15 @@ export class MyBleManager {
     let currAttempt = 0;
 
     const retryConnect = async () => {
+      console.log('Attempting reconnection');
+      console.log('should reconnect? ', this.shouldReconnect);
+      if (!this.shouldReconnect) return;
+
       if (await this.bleManager.isDeviceConnected(device.id)) {
         console.log('device already connected');
         return;
       }
+
       try {
         await this.bleManager.connectToDevice(device.id);
         this.connectedDevice1 =
