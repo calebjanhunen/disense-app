@@ -14,6 +14,7 @@ import { TestInfoProvider } from './src/context/test-info-context';
 import { connectToDB, createTables } from './src/db/db';
 import AppNavigation from './src/navigation/app-navigation';
 import { theme } from './src/theme/theme';
+import { BLEContextProvider } from './src/context/ble-context';
 
 export default function App(): React.ReactElement | null {
   const [fontLoaded] = useFonts({
@@ -34,18 +35,20 @@ export default function App(): React.ReactElement | null {
     await createTables(db);
   }
   return (
-    <StopwatchProvider>
-      <TestInfoProvider>
-        <PaperProvider>
-          <ThemeProvider theme={theme}>
-            <SafeAreaView style={styles.AndroidSafeArea}>
-              <AppNavigation />
-              {/* <StatusBar barStyle="light-content" /> */}
-            </SafeAreaView>
-          </ThemeProvider>
-        </PaperProvider>
-      </TestInfoProvider>
-    </StopwatchProvider>
+    <BLEContextProvider>
+      <StopwatchProvider>
+        <TestInfoProvider>
+          <PaperProvider>
+            <ThemeProvider theme={theme}>
+              <SafeAreaView style={styles.AndroidSafeArea}>
+                <AppNavigation />
+                {/* <StatusBar barStyle="light-content" /> */}
+              </SafeAreaView>
+            </ThemeProvider>
+          </PaperProvider>
+        </TestInfoProvider>
+      </StopwatchProvider>
+    </BLEContextProvider>
   );
 }
 

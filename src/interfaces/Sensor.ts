@@ -19,3 +19,13 @@ export interface SPO2Sensor {
   heartRate: number;
   bloodOxygen: number;
 }
+
+export interface Thermistor {
+  id: number;
+  temp: number;
+}
+
+export interface FSR {
+  id: number;
+  force: number;
+}
