@@ -4,7 +4,6 @@ import DeviceConnected from './device-connected';
 import { useBLE } from '../../context/ble-context';
 
 export default function Home(): React.ReactElement {
-  const { thermistorData } = useThermistorData();
   const {
     connectToDevice,
     disconnectFromDevice,

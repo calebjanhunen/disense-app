@@ -7,26 +7,26 @@ import {
 } from 'react';
 import { TestInfoContext } from '../context/test-info-context';
 import { bulkInsertIntoThermistorTable } from '../db/sensor-interface';
-import { Sensor, Sensors } from '../interfaces/Sensor';
+import { Thermistor } from '../interfaces/Sensor';
 
 interface IUseThermistorData {
   error: string | null;
-  setThermistorData: Dispatch<SetStateAction<Sensors | undefined>>;
-  thermistorData: Sensors | undefined;
+  setThermistorData: Dispatch<SetStateAction<Thermistor[]>>;
+  thermistorData: Thermistor[];
 }
 
 export function useThermistorData(): IUseThermistorData {
   const { user } = useContext(TestInfoContext);
-  const [thermistorData, setThermistorData] = useState<Sensors>();
+  const [thermistorData, setThermistorData] = useState<Thermistor[]>([]);
   const [error, setError] = useState<string | null>(null);
-
+  console.log('thermistor data in hook: ', thermistorData);
   useEffect(() => {
     if (thermistorData) {
-      insert(thermistorData.sensors);
+      // insert(thermistorData);
     }
   }, [thermistorData]);
 
-  async function insert(sensors: Sensor[]): Promise<void> {
+  async function insert(sensors: Thermistor[]): Promise<void> {
     setError(null);
     try {
       await bulkInsertIntoThermistorTable(sensors, user);
