@@ -3,16 +3,8 @@ import { Button, PageView, Text } from '../../components';
 import Spacer from '../../components/spacer/spacer';
 import { useBLE } from '../../context/ble-context';
 
-interface Props {
-  connectToDevice(): Promise<void>;
-  isConnecting: boolean;
-}
-
-export default function ConnectDevice({
-  connectToDevice,
-  isConnecting,
-}: Props) {
-  const { stopConnecting } = useBLE();
+export default function ConnectDevice() {
+  const { stopConnecting, isConnecting, connectToDevice } = useBLE();
   return (
     <PageView>
       <Spacer size='md' />

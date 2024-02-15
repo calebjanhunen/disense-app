@@ -4,22 +4,9 @@ import DeviceConnected from './device-connected';
 import { useBLE } from '../../context/ble-context';
 
 export default function Home(): React.ReactElement {
-  const {
-    connectToDevice,
-    disconnectFromDevice,
-    connectedDevice,
-    isConnecting,
-  } = useBLE();
+  const { connectedDevice } = useBLE();
 
-  return connectedDevice ? (
-    <DeviceConnected
-      device={connectedDevice}
-      disconnect={disconnectFromDevice}
-    />
-  ) : (
-    <ConnectDevice
-      isConnecting={isConnecting}
-      connectToDevice={connectToDevice}
-    />
-  );
+  console.log('HOME PAGE RENDERED');
+
+  return connectedDevice ? <DeviceConnected /> : <ConnectDevice />;
 }

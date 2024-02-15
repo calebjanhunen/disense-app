@@ -1,19 +1,24 @@
 import React from 'react';
 import { Text } from '../../../../components';
-import { SPO2Sensor } from '../../../../interfaces/Sensor';
 import { Container } from './spo2-data-display.styles';
+import { FlatList } from 'react-native';
+import { useSensorData } from '../../../../context/sensor-context';
 
-interface Props {
-  sensor: SPO2Sensor;
-}
+export default function Spo2DataDisplay() {
+  const { spo2Data } = useSensorData();
+  console.log('SPO2 component RENDERED');
 
-export default function Spo2DataDisplay({ sensor }: Props) {
   return (
-    <Container>
-      <Text variant='body'>ID: {sensor.id}</Text>
-      <Text variant='body'>|</Text>
-      <Text variant='body'>Heart Rate: {sensor.heartRate} bpm</Text>
-      <Text variant='body'>Blood Oxygen: {sensor.bloodOxygen}%</Text>
-    </Container>
+    <FlatList
+      data={spo2Data}
+      renderItem={({ item }) => (
+        <Container>
+          <Text variant='body'>ID: {item.id}</Text>
+          <Text variant='body'>|</Text>
+          <Text variant='body'>Heart Rate: {item.heartRate} bpm</Text>
+          <Text variant='body'>Blood Oxygen: {item.bloodOxygen}%</Text>
+        </Container>
+      )}
+    />
   );
 }
