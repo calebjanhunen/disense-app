@@ -2,11 +2,14 @@ import React from 'react';
 import { Text } from '../../../../components';
 import { Container } from './spo2-data-display.styles';
 import { FlatList } from 'react-native';
-import { useSensorData } from '../../../../context/sensor-context';
+import { SPO2Sensor } from '../../../../interfaces/Sensor';
 
-export default function Spo2DataDisplay() {
-  const { spo2Data } = useSensorData();
-  console.log('SPO2 component RENDERED');
+interface Props {
+  spo2Data: SPO2Sensor[];
+}
+
+export default function Spo2DataDisplay({ spo2Data }: Props) {
+  // console.log('SPO2 component RENDERED');
 
   return (
     <FlatList

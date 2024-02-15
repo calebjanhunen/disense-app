@@ -23,23 +23,26 @@ export class SensorService {
 
   private readCharacteristicCallbacks: Subscription[];
   private acknowledgmentCharacteristic: Characteristic | undefined;
-  private onReadThermistor: (thermistorData: Thermistor[]) => void;
-  private onReadFsr: (fsrData: FSR[]) => void;
-  private onReadSPO2: (spo2Data: SPO2Sensor[]) => void;
+  private thermistorData: Thermistor[] | null;
+  private fsrData: FSR[] | null;
+  private spo2Data: SPO2Sensor[] | null;
 
-  constructor(
-    onReadThermistor: (thermistorData: Thermistor[]) => void,
-    onReadFsr: (fsrData: FSR[]) => void,
-    onReadSPO2: (spo2Data: SPO2Sensor[]) => void
-  ) {
+  constructor() {
     this.readCharacteristicCallbacks = new Array(3);
     this.acknowledgmentCharacteristic = undefined;
-    this.onReadThermistor = onReadThermistor;
-    this.onReadFsr = onReadFsr;
-    this.onReadSPO2 = onReadSPO2;
+    this.thermistorData = null;
+    this.fsrData = null;
+    this.spo2Data = null;
   }
 
-  async readSensorData(device: Device) {
+  async readSensorData(
+    device: Device,
+    onReadSensors: (
+      thermistorData: Thermistor[],
+      fsrData: FSR[],
+      spo2Data: SPO2Sensor[]
+    ) => void
+  ) {
     // Set callbacks for when sensor data is read
 
     // Get services from device
@@ -82,20 +85,21 @@ export class SensorService {
               }
 
               const byteArr = fromBase64ToByteArr(characteristic.value);
-
               if (characteristic.uuid === this.thermistorCharUuid) {
-                const thermistorData = decodeByteArrayForThermistor(byteArr);
-                // console.log(thermistorData);
-                this.onReadThermistor(thermistorData);
+                this.thermistorData = decodeByteArrayForThermistor(byteArr);
                 await this.writeToAcknowledgeCharacteristic('thermistor');
               } else if (characteristic.uuid === this.fsrCharUuid) {
-                const fsrData = decodeByteArrayForFSR(byteArr);
-                // console.log(fsrData);
-                this.onReadFsr(fsrData);
+                this.fsrData = decodeByteArrayForFSR(byteArr);
                 await this.writeToAcknowledgeCharacteristic('fsr');
               } else if (characteristic.uuid === this.spo2CharUuid) {
-                const spo2Data = decodeByteArrForSPO2(byteArr);
-                this.onReadSPO2(spo2Data);
+                this.spo2Data = decodeByteArrForSPO2(byteArr);
+              }
+
+              if (this.thermistorData && this.fsrData && this.spo2Data) {
+                onReadSensors(this.thermistorData, this.fsrData, this.spo2Data);
+                this.thermistorData = null;
+                this.fsrData = null;
+                this.spo2Data = null;
               }
             }
           );

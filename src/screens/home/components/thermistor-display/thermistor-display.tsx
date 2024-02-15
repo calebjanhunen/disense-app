@@ -1,12 +1,15 @@
 import React from 'react';
 import { Text } from '../../../../components';
 import { Container } from './sensor-display.styles';
-import { useSensorData } from '../../../../context/sensor-context';
 import { FlatList } from 'react-native';
+import { Thermistor } from '../../../../interfaces/Sensor';
 
-export default function ThermistorDisplay() {
-  const { thermistorData } = useSensorData();
-  console.log('THERMISTOR component RENDERED');
+interface Props {
+  thermistorData: Thermistor[];
+}
+
+export default function ThermistorDisplay({ thermistorData }: Props) {
+  // console.log('THERMISTOR component RENDERED');
 
   return (
     <FlatList

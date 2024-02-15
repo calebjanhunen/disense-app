@@ -2,11 +2,14 @@ import React from 'react';
 import { Text } from '../../../../components';
 import { Container } from './fsr-display.styles';
 import { FlatList } from 'react-native';
-import { useSensorData } from '../../../../context/sensor-context';
+import { FSR } from '../../../../interfaces/Sensor';
 
-export default function FSRDisplay() {
-  const { fsrData } = useSensorData();
-  console.log('FSR component RENDERED');
+interface Props {
+  fsrData: FSR[];
+}
+
+export default function FSRDisplay({ fsrData }: Props) {
+  // console.log('FSR component RENDERED');
   return (
     <FlatList
       data={fsrData}

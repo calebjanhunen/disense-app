@@ -3,8 +3,6 @@ import { MyBleManager } from '../ble/ble-manager';
 import { Device } from 'react-native-ble-plx';
 import { FSR, SPO2Sensor, Thermistor } from '../interfaces/Sensor';
 import { SensorService } from '../ble/sensor-service';
-import { useThermistorData } from '../hooks/useThermistorData';
-import { useFSRData } from '../hooks/useFSRData';
 import { useSensorData } from './sensor-context';
 
 interface IBLEContext {
@@ -23,33 +21,30 @@ const BleContext = createContext<IBLEContext>({} as IBLEContext);
 export const useBLE = () => useContext(BleContext);
 
 export function BLEContextProvider({ children }: Props) {
-  const sensorService = useMemo(
-    () => new SensorService(onReadThermistor, onReadFSR, onReadSPO2),
-    []
-  );
+  const sensorService = useMemo(() => new SensorService(), []);
   const bleManager = useMemo(() => new MyBleManager(sensorService), []);
   const [connectedDevice, setConnectedDevice] = useState<Device | null>(null);
   const [isConnecting, setIsConnecting] = useState<boolean>(false);
-  const { setFsrData, setThermistorData, setSpo2Data } = useSensorData();
-  console.log('ble context rerendered');
+  const { setSensorData } = useSensorData();
+  // console.log('ble context rerenderd');
 
   // TODO: Implement for 2nd sock when set up
   function onDeviceConnected(device1: Device): void {
     setConnectedDevice(device1);
     setIsConnecting(false);
-    sensorService.readSensorData(device1);
+    sensorService.readSensorData(device1, onReadSensors);
   }
 
-  function onReadThermistor(thermistorData: Thermistor[]) {
-    setThermistorData(thermistorData);
-  }
-
-  function onReadFSR(fsrData: FSR[]) {
-    setFsrData(fsrData);
-  }
-
-  function onReadSPO2(spo2Data: SPO2Sensor[]) {
-    setSpo2Data(spo2Data);
+  function onReadSensors(
+    thermistorData: Thermistor[],
+    fsrData: FSR[],
+    spo2Data: SPO2Sensor[]
+  ): void {
+    setSensorData({
+      thermistors: thermistorData,
+      fsr: fsrData,
+      spo2: spo2Data,
+    });
   }
 
   async function connectToDevice(): Promise<void> {
