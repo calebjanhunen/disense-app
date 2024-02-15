@@ -1,10 +1,12 @@
 import React, { useContext, useState } from 'react';
 import { Alert } from 'react-native';
 import { Dropdown } from 'react-native-element-dropdown';
-import { Text, TextInput } from 'react-native-paper';
-import { Button, PageView, Spacer } from '../../components';
+import { Button, Text, TextInput } from 'react-native-paper';
+import { Button as CustomBtn, PageView, Spacer } from '../../components';
 import { StopwatchContext } from '../../context/stopwatch';
 import { TestInfoContext } from '../../context/test-info-context';
+import * as Sharing from 'expo-sharing';
+import * as FileSystem from 'expo-file-system';
 
 const data = [
   { label: 'User 1', value: 1 },
@@ -54,6 +56,13 @@ export default function UserSetup() {
     );
   }
 
+  async function exportDb() {
+    // console.log(FileSystem.documentDirectory);
+    await Sharing.shareAsync(
+      FileSystem.documentDirectory + 'SQLite/disense.db'
+    );
+  }
+
   return (
     <PageView>
       <Spacer size='xl' />
@@ -85,7 +94,7 @@ export default function UserSetup() {
         onChangeText={size => setShoeSize(parseInt(size))}
       />
       <Spacer size='lg' />
-      <Button
+      <CustomBtn
         variant='full'
         backgroundColor='secondary'
         textColor='primary'
@@ -95,13 +104,16 @@ export default function UserSetup() {
         }
       >
         {isTestRunning ? 'Stop Test' : 'Start Test'}
-      </Button>
+      </CustomBtn>
       <Spacer size='xxxl' />
       {isTestRunning && (
         <Text variant='titleLarge' style={{ textAlign: 'center' }}>
           Test running for: {timerDisplay}
         </Text>
       )}
+      <Button mode='contained' onPress={exportDb}>
+        Export data
+      </Button>
     </PageView>
   );
 }
