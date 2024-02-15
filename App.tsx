@@ -35,10 +35,10 @@ export default function App(): React.ReactElement | null {
     await createTables();
   }
   return (
-    <SensorContextProvider>
-      <BLEContextProvider>
-        <StopwatchProvider>
-          <TestInfoProvider>
+    <TestInfoProvider>
+      <SensorContextProvider>
+        <BLEContextProvider>
+          <StopwatchProvider>
             <PaperProvider>
               <ThemeProvider theme={theme}>
                 <SafeAreaView style={styles.AndroidSafeArea}>
@@ -47,10 +47,10 @@ export default function App(): React.ReactElement | null {
                 </SafeAreaView>
               </ThemeProvider>
             </PaperProvider>
-          </TestInfoProvider>
-        </StopwatchProvider>
-      </BLEContextProvider>
-    </SensorContextProvider>
+          </StopwatchProvider>
+        </BLEContextProvider>
+      </SensorContextProvider>
+    </TestInfoProvider>
   );
 }
 

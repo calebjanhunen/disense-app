@@ -176,7 +176,7 @@ export class MyBleManager {
         currAttempt++;
         console.log(currAttempt);
         if (currAttempt < numAttempts) {
-          setTimeout(retryConnect, 200);
+          setTimeout(retryConnect, 1000);
         } else {
           this.disconnectFromDevice();
         }

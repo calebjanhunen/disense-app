@@ -61,7 +61,8 @@ export async function createTables() {
                   id INTEGER PRIMARY KEY AUTOINCREMENT,
                   sensor_id INTEGER,
                   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, 
-                  force INTEGER,
+                  heart_rate INTEGER,
+                  blood_oxygen INTEGER,
                   user INTEGER,
                   FOREIGN KEY (user) REFERENCES users(id)
                 );`,

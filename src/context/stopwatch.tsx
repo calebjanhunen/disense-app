@@ -17,6 +17,7 @@ export const StopwatchContext = createContext<IStopwatchContext>(
   {} as IStopwatchContext
 );
 
+// TODO: Move this to a component since it's only being used on one page
 export function StopwatchProvider({ children }: Props) {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [elapsedTime, setElapsedTime] = useState<number>(0);
