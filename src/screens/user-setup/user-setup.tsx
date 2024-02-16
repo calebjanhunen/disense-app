@@ -7,6 +7,8 @@ import { StopwatchContext } from '../../context/stopwatch';
 import { TestInfoContext } from '../../context/test-info-context';
 import * as Sharing from 'expo-sharing';
 import * as FileSystem from 'expo-file-system';
+import { getThermistorDataForUser } from '../../db/sensor-interface';
+import { convertToCSV } from '../../utils/db-to-csv';
 
 const data = [
   { label: 'User 1', value: 1 },
@@ -58,9 +60,13 @@ export default function UserSetup() {
 
   async function exportDb() {
     // console.log(FileSystem.documentDirectory);
-    await Sharing.shareAsync(
-      FileSystem.documentDirectory + 'SQLite/disense.db'
-    );
+    const data = await getThermistorDataForUser(user);
+    if (!data) return;
+    const csvData = convertToCSV(data);
+    console.log(csvData);
+    // await Sharing.shareAsync(
+    //   FileSystem.documentDirectory + 'SQLite/disense.db'
+    // );
   }
 
   return (

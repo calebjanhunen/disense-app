@@ -18,7 +18,7 @@ export async function createTables() {
     );
     console.log('User table created:', userTableResult);
 
-    const thermistorTableResult = await db.execAsync(
+    await db.execAsync(
       [
         {
           sql: `CREATE TABLE IF NOT EXISTS thermistor_data (
@@ -34,9 +34,8 @@ export async function createTables() {
       ],
       false
     );
-    console.log('THERMISTOR table created:', thermistorTableResult);
 
-    const fsrTableResult = await db.execAsync(
+    await db.execAsync(
       [
         {
           sql: `CREATE TABLE IF NOT EXISTS fsr_data (
@@ -52,9 +51,8 @@ export async function createTables() {
       ],
       false
     );
-    console.log('FSR table created:', fsrTableResult);
 
-    const spo2TableResult = await db.execAsync(
+    await db.execAsync(
       [
         {
           sql: `CREATE TABLE IF NOT EXISTS spo2_data (
@@ -71,7 +69,6 @@ export async function createTables() {
       ],
       false
     );
-    console.log('SPO2 table created:', spo2TableResult);
   } catch (e) {
     console.log('ERror creating table: ', e);
   }

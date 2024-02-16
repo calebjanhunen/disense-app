@@ -1,4 +1,4 @@
-import { SQLTransactionAsync } from 'expo-sqlite';
+import { ResultSet, SQLTransactionAsync } from 'expo-sqlite';
 import { FSR, SPO2Sensor, Thermistor } from '../interfaces/Sensor';
 import { db } from './db';
 
@@ -23,6 +23,27 @@ export async function bulkInsertIntoThermistorTable(
     throw e;
   }
   // console.log('Inserted into thermistor_data', result);
+}
+
+export async function getThermistorDataForUser(
+  user: number
+): Promise<ResultSet | undefined> {
+  try {
+    // const data = await db.execAsync(
+    //   [{ sql: 'SELECT * from thermistor_data WHERE user=?', args: [user] }],
+    //   true
+    // );
+    let data: ResultSet = {} as ResultSet;
+    await db.transactionAsync(async (tx: SQLTransactionAsync) => {
+      data = await tx.executeSqlAsync(
+        'SELECT * from thermistor_data WHERE user=?',
+        [user]
+      );
+    });
+    return data;
+  } catch (e) {
+    console.log('Error getting from thermistor table: ', e);
+  }
 }
 
 export async function bulkInsertIntoFSRTable(sensors: FSR[], user: number) {
