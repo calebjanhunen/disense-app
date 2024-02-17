@@ -5,7 +5,7 @@ import { Button, Text, TextInput } from 'react-native-paper';
 
 import { Button as CustomBtn, PageView, Spacer } from '@/components';
 import { TestInfoContext } from '@/context/test-info-context';
-import { useStopwatch } from '@/hooks/stopwatch';
+import { useStopwatch } from '@/hooks/useStopwatch';
 import * as ExportDBManager from '@/utils/export-db-files';
 
 const data = [
