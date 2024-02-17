@@ -2,13 +2,11 @@ import React, { useContext, useState } from 'react';
 import { Alert } from 'react-native';
 import { Dropdown } from 'react-native-element-dropdown';
 import { Button, Text, TextInput } from 'react-native-paper';
-import { Button as CustomBtn, PageView, Spacer } from '../../components';
-import { StopwatchContext } from '../../context/stopwatch';
-import { TestInfoContext } from '../../context/test-info-context';
-import * as Sharing from 'expo-sharing';
-import * as FileSystem from 'expo-file-system';
-import { getThermistorDataForUser } from '../../db/sensor-interface';
-import { convertToCSV } from '../../utils/db-to-csv';
+
+import { Button as CustomBtn, PageView, Spacer } from '@/components';
+import { StopwatchContext } from '@/context/stopwatch';
+import { TestInfoContext } from '@/context/test-info-context';
+import * as ExportDBManager from '@/utils/export-db-files';
 
 const data = [
   { label: 'User 1', value: 1 },
@@ -19,7 +17,6 @@ const data = [
 ];
 
 export default function UserSetup() {
-  // const [user, setUser] = useState<number>();
   const { user, setUser, isTestRunning, setIsTestRunning } =
     useContext(TestInfoContext);
   const { startTestStopwatch, stopTestStopwatch, timerDisplay } =
@@ -59,14 +56,7 @@ export default function UserSetup() {
   }
 
   async function exportDb() {
-    // console.log(FileSystem.documentDirectory);
-    const data = await getThermistorDataForUser(user);
-    if (!data) return;
-    const csvData = convertToCSV(data);
-    console.log(csvData);
-    // await Sharing.shareAsync(
-    //   FileSystem.documentDirectory + 'SQLite/disense.db'
-    // );
+    await ExportDBManager.exportDatabaseFilesForUser(user);
   }
 
   return (

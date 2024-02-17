@@ -2,6 +2,8 @@ import { ResultSet, SQLTransactionAsync } from 'expo-sqlite';
 import { FSR, SPO2Sensor, Thermistor } from '../interfaces/Sensor';
 import { db } from './db';
 
+export type TableName = 'thermistor' | 'fsr' | 'spo2';
+
 export async function bulkInsertIntoThermistorTable(
   sensors: Thermistor[],
   user: number
@@ -23,27 +25,6 @@ export async function bulkInsertIntoThermistorTable(
     throw e;
   }
   // console.log('Inserted into thermistor_data', result);
-}
-
-export async function getThermistorDataForUser(
-  user: number
-): Promise<ResultSet | undefined> {
-  try {
-    // const data = await db.execAsync(
-    //   [{ sql: 'SELECT * from thermistor_data WHERE user=?', args: [user] }],
-    //   true
-    // );
-    let data: ResultSet = {} as ResultSet;
-    await db.transactionAsync(async (tx: SQLTransactionAsync) => {
-      data = await tx.executeSqlAsync(
-        'SELECT * from thermistor_data WHERE user=?',
-        [user]
-      );
-    });
-    return data;
-  } catch (e) {
-    console.log('Error getting from thermistor table: ', e);
-  }
 }
 
 export async function bulkInsertIntoFSRTable(sensors: FSR[], user: number) {
@@ -86,4 +67,70 @@ export async function bulkInsertIntoSPO2Table(
     console.log('transaction error: ', e);
     throw e;
   }
+}
+
+export async function getSensorDataForUser(
+  tableName: TableName,
+  user: number
+): Promise<{ [column: string]: unknown }[] | null> {
+  if (tableName === 'thermistor') {
+    return await getThermistorDataForUser(user);
+  } else if (tableName === 'fsr') {
+    return await getFSRDataForUser(user);
+  } else if (tableName === 'spo2') {
+    return await getSpo2DataForUser(user);
+  }
+  return null;
+}
+
+export async function getThermistorDataForUser(
+  user: number
+): Promise<{ [column: string]: unknown }[] | null> {
+  try {
+    let data: ResultSet = {} as ResultSet;
+    await db.transactionAsync(async (tx: SQLTransactionAsync) => {
+      data = await tx.executeSqlAsync(
+        'SELECT * from thermistor_data WHERE user=?',
+        [user]
+      );
+    });
+    return data.rows.length === 0 ? null : data.rows;
+  } catch (e) {
+    console.log('Error getting from thermistor table: ', e);
+  }
+  return null;
+}
+
+export async function getFSRDataForUser(
+  user: number
+): Promise<{ [column: string]: unknown }[] | null> {
+  try {
+    let data: ResultSet = {} as ResultSet;
+    await db.transactionAsync(async (tx: SQLTransactionAsync) => {
+      data = await tx.executeSqlAsync('SELECT * from fsr_data WHERE user=?', [
+        user,
+      ]);
+    });
+    return data.rows.length === 0 ? null : data.rows;
+  } catch (e) {
+    console.log('Error getting from fsr table: ', e);
+  }
+  return null;
+}
+
+export async function getSpo2DataForUser(
+  user: number
+): Promise<{ [column: string]: unknown }[] | null> {
+  try {
+    let data: ResultSet = {} as ResultSet;
+    await db.transactionAsync(async (tx: SQLTransactionAsync) => {
+      data = await tx.executeSqlAsync('SELECT * from spo2_data WHERE user=?', [
+        user,
+      ]);
+    });
+    return data.rows.length === 0 ? null : data.rows;
+  } catch (e) {
+    console.log('Error getting from spo2 table: ', e);
+  }
+  return null;
 }
