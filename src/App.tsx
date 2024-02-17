@@ -9,13 +9,12 @@ import {
 import { Platform, SafeAreaView, StatusBar, StyleSheet } from 'react-native';
 import { PaperProvider } from 'react-native-paper';
 import { ThemeProvider } from 'styled-components';
-import { StopwatchProvider } from './src/context/stopwatch';
-import { TestInfoProvider } from './src/context/test-info-context';
-import { createTables } from './src/db/db';
-import AppNavigation from './src/navigation/app-navigation';
-import { theme } from './src/theme/theme';
-import { BLEContextProvider } from './src/context/ble-context';
-import { SensorContextProvider } from './src/context/sensor-context';
+import { BLEContextProvider } from './context/ble-context';
+import { SensorContextProvider } from './context/sensor-context';
+import { TestInfoProvider } from './context/test-info-context';
+import { createTables } from './db/db';
+import AppNavigation from './navigation/app-navigation';
+import { theme } from './theme/theme';
 
 export default function App(): React.ReactElement | null {
   const [fontLoaded] = useFonts({
@@ -38,16 +37,14 @@ export default function App(): React.ReactElement | null {
     <TestInfoProvider>
       <SensorContextProvider>
         <BLEContextProvider>
-          <StopwatchProvider>
-            <PaperProvider>
-              <ThemeProvider theme={theme}>
-                <SafeAreaView style={styles.AndroidSafeArea}>
-                  <AppNavigation />
-                  {/* <StatusBar barStyle="light-content" /> */}
-                </SafeAreaView>
-              </ThemeProvider>
-            </PaperProvider>
-          </StopwatchProvider>
+          <PaperProvider>
+            <ThemeProvider theme={theme}>
+              <SafeAreaView style={styles.AndroidSafeArea}>
+                <AppNavigation />
+                {/* <StatusBar barStyle="light-content" /> */}
+              </SafeAreaView>
+            </ThemeProvider>
+          </PaperProvider>
         </BLEContextProvider>
       </SensorContextProvider>
     </TestInfoProvider>
