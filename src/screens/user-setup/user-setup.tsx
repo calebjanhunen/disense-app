@@ -1,35 +1,41 @@
 import React, { useContext, useState } from 'react';
 import { Alert } from 'react-native';
-import { Dropdown } from 'react-native-element-dropdown';
+// import { Dropdown } from 'react-native-element-dropdown';
 import { Button, Text, TextInput } from 'react-native-paper';
 
 import { Button as CustomBtn, PageView, Spacer } from '@/components';
 import { TestInfoContext } from '@/context/test-info-context';
 import { useStopwatch } from '@/hooks/useStopwatch';
+import { useUserData } from '@/hooks/useUserData';
 import * as ExportDBManager from '@/utils/export-db-files';
 
-const data = [
-  { label: 'User 1', value: 1 },
-  { label: 'User 2', value: 2 },
-  { label: 'User 3', value: 3 },
-  { label: 'User 4', value: 4 },
-  { label: 'User 5', value: 5 },
-];
+// const data = [
+//   { label: 'User 1', value: '1' },
+//   { label: 'User 2', value: '2' },
+//   { label: 'User 3', value: '3' },
+//   { label: 'User 4', value: '4' },
+//   { label: 'User 5', value: '5' },
+// ];
 
 export default function UserSetup() {
-  const { user, setUser, isTestRunning, setIsTestRunning } =
-    useContext(TestInfoContext);
+  const { user, isTestRunning, setIsTestRunning } = useContext(TestInfoContext);
   const { startStopwatch, stopStopwatch, timeDisplay } = useStopwatch();
-  const [weight, setWeight] = useState<number | undefined>();
-  const [height, setHeight] = useState<number | undefined>();
-  const [shoeSize, setShoeSize] = useState<number | undefined>();
+  const { saveUser } = useUserData();
+  const [weight, setWeight] = useState<number | null>(null);
+  const [height, setHeight] = useState<number | null>(null);
+  const [shoeSize, setShoeSize] = useState<number | null>(null);
 
-  function startTest() {
+  async function startTest() {
     // TODO: save user data to db
-    // setUser(0);
-    setWeight(undefined);
-    setHeight(undefined);
-    setShoeSize(undefined);
+    if (!user || !weight || !height || !shoeSize) {
+      Alert.alert('Missing values');
+      return;
+    }
+    const result = await saveUser({ id: user, weight, height, shoeSize });
+    if (!result) return;
+    setWeight(null);
+    setHeight(null);
+    setShoeSize(null);
     setIsTestRunning(true);
     startStopwatch();
   }
@@ -63,13 +69,14 @@ export default function UserSetup() {
       <Spacer size='xl' />
       <Text variant='titleLarge'>User Information:</Text>
       <Spacer size='xl' />
-      <Dropdown
+      {/* <Dropdown
         valueField='value'
         labelField='label'
         placeholder='Select User'
         data={data}
-        onChange={data => setUser(data.value)}
-      />
+        onChange={data => setUser(parseInt(data.value))}
+        value={user.toString()}
+      /> */}
       <Spacer size='xl' />
       <TextInput
         keyboardType='number-pad'

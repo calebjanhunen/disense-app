@@ -1,9 +1,9 @@
 import { Alert } from 'react-native';
 
-export function handleError(e: unknown): void {
+export function handleError(message: string, e: unknown): void {
   if (e instanceof Error) {
-    Alert.alert('Error getting user:', e.message);
+    Alert.alert(message, e.message);
   } else {
-    Alert.alert('Error getting user:', 'Unknown error');
+    Alert.alert(message, 'Unknown error');
   }
 }

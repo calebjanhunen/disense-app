@@ -4,19 +4,27 @@ export const db = openDatabase('disense.db');
 
 export async function createTables() {
   try {
-    const userTableResult = await db.execAsync(
-      [
-        {
-          sql: `CREATE TABLE IF NOT EXISTS users (
-                  id INTEGER PRIMARY KEY AUTOINCREMENT,
-                  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-                );`,
-          args: [],
-        },
-      ],
-      false
-    );
-    console.log('User table created:', userTableResult);
+    await db.transactionAsync(async tx => {
+      await tx.executeSqlAsync(
+        `CREATE TABLE IF NOT EXISTS users (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+          updated_at DATETIME,
+          weight INTEGER,
+          height INTEGER,
+          shoe_size INTEGER
+        );`
+      );
+
+      await tx.executeSqlAsync(
+        `CREATE TRIGGER IF NOT EXISTS update_users_updated_at
+          AFTER UPDATE ON users
+          FOR EACH ROW
+          BEGIN
+              UPDATE users SET updated_at = CURRENT_TIMESTAMP WHERE rowid = NEW.rowid;
+          END;`
+      );
+    });
 
     await db.execAsync(
       [
