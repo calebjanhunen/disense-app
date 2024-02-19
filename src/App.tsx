@@ -26,6 +26,7 @@ export default function App(): React.ReactElement | null {
     initDB();
   }, []);
 
+  // console.log(process.env);
   if (!fontLoaded) {
     return null;
   }

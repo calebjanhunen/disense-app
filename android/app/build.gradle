@@ -81,9 +81,9 @@ android {
 
     compileSdkVersion rootProject.ext.compileSdkVersion
 
-    namespace 'com.disense.disense'
+    namespace 'com.disense.disense.dev'
     defaultConfig {
-        applicationId 'com.disense.disense'
+        applicationId 'com.disense.disense.dev'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1

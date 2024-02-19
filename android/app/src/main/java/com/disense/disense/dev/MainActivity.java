@@ -1,4 +1,4 @@
-package com.disense.disense;
+package com.disense.disense.dev;
 
 import android.os.Build;
 import android.os.Bundle;
