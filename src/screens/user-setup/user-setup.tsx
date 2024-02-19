@@ -4,8 +4,8 @@ import { Dropdown } from 'react-native-element-dropdown';
 import { Button, Text, TextInput } from 'react-native-paper';
 
 import { Button as CustomBtn, PageView, Spacer } from '@/components';
-import { StopwatchContext } from '@/context/stopwatch';
 import { TestInfoContext } from '@/context/test-info-context';
+import { useStopwatch } from '@/hooks/stopwatch';
 import * as ExportDBManager from '@/utils/export-db-files';
 
 const data = [
@@ -19,8 +19,7 @@ const data = [
 export default function UserSetup() {
   const { user, setUser, isTestRunning, setIsTestRunning } =
     useContext(TestInfoContext);
-  const { startTestStopwatch, stopTestStopwatch, timerDisplay } =
-    useContext(StopwatchContext);
+  const { startStopwatch, stopStopwatch, timeDisplay } = useStopwatch();
   const [weight, setWeight] = useState<number | undefined>();
   const [height, setHeight] = useState<number | undefined>();
   const [shoeSize, setShoeSize] = useState<number | undefined>();
@@ -32,7 +31,7 @@ export default function UserSetup() {
     setHeight(undefined);
     setShoeSize(undefined);
     setIsTestRunning(true);
-    startTestStopwatch();
+    startStopwatch();
   }
 
   function stopTest() {
@@ -48,7 +47,7 @@ export default function UserSetup() {
           text: 'Yes',
           onPress: () => {
             setIsTestRunning(false);
-            stopTestStopwatch();
+            stopStopwatch();
           },
         },
       ]
@@ -95,16 +94,16 @@ export default function UserSetup() {
         backgroundColor='secondary'
         textColor='primary'
         onPress={isTestRunning ? stopTest : startTest}
-        disabled={
-          !isTestRunning && (user === 0 || !weight || !height || !shoeSize)
-        }
+        // disabled={
+        //   !isTestRunning && (user === 0 || !weight || !height || !shoeSize)
+        // }
       >
         {isTestRunning ? 'Stop Test' : 'Start Test'}
       </CustomBtn>
       <Spacer size='xxxl' />
       {isTestRunning && (
         <Text variant='titleLarge' style={{ textAlign: 'center' }}>
-          Test running for: {timerDisplay}
+          Test running for: {timeDisplay}
         </Text>
       )}
       <Button mode='contained' onPress={exportDb}>
