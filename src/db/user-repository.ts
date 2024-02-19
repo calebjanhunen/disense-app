@@ -1,0 +1,50 @@
+import { User } from '@/interfaces/User';
+import { ResultSet } from 'expo-sqlite';
+import { db } from './db';
+
+export async function insertUser(user: User): Promise<number | undefined> {
+  try {
+    if (!user.height || !user.weight || !user.shoeSize)
+      throw new Error('Missing values');
+    let result: ResultSet = {} as ResultSet;
+    await db.transactionAsync(async tx => {
+      result = await tx.executeSqlAsync(
+        'INSERT INTO users (weight, height, shoe_size) VALUES (?, ?, ?)',
+        [user.weight, user.height, user.shoeSize]
+      );
+    });
+    console.log('inserted user: ', result);
+    return result.insertId;
+  } catch (e) {
+    console.warn(e);
+    throw e;
+  }
+}
+
+export async function getById(userId: number): Promise<User | null> {
+  try {
+    let user: User | null = null;
+    await db.transactionAsync(async tx => {
+      const result = await tx.executeSqlAsync(
+        'SELECT * from users WHERE id=?',
+        [userId]
+      );
+      if (result.rows.length > 0) {
+        user = {
+          id: result.rows[0]['id'],
+          height: result.rows[0]['height'],
+          weight: result.rows[0]['weight'],
+          shoeSize: result.rows[0]['shoe_size'],
+        };
+      }
+    });
+    if (user) {
+      return user;
+    } else {
+      return null;
+    }
+  } catch (e) {
+    console.warn(e);
+    throw e;
+  }
+}
