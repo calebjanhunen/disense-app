@@ -35,6 +35,10 @@ export function BLEContextProvider({ children }: Props) {
     sensorService.readSensorData(device1, onReadSensors);
   }
 
+  function onDeviceDisconnected(): void {
+    setConnectedDevice(null);
+  }
+
   function onReadSensors(
     thermistorData: Thermistor[],
     fsrData: FSR[],
@@ -59,7 +63,7 @@ export function BLEContextProvider({ children }: Props) {
     // }, 10000);
 
     setIsConnecting(true);
-    await bleManager.connect(onDeviceConnected);
+    await bleManager.connect(onDeviceConnected, onDeviceDisconnected);
   }
 
   async function disconnectFromDevice(): Promise<void> {

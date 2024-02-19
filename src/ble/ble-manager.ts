@@ -16,6 +16,7 @@ export class MyBleManager {
   private onDeviceDisconnectSubscription: Subscription | null;
   private onDeviceConnectCallback: ((device1: Device) => void) | null;
   private shouldReconnect: boolean;
+  private onDeviceDisconnectedCallback: (() => void) | null;
 
   constructor(sensorService: SensorService) {
     // TODO maybe sometime later:
@@ -27,13 +28,18 @@ export class MyBleManager {
     this.onDeviceDisconnectSubscription = null;
     this.onDeviceConnectCallback = null;
     this.shouldReconnect = false;
+    this.onDeviceDisconnectedCallback = null;
   }
 
   /**
    * Scans and connected to disense devices
    */
-  async connect(onDevicesConnected: (device1: Device) => void): Promise<void> {
+  async connect(
+    onDevicesConnected: (device1: Device) => void,
+    onDeviceDisconnected: () => void
+  ): Promise<void> {
     this.onDeviceConnectCallback = onDevicesConnected;
+    this.onDeviceDisconnectedCallback = onDeviceDisconnected;
     this.connectedDevice1 = null;
     this.shouldReconnect = true;
     const permissionsGranted =
@@ -77,6 +83,7 @@ export class MyBleManager {
     this.sensorService.removeReadCharacteristicCallbackSubscriptions();
     this.onDeviceDisconnectSubscription?.remove();
     this.shouldReconnect = false;
+    if (this.onDeviceDisconnectedCallback) this.onDeviceDisconnectedCallback();
     if (!this.connectedDevice1) {
       console.log('device already disconnected');
       return;

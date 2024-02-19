@@ -86,13 +86,17 @@ export class SensorService {
 
               const byteArr = fromBase64ToByteArr(characteristic.value);
               if (characteristic.uuid === this.thermistorCharUuid) {
+                console.log('read thermistor');
                 this.thermistorData = decodeByteArrayForThermistor(byteArr);
                 await this.writeToAcknowledgeCharacteristic('thermistor');
               } else if (characteristic.uuid === this.fsrCharUuid) {
+                console.log('read fsr');
                 this.fsrData = decodeByteArrayForFSR(byteArr);
                 await this.writeToAcknowledgeCharacteristic('fsr');
               } else if (characteristic.uuid === this.spo2CharUuid) {
+                console.log('read spo2');
                 this.spo2Data = decodeByteArrForSPO2(byteArr);
+                await this.writeToAcknowledgeCharacteristic('spo2');
               }
 
               if (this.thermistorData && this.fsrData && this.spo2Data) {
