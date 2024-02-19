@@ -9,7 +9,7 @@ export default function ConnectDevice() {
     <PageView>
       <Spacer size='md' />
       <Text variant='smallTitle' textAlign='center'>
-        Disense Socks not Connected
+        Disense socks not connected
       </Text>
       <Spacer size='md' />
       <Button
