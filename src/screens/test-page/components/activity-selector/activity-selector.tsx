@@ -10,6 +10,7 @@ interface Data {
 }
 const data: Data[] = [
   { label: 'Sitting', value: 'sitting' },
+  { label: 'Standing', value: 'standing' },
   { label: 'Walking', value: 'walking' },
   { label: 'Running', value: 'running' },
 ];
@@ -36,6 +37,8 @@ export default function ActivitySelector() {
           backgroundColor: activityRunning ? 'grey' : 'white',
           borderRadius: 20,
           padding: 6,
+          borderColor: 'black',
+          borderWidth: 1,
         }}
         labelField='label'
         valueField='value'

@@ -1,1 +1,1 @@
-export type ActivityState = 'sitting' | 'walking' | 'running';
+export type ActivityState = 'sitting' | 'standing' | 'walking' | 'running';
