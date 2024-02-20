@@ -1,3 +1,5 @@
+import { ActivityState } from '@/interfaces/ActivityState';
+
 export interface ThermistorDB {
   id: number;
   sensorId: number;
@@ -24,4 +26,12 @@ export interface SensorDB {
   sensorId: number;
   createdAt: Date;
   value: number;
+}
+
+export interface ActivityStateDB {
+  id: number;
+  activityState: ActivityState;
+  timeStarted: Date;
+  timeEnded: Date | null;
+  user: number;
 }
