@@ -106,15 +106,17 @@ export async function getThermistorDataForUser(
 export async function getThermistorDataForUserV2(
   user: number,
   orderBy?: string,
-  direction?: 'ASC' | 'DESC'
+  direction?: 'ASC' | 'DESC',
+  limit?: number
 ): Promise<SensorDB[]> {
   const dir = direction || 'ASC';
   const order = orderBy || 'id';
+  limit = limit || 10;
   try {
     const thermisorData: SensorDB[] = [];
     await db.transactionAsync(async (tx: SQLTransactionAsync) => {
       const data = await tx.executeSqlAsync(
-        `SELECT * from thermistor_data WHERE user=? ORDER BY  ${order} ${dir}`,
+        `SELECT * from thermistor_data WHERE user=? ORDER BY  ${order} ${dir} LIMIT ${limit}`,
         [user]
       );
 
@@ -156,15 +158,17 @@ export async function getFSRDataForUser(
 export async function getFsrDataForUserV2(
   user: number,
   orderBy?: string,
-  direction?: 'ASC' | 'DESC'
+  direction?: 'ASC' | 'DESC',
+  limit?: number
 ): Promise<SensorDB[]> {
   const dir = direction || 'ASC';
   const order = orderBy || 'id';
+  limit = limit || 10;
   try {
     const fsrData: SensorDB[] = [];
     await db.transactionAsync(async (tx: SQLTransactionAsync) => {
       const data = await tx.executeSqlAsync(
-        `SELECT * from fsr_data WHERE user=? ORDER BY  ${order} ${dir}`,
+        `SELECT * from fsr_data WHERE user=? ORDER BY  ${order} ${dir} LIMIT ${limit}`,
         [user]
       );
 
@@ -206,15 +210,18 @@ export async function getSpo2DataForUser(
 export async function getSpo2DataForUserV2(
   user: number,
   orderBy?: string,
-  direction?: 'ASC' | 'DESC'
+  direction?: 'ASC' | 'DESC',
+  limit?: number
 ): Promise<SensorDB[]> {
   const order = orderBy || 'id';
   const dir = direction || 'ASC';
+  limit = limit || 10;
+  console.log(limit);
   try {
     const spo2Data: SensorDB[] = [];
     await db.transactionAsync(async (tx: SQLTransactionAsync) => {
       const data = await tx.executeSqlAsync(
-        `SELECT * from spo2_data WHERE user=? ORDER BY ${order} ${dir}`,
+        `SELECT * from spo2_data WHERE user=? ORDER BY ${order} ${dir} LIMIT ${limit}`,
         [user]
       );
 
