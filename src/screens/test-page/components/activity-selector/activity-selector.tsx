@@ -3,7 +3,6 @@ import React, { useEffect, useState } from 'react';
 import { Button } from 'react-native-paper';
 import { Dropdown } from 'react-native-element-dropdown';
 import { ActivityState } from '@/interfaces/ActivityState';
-import { getActivityStateById } from '@/db/activity-state-repository';
 import { useActivityState } from '@/hooks/useActivityState';
 
 interface Data {
