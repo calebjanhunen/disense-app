@@ -27,11 +27,11 @@ export function useSensorData(): IUseSensorData {
     let data;
     setSensorData([]);
     if (sensorType === 'thermistor') {
-      data = await getThermistorDataForUserV2(user, 'created_at', 'DESC');
+      data = await getThermistorDataForUserV2(user, 'created_at', 'DESC', 20);
     } else if (sensorType === 'fsr') {
-      data = await getFsrDataForUserV2(user, 'created_at', 'DESC');
+      data = await getFsrDataForUserV2(user, 'created_at', 'DESC', 20);
     } else {
-      data = await getSpo2DataForUserV2(user, 'created_at', 'DESC');
+      data = await getSpo2DataForUserV2(user, 'created_at', 'DESC', 20);
     }
     if (!data || data.length === 0) {
       setNoDataText(`User ${user} has no data for ${sensorType}`);
