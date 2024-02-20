@@ -8,6 +8,7 @@ import { ActivityState } from '@/interfaces/ActivityState';
 import { handleError } from '@/utils/error-handler';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useContext, useState } from 'react';
+import { Alert } from 'react-native';
 
 interface IUseActivityState {
   startActivity(activity: ActivityState): Promise<void>;
@@ -27,6 +28,13 @@ export function useActivityState(): IUseActivityState {
     useState<ActivityState | null>(null);
 
   async function startActivity(activity: ActivityState): Promise<void> {
+    if (!user) {
+      Alert.alert(
+        'No user created',
+        'Create a user before starting an activity'
+      );
+      return;
+    }
     try {
       const insertedId = await insertActivityState(activity, user);
       await saveCurrentActivity(insertedId);
