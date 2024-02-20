@@ -1,5 +1,5 @@
 import { View } from 'react-native';
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext } from 'react';
 
 import { PageView, Spacer } from '@/components';
 import { Button, Text } from 'react-native-paper';
@@ -12,11 +12,9 @@ import { useSensorData } from '@/hooks/useSensorData';
 export default function TestPage() {
   const { isTestRunning, setIsTestRunning, user } = useContext(TestInfoContext);
   const { startStopwatch, timeDisplay, stopStopwatch } = useStopwatch();
-  const [sensorType, setSensorType] = useState<SensorType>('thermistor');
   const { sensorData, getSensorData } = useSensorData();
 
   async function getSensorDataForTable(sensorType: SensorType) {
-    setSensorType(sensorType);
     await getSensorData(sensorType);
   }
 
@@ -46,27 +44,14 @@ export default function TestPage() {
         </View>
       </View>
       <View style={{ flexDirection: 'row', justifyContent: 'center', gap: 10 }}>
-        <Button
-          mode={sensorType === 'thermistor' ? 'contained' : 'outlined'}
-          onPress={() => getSensorDataForTable('thermistor')}
-        >
+        <Button onPress={() => getSensorDataForTable('thermistor')}>
           Thermistor
         </Button>
-        <Button
-          mode={sensorType === 'fsr' ? 'contained' : 'outlined'}
-          onPress={() => getSensorDataForTable('fsr')}
-        >
-          FSR
-        </Button>
-        <Button
-          mode={sensorType === 'spo2' ? 'contained' : 'outlined'}
-          onPress={() => getSensorDataForTable('spo2')}
-        >
-          SPO2
-        </Button>
+        <Button onPress={() => getSensorDataForTable('fsr')}>FSR</Button>
+        <Button onPress={() => getSensorDataForTable('spo2')}>SPO2</Button>
       </View>
       <Spacer size='sm' />
-      <SensorDataTable sensorType={sensorType} data={sensorData} />
+      <SensorDataTable sensorType='thermistor' data={sensorData} />
       <View style={{ justifyContent: 'flex-end' }}>
         <Spacer size='sm' />
         <Button mode='contained-tonal'>Export data</Button>

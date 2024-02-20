@@ -104,13 +104,17 @@ export async function getThermistorDataForUser(
 }
 
 export async function getThermistorDataForUserV2(
-  user: number
+  user: number,
+  orderBy?: string,
+  direction?: 'ASC' | 'DESC'
 ): Promise<SensorDB[]> {
+  const dir = direction || 'ASC';
+  const order = orderBy || 'id';
   try {
     const thermisorData: SensorDB[] = [];
     await db.transactionAsync(async (tx: SQLTransactionAsync) => {
       const data = await tx.executeSqlAsync(
-        'SELECT * from thermistor_data WHERE user=?',
+        `SELECT * from thermistor_data WHERE user=? ORDER BY  ${order} ${dir}`,
         [user]
       );
 
@@ -149,12 +153,18 @@ export async function getFSRDataForUser(
   return null;
 }
 
-export async function getFsrDataForUserV2(user: number): Promise<SensorDB[]> {
+export async function getFsrDataForUserV2(
+  user: number,
+  orderBy?: string,
+  direction?: 'ASC' | 'DESC'
+): Promise<SensorDB[]> {
+  const dir = direction || 'ASC';
+  const order = orderBy || 'id';
   try {
     const fsrData: SensorDB[] = [];
     await db.transactionAsync(async (tx: SQLTransactionAsync) => {
       const data = await tx.executeSqlAsync(
-        'SELECT * from fsr_data WHERE user=?',
+        `SELECT * from fsr_data WHERE user=? ORDER BY  ${order} ${dir}`,
         [user]
       );
 
@@ -193,12 +203,18 @@ export async function getSpo2DataForUser(
   return null;
 }
 
-export async function getSpo2DataForUserV2(user: number): Promise<SensorDB[]> {
+export async function getSpo2DataForUserV2(
+  user: number,
+  orderBy?: string,
+  direction?: 'ASC' | 'DESC'
+): Promise<SensorDB[]> {
+  const order = orderBy || 'id';
+  const dir = direction || 'ASC';
   try {
     const spo2Data: SensorDB[] = [];
     await db.transactionAsync(async (tx: SQLTransactionAsync) => {
       const data = await tx.executeSqlAsync(
-        'SELECT * from spo2_data WHERE user=?',
+        `SELECT * from spo2_data WHERE user=? ORDER BY ${order} ${dir}`,
         [user]
       );
 

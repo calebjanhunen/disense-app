@@ -8,18 +8,7 @@ interface Props {
   data: SensorDB[];
 }
 
-function SensorDataTable({ sensorType, data }: Props) {
-  console.log(sensorType, data);
-  const valueCol = () => {
-    if (sensorType === 'thermistor') {
-      return 'Temp';
-    } else if (sensorType === 'fsr') {
-      return 'Force';
-    } else {
-      return 'Blood oxygen';
-    }
-  };
-
+function SensorDataTable({ data }: Props) {
   return (
     <View
       style={{
@@ -38,7 +27,7 @@ function SensorDataTable({ sensorType, data }: Props) {
         <Text style={{ flex: 1, textAlign: 'center' }}>ID</Text>
         <Text style={{ flex: 1, textAlign: 'center' }}>Sensor ID</Text>
         <Text style={{ flex: 2, textAlign: 'center' }}>Time</Text>
-        <Text style={{ flex: 1, textAlign: 'center' }}>{valueCol()}</Text>
+        <Text style={{ flex: 1, textAlign: 'center' }}>Value</Text>
       </View>
       <SensorList data={data} />
     </View>

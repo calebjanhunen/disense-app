@@ -23,16 +23,17 @@ export function useSensorData(): IUseSensorData {
     //   return;
     // }
     let data;
+    setSensorData([]);
     if (sensorType === 'thermistor') {
-      data = await getThermistorDataForUserV2(2);
+      data = await getThermistorDataForUserV2(2, 'created_at', 'DESC');
     } else if (sensorType === 'fsr') {
-      data = await getFsrDataForUserV2(2);
+      data = await getFsrDataForUserV2(2, 'created_at', 'DESC');
     } else {
-      data = await getSpo2DataForUserV2(2);
+      data = await getSpo2DataForUserV2(2, 'created_at', 'DESC');
     }
     if (!data) {
       console.log('no data');
-      return;
+      return [];
     }
     setSensorData(data);
   }
