@@ -98,7 +98,7 @@ export function useStopwatch(): IUseStopwatch {
   function startStopwatch() {
     setStartTime(Date.now());
     setIsRunning(true);
-    recordStartTime;
+    recordStartTime();
   }
 
   /**
