@@ -68,7 +68,7 @@ export default function UserSetup() {
         )}
       </CustomBtn>
       <Spacer size='xxxs' />
-      {user && (
+      {user !== 0 && (
         <Text style={{ textAlign: 'center', color: 'red' }}>
           Finish current test before creating another user.
         </Text>

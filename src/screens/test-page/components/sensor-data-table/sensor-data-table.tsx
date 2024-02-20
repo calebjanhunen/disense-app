@@ -4,11 +4,11 @@ import { SensorDB } from '@/db/DBInterfaces';
 import SensorList from '../sensor-list/sensor-list';
 
 interface Props {
-  sensorType: 'thermistor' | 'fsr' | 'spo2';
   data: SensorDB[];
+  noDataText: string;
 }
 
-function SensorDataTable({ data }: Props) {
+function SensorDataTable({ data, noDataText }: Props) {
   return (
     <View
       style={{
@@ -29,7 +29,11 @@ function SensorDataTable({ data }: Props) {
         <Text style={{ flex: 2, textAlign: 'center' }}>Time</Text>
         <Text style={{ flex: 1, textAlign: 'center' }}>Value</Text>
       </View>
-      <SensorList data={data} />
+      {noDataText ? (
+        <Text style={{ textAlign: 'center', color: 'red' }}>{noDataText}</Text>
+      ) : (
+        <SensorList data={data} />
+      )}
     </View>
   );
 }

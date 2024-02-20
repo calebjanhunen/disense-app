@@ -9,11 +9,13 @@ import SensorDataTable from './components/sensor-data-table/sensor-data-table';
 import { SensorType } from '@/types/sensor-types';
 import { useSensorData } from '@/hooks/useSensorData';
 import * as ExportDBManager from '@/utils/export-db-files';
+import { useUserData } from '@/hooks/useUserData';
 
 export default function TestPage() {
   const { isTestRunning, setIsTestRunning, user } = useContext(TestInfoContext);
   const { startStopwatch, timeDisplay, stopStopwatch } = useStopwatch();
-  const { sensorData, getSensorData } = useSensorData();
+  const { sensorData, getSensorData, noDataText } = useSensorData();
+  const { removeCurrentUser } = useUserData();
 
   async function getSensorDataForTable(sensorType: SensorType) {
     await getSensorData(sensorType);
@@ -45,7 +47,22 @@ export default function TestPage() {
   }
 
   async function exportDb() {
-    await ExportDBManager.exportDatabaseFilesForUser(user);
+    Alert.alert(
+      'Are you sure you want to export data',
+      'This will remove the current user',
+      [
+        {
+          text: 'No',
+        },
+        {
+          text: 'Yes',
+          onPress: async () => {
+            await ExportDBManager.exportDatabaseFilesForUser(user);
+            await removeCurrentUser();
+          },
+        },
+      ]
+    );
   }
 
   return (
@@ -71,7 +88,7 @@ export default function TestPage() {
         <Button onPress={() => getSensorDataForTable('spo2')}>SPO2</Button>
       </View>
       <Spacer size='sm' />
-      <SensorDataTable sensorType='thermistor' data={sensorData} />
+      <SensorDataTable data={sensorData} noDataText={noDataText} />
       <View style={{ justifyContent: 'flex-end' }}>
         <Spacer size='sm' />
         <Button mode='contained-tonal' onPress={exportDb}>

@@ -9,6 +9,7 @@ import { Alert } from 'react-native';
 interface IUseUserData {
   saveUser: (user: User) => Promise<void>;
   getCurrentUser: () => Promise<void>;
+  removeCurrentUser: () => Promise<void>;
   isSaving: boolean;
 }
 
@@ -43,5 +44,14 @@ export function useUserData(): IUseUserData {
     }
   }
 
-  return { getCurrentUser, saveUser, isSaving };
+  async function removeCurrentUser(): Promise<void> {
+    try {
+      await AsyncStorage.removeItem('current_user');
+      setUser(0);
+    } catch (e) {
+      handleError('Could not remove current user.', e);
+    }
+  }
+
+  return { getCurrentUser, saveUser, isSaving, removeCurrentUser };
 }
