@@ -77,6 +77,23 @@ export async function createTables() {
       ],
       false
     );
+
+    await db.execAsync(
+      [
+        {
+          sql: `CREATE TABLE IF NOT EXISTS activity_state (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                activity_state VARCHAR(255),
+                time_started TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                time_ended TIMESTAMP,
+                user INTEGER,
+                FOREIGN KEY (user) REFERENCES users(id)
+              );`,
+          args: [],
+        },
+      ],
+      false
+    );
   } catch (e) {
     console.log('ERror creating table: ', e);
   }
