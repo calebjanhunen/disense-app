@@ -51,7 +51,6 @@ export default function ActivitySelector() {
           placeholder='Select Activity'
           style={{
             flex: 1,
-            backgroundColor: activityRunning ? 'grey' : 'white',
             borderRadius: 20,
             padding: 6,
             borderColor: 'black',
