@@ -1,38 +1,47 @@
 import { TestInfoContext } from '@/context/test-info-context';
-import { getById, insertUser } from '@/db/user-repository';
+import { insertUser } from '@/db/user-repository';
 import { User } from '@/interfaces/User';
 import { handleError } from '@/utils/error-handler';
-import { useContext } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useContext, useState } from 'react';
+import { Alert } from 'react-native';
 
 interface IUseUserData {
-  saveUser: (user: User) => Promise<boolean>;
-  getUser: (userId: number) => Promise<void>;
+  saveUser: (user: User) => Promise<void>;
+  getCurrentUser: () => Promise<void>;
+  isSaving: boolean;
 }
 
 export function useUserData(): IUseUserData {
   const { setUser } = useContext(TestInfoContext);
-  //   const [user, setUser] = useState<User>();
+  const [isSaving, setIsSaving] = useState<boolean>(false);
 
-  async function saveUser(user: User): Promise<boolean> {
+  async function saveUser(user: User): Promise<void> {
+    setIsSaving(true);
     try {
       const userId = await insertUser(user);
-      if (userId) setUser(userId);
-      return true;
+      if (!userId) {
+        handleError('Error saving user. ', 'Could not save user');
+        return;
+      }
+      setUser(userId);
+      await AsyncStorage.setItem('current_user', userId.toString());
+      Alert.alert('Success', `User ${userId} saved successfully`);
     } catch (e) {
       handleError('Error saving user', e);
-      return false;
+    } finally {
+      setIsSaving(false);
     }
   }
 
-  async function getUser(userId: number): Promise<void> {
+  async function getCurrentUser(): Promise<void> {
     try {
-      const user = await getById(userId);
-      console.log(user);
-      //   setUser(user);
+      const currentUser = await AsyncStorage.getItem('current_user');
+      if (currentUser) setUser(parseInt(currentUser));
     } catch (e) {
-      handleError('Error getting user', e);
+      handleError('Error getting current user.', e);
     }
   }
 
-  return { getUser, saveUser };
+  return { getCurrentUser, saveUser, isSaving };
 }

@@ -1,5 +1,5 @@
 export interface User {
-  id: number;
+  id?: number;
   weight: number;
   height: number;
   shoeSize: number;

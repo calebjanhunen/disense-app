@@ -1,67 +1,31 @@
 import React, { useContext, useState } from 'react';
 import { Alert } from 'react-native';
-// import { Dropdown } from 'react-native-element-dropdown';
-import { Button, Text, TextInput } from 'react-native-paper';
+import { ActivityIndicator, Text, TextInput } from 'react-native-paper';
 
 import { Button as CustomBtn, PageView, Spacer } from '@/components';
-import { TestInfoContext } from '@/context/test-info-context';
-import { useStopwatch } from '@/hooks/useStopwatch';
 import { useUserData } from '@/hooks/useUserData';
-import * as ExportDBManager from '@/utils/export-db-files';
-
-// const data = [
-//   { label: 'User 1', value: '1' },
-//   { label: 'User 2', value: '2' },
-//   { label: 'User 3', value: '3' },
-//   { label: 'User 4', value: '4' },
-//   { label: 'User 5', value: '5' },
-// ];
+import { TestInfoContext } from '@/context/test-info-context';
 
 export default function UserSetup() {
-  const { user, isTestRunning, setIsTestRunning } = useContext(TestInfoContext);
-  const { startStopwatch, stopStopwatch, timeDisplay } = useStopwatch();
-  const { saveUser } = useUserData();
-  const [weight, setWeight] = useState<number | null>(null);
-  const [height, setHeight] = useState<number | null>(null);
-  const [shoeSize, setShoeSize] = useState<number | null>(null);
+  const { user } = useContext(TestInfoContext);
+  const { saveUser, isSaving } = useUserData();
+  const [weight, setWeight] = useState<string>('');
+  const [height, setHeight] = useState<string>('');
+  const [shoeSize, setShoeSize] = useState<string>('');
 
-  async function startTest() {
-    // TODO: save user data to db
-    if (!user || !weight || !height || !shoeSize) {
+  async function saveUserToDb() {
+    if (!weight || !height || !shoeSize) {
       Alert.alert('Missing values');
       return;
     }
-    const result = await saveUser({ id: user, weight, height, shoeSize });
-    if (!result) return;
-    setWeight(null);
-    setHeight(null);
-    setShoeSize(null);
-    setIsTestRunning(true);
-    startStopwatch();
-  }
-
-  function stopTest() {
-    Alert.alert(
-      'Are you sure you want to stop the test?',
-      'This will reset the time and stop saving data to the database',
-      [
-        {
-          text: 'No',
-          onPress: () => {},
-        },
-        {
-          text: 'Yes',
-          onPress: () => {
-            setIsTestRunning(false);
-            stopStopwatch();
-          },
-        },
-      ]
-    );
-  }
-
-  async function exportDb() {
-    await ExportDBManager.exportDatabaseFilesForUser(user);
+    await saveUser({
+      weight: parseInt(weight),
+      height: parseInt(height),
+      shoeSize: parseInt(shoeSize),
+    });
+    setWeight('');
+    setHeight('');
+    setShoeSize('');
   }
 
   return (
@@ -69,53 +33,48 @@ export default function UserSetup() {
       <Spacer size='xl' />
       <Text variant='titleLarge'>User Information:</Text>
       <Spacer size='xl' />
-      {/* <Dropdown
-        valueField='value'
-        labelField='label'
-        placeholder='Select User'
-        data={data}
-        onChange={data => setUser(parseInt(data.value))}
-        value={user.toString()}
-      /> */}
-      <Spacer size='xl' />
       <TextInput
         keyboardType='number-pad'
         label='Enter your weight in kg'
-        onChangeText={weight => setWeight(parseInt(weight))}
+        onChangeText={weight => setWeight(weight)}
+        value={weight}
       />
       <Spacer size='lg' />
       <TextInput
         keyboardType='number-pad'
-        label='Enter your height in meters'
-        onChangeText={height => setHeight(parseFloat(height) * 100)} //convert to cm
+        label='Enter your height in centimeters'
+        onChangeText={height => setHeight(height)}
+        value={height}
       />
       <Spacer size='lg' />
       <TextInput
         keyboardType='number-pad'
         label='Enter your shoe size'
-        onChangeText={size => setShoeSize(parseInt(size))}
+        onChangeText={size => setShoeSize(size)}
+        value={shoeSize}
       />
       <Spacer size='lg' />
       <CustomBtn
         variant='full'
         backgroundColor='secondary'
         textColor='primary'
-        onPress={isTestRunning ? stopTest : startTest}
-        // disabled={
-        //   !isTestRunning && (user === 0 || !weight || !height || !shoeSize)
-        // }
+        onPress={saveUserToDb}
+        disabled={!weight || !height || !shoeSize || isSaving || user !== 0}
       >
-        {isTestRunning ? 'Stop Test' : 'Start Test'}
+        {isSaving ? (
+          <ActivityIndicator size='large' color='white' />
+        ) : (
+          'Save User'
+        )}
       </CustomBtn>
-      <Spacer size='xxxl' />
-      {isTestRunning && (
-        <Text variant='titleLarge' style={{ textAlign: 'center' }}>
-          Test running for: {timeDisplay}
+      <Spacer size='xxxs' />
+      {user && (
+        <Text style={{ textAlign: 'center', color: 'red' }}>
+          Finish current test before creating another user.
         </Text>
       )}
-      <Button mode='contained' onPress={exportDb}>
-        Export data
-      </Button>
+
+      <Spacer size='xxxl' />
     </PageView>
   );
 }

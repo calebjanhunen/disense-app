@@ -1,4 +1,4 @@
-import { View } from 'react-native';
+import { Alert, View } from 'react-native';
 import React, { useContext } from 'react';
 
 import { PageView, Spacer } from '@/components';
@@ -8,6 +8,7 @@ import { useStopwatch } from '@/hooks/useStopwatch';
 import SensorDataTable from './components/sensor-data-table/sensor-data-table';
 import { SensorType } from '@/types/sensor-types';
 import { useSensorData } from '@/hooks/useSensorData';
+import * as ExportDBManager from '@/utils/export-db-files';
 
 export default function TestPage() {
   const { isTestRunning, setIsTestRunning, user } = useContext(TestInfoContext);
@@ -24,8 +25,27 @@ export default function TestPage() {
   }
 
   function stopTest() {
-    stopStopwatch();
-    setIsTestRunning(false);
+    Alert.alert(
+      'Are you sure you want to stop the test?',
+      'This will reset the time and stop saving data to the database',
+      [
+        {
+          text: 'No',
+          onPress: () => {},
+        },
+        {
+          text: 'Yes',
+          onPress: () => {
+            setIsTestRunning(false);
+            stopStopwatch();
+          },
+        },
+      ]
+    );
+  }
+
+  async function exportDb() {
+    await ExportDBManager.exportDatabaseFilesForUser(user);
   }
 
   return (
@@ -54,7 +74,9 @@ export default function TestPage() {
       <SensorDataTable sensorType='thermistor' data={sensorData} />
       <View style={{ justifyContent: 'flex-end' }}>
         <Spacer size='sm' />
-        <Button mode='contained-tonal'>Export data</Button>
+        <Button mode='contained-tonal' onPress={exportDb}>
+          Export data
+        </Button>
         <Spacer size='xxl' />
         <Button mode='contained' onPress={isTestRunning ? stopTest : startTest}>
           {isTestRunning ? 'Stop Test' : 'Start Test'}

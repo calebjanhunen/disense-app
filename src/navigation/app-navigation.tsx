@@ -1,15 +1,22 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer } from '@react-navigation/native';
-import React from 'react';
+import React, { useEffect } from 'react';
 import Ionicons from '@expo/vector-icons/Ionicons';
 
 import Home from '@/screens/home/home';
 import UserSetup from '@/screens/user-setup/user-setup';
 import TestPage from '@/screens/test-page/test-page';
+import { useUserData } from '@/hooks/useUserData';
 
 const Tab = createBottomTabNavigator();
 
 export default function AppNavigation() {
+  const { getCurrentUser } = useUserData();
+
+  useEffect(() => {
+    getCurrentUser();
+  }, []);
+
   return (
     <NavigationContainer>
       <Tab.Navigator initialRouteName='Home'>
