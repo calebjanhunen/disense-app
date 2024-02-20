@@ -10,6 +10,7 @@ import { SensorType } from '@/types/sensor-types';
 import { useSensorData } from '@/hooks/useSensorData';
 import * as ExportDBManager from '@/utils/export-db-files';
 import { useUserData } from '@/hooks/useUserData';
+import ActivitySelector from './components/activity-selector/activity-selector';
 
 export default function TestPage() {
   const { isTestRunning, setIsTestRunning, user } = useContext(TestInfoContext);
@@ -74,18 +75,25 @@ export default function TestPage() {
           justifyContent: 'space-between',
         }}
       >
-        <Text variant='displaySmall'>{timeDisplay}</Text>
+        <Text variant='headlineSmall'>{timeDisplay}</Text>
         <View style={{ flexDirection: 'row' }}>
           <Text variant='bodyLarge'>User:</Text>
           <Text variant='bodyLarge'>{user !== 0 && user}</Text>
         </View>
       </View>
       <View style={{ flexDirection: 'row', justifyContent: 'center', gap: 10 }}>
-        <Button onPress={() => getSensorDataForTable('thermistor')}>
+        <Button
+          mode='outlined'
+          onPress={() => getSensorDataForTable('thermistor')}
+        >
           Thermistor
         </Button>
-        <Button onPress={() => getSensorDataForTable('fsr')}>FSR</Button>
-        <Button onPress={() => getSensorDataForTable('spo2')}>SPO2</Button>
+        <Button mode='outlined' onPress={() => getSensorDataForTable('fsr')}>
+          FSR
+        </Button>
+        <Button mode='outlined' onPress={() => getSensorDataForTable('spo2')}>
+          SPO2
+        </Button>
       </View>
       <Spacer size='sm' />
       <SensorDataTable data={sensorData} noDataText={noDataText} />
@@ -94,6 +102,8 @@ export default function TestPage() {
         <Button mode='contained-tonal' onPress={exportDb}>
           Export data
         </Button>
+        <Spacer size='sm' />
+        <ActivitySelector />
         <Spacer size='xxl' />
         <Button mode='contained' onPress={isTestRunning ? stopTest : startTest}>
           {isTestRunning ? 'Stop Test' : 'Start Test'}
