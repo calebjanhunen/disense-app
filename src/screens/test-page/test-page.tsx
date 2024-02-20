@@ -23,6 +23,10 @@ export default function TestPage() {
   }
 
   function startTest() {
+    if (!user) {
+      Alert.alert('No user created', 'Create a user before starting the test');
+      return;
+    }
     startStopwatch();
     setIsTestRunning(true);
   }
