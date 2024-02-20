@@ -1,6 +1,8 @@
 import { ResultSet, SQLTransactionAsync } from 'expo-sqlite';
 import { FSR, SPO2Sensor, Thermistor } from '../interfaces/Sensor';
 import { db } from './db';
+import { SensorDB } from './DBInterfaces';
+import { handleError } from '@/utils/error-handler';
 
 export type TableName = 'thermistor' | 'fsr' | 'spo2';
 
@@ -101,6 +103,35 @@ export async function getThermistorDataForUser(
   return null;
 }
 
+export async function getThermistorDataForUserV2(
+  user: number
+): Promise<SensorDB[]> {
+  try {
+    const thermisorData: SensorDB[] = [];
+    await db.transactionAsync(async (tx: SQLTransactionAsync) => {
+      const data = await tx.executeSqlAsync(
+        'SELECT * from thermistor_data WHERE user=?',
+        [user]
+      );
+
+      for (const row of data.rows) {
+        thermisorData.push({
+          id: row['id'],
+          sensorId: row['sensor_id'],
+          createdAt: row['created_at'],
+          value: row['temperature'],
+        });
+      }
+    });
+
+    return thermisorData;
+  } catch (e) {
+    console.log('Error getting from thermistor table: ', e);
+    handleError('Could not get thermistor data', e);
+    return [];
+  }
+}
+
 export async function getFSRDataForUser(
   user: number
 ): Promise<{ [column: string]: unknown }[] | null> {
@@ -118,6 +149,33 @@ export async function getFSRDataForUser(
   return null;
 }
 
+export async function getFsrDataForUserV2(user: number): Promise<SensorDB[]> {
+  try {
+    const fsrData: SensorDB[] = [];
+    await db.transactionAsync(async (tx: SQLTransactionAsync) => {
+      const data = await tx.executeSqlAsync(
+        'SELECT * from fsr_data WHERE user=?',
+        [user]
+      );
+
+      for (const row of data.rows) {
+        fsrData.push({
+          id: row['id'],
+          sensorId: row['sensor_id'],
+          createdAt: row['created_at'],
+          value: row['force'],
+        });
+      }
+    });
+
+    return fsrData;
+  } catch (e) {
+    console.log('Error getting from fsr table: ', e);
+    handleError('Could not get fsr data', e);
+    return [];
+  }
+}
+
 export async function getSpo2DataForUser(
   user: number
 ): Promise<{ [column: string]: unknown }[] | null> {
@@ -133,4 +191,31 @@ export async function getSpo2DataForUser(
     console.log('Error getting from spo2 table: ', e);
   }
   return null;
+}
+
+export async function getSpo2DataForUserV2(user: number): Promise<SensorDB[]> {
+  try {
+    const spo2Data: SensorDB[] = [];
+    await db.transactionAsync(async (tx: SQLTransactionAsync) => {
+      const data = await tx.executeSqlAsync(
+        'SELECT * from spo2_data WHERE user=?',
+        [user]
+      );
+
+      for (const row of data.rows) {
+        spo2Data.push({
+          id: row['id'],
+          sensorId: row['sensor_id'],
+          createdAt: row['created_at'],
+          value: row['blood_oxygen'],
+        });
+      }
+    });
+
+    return spo2Data;
+  } catch (e) {
+    console.log('Error getting from spo2 table: ', e);
+    handleError('Could not get spo2 data', e);
+    return [];
+  }
 }

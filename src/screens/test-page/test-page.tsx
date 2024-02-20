@@ -5,18 +5,20 @@ import { PageView, Spacer } from '@/components';
 import { Button, Text } from 'react-native-paper';
 import { TestInfoContext } from '@/context/test-info-context';
 import { useStopwatch } from '@/hooks/useStopwatch';
-import SensorDataTable from './sensor-data-table/sensor-data-table';
+import SensorDataTable from './components/sensor-data-table/sensor-data-table';
+import { SensorType } from '@/types/sensor-types';
+import { useSensorData } from '@/hooks/useSensorData';
 
 export default function TestPage() {
   const { isTestRunning, setIsTestRunning, user } = useContext(TestInfoContext);
   const { startStopwatch, timeDisplay, stopStopwatch } = useStopwatch();
-  const [sensorType, setSensorType] = useState<'thermistor' | 'fsr' | 'spo2'>(
-    'thermistor'
-  );
+  const [sensorType, setSensorType] = useState<SensorType>('thermistor');
+  const { sensorData, getSensorData } = useSensorData();
 
-  useEffect(() => {
-    console.log('get ', sensorType);
-  }, [sensorType]);
+  async function getSensorDataForTable(sensorType: SensorType) {
+    setSensorType(sensorType);
+    await getSensorData(sensorType);
+  }
 
   function startTest() {
     startStopwatch();
@@ -46,25 +48,25 @@ export default function TestPage() {
       <View style={{ flexDirection: 'row', justifyContent: 'center', gap: 10 }}>
         <Button
           mode={sensorType === 'thermistor' ? 'contained' : 'outlined'}
-          onPress={() => setSensorType('thermistor')}
+          onPress={() => getSensorDataForTable('thermistor')}
         >
           Thermistor
         </Button>
         <Button
           mode={sensorType === 'fsr' ? 'contained' : 'outlined'}
-          onPress={() => setSensorType('fsr')}
+          onPress={() => getSensorDataForTable('fsr')}
         >
           FSR
         </Button>
         <Button
           mode={sensorType === 'spo2' ? 'contained' : 'outlined'}
-          onPress={() => setSensorType('spo2')}
+          onPress={() => getSensorDataForTable('spo2')}
         >
           SPO2
         </Button>
       </View>
       <Spacer size='sm' />
-      <SensorDataTable sensorType={sensorType} />
+      <SensorDataTable sensorType={sensorType} data={sensorData} />
       <View style={{ justifyContent: 'flex-end' }}>
         <Spacer size='sm' />
         <Button mode='contained-tonal'>Export data</Button>

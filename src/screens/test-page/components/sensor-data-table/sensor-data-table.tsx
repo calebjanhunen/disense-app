@@ -1,11 +1,15 @@
-import { View, Text, FlatList } from 'react-native';
-import React from 'react';
+import { View, Text } from 'react-native';
+import React, { memo } from 'react';
+import { SensorDB } from '@/db/DBInterfaces';
+import SensorList from '../sensor-list/sensor-list';
 
 interface Props {
   sensorType: 'thermistor' | 'fsr' | 'spo2';
+  data: SensorDB[];
 }
 
-export default function SensorDataTable({ sensorType }: Props) {
+function SensorDataTable({ sensorType, data }: Props) {
+  console.log(sensorType, data);
   const valueCol = () => {
     if (sensorType === 'thermistor') {
       return 'Temp';
@@ -36,32 +40,9 @@ export default function SensorDataTable({ sensorType }: Props) {
         <Text style={{ flex: 2, textAlign: 'center' }}>Time</Text>
         <Text style={{ flex: 1, textAlign: 'center' }}>{valueCol()}</Text>
       </View>
-      <FlatList
-        data={[0, 1]}
-        renderItem={({ item }) => <Row />}
-        ItemSeparatorComponent={() => (
-          <View style={{ height: 1, borderColor: 'black', borderWidth: 1 }} />
-        )}
-      />
+      <SensorList data={data} />
     </View>
   );
 }
 
-function Row() {
-  return (
-    <View
-      style={{
-        paddingTop: 7,
-        paddingBottom: 7,
-        paddingLeft: 7,
-        paddingRight: 7,
-        flexDirection: 'row',
-      }}
-    >
-      <Text style={{ flex: 1, textAlign: 'center' }}>1</Text>
-      <Text style={{ flex: 1, textAlign: 'center' }}>1</Text>
-      <Text style={{ flex: 2, textAlign: 'center' }}>12:03</Text>
-      <Text style={{ flex: 1, textAlign: 'center' }}>26.8</Text>
-    </View>
-  );
-}
+export default memo(SensorDataTable);
