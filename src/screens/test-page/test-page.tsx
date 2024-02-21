@@ -13,7 +13,8 @@ import { useUserData } from '@/hooks/useUserData';
 import ActivitySelector from './components/activity-selector/activity-selector';
 
 export default function TestPage() {
-  const { isTestRunning, setIsTestRunning, user } = useContext(TestInfoContext);
+  const { isTestRunning, beginTest, endTest, user } =
+    useContext(TestInfoContext);
   const { startStopwatch, timeDisplay, stopStopwatch } = useStopwatch();
   const { sensorData, getSensorData, noDataText } = useSensorData();
   const { removeCurrentUser } = useUserData();
@@ -22,13 +23,13 @@ export default function TestPage() {
     await getSensorData(sensorType);
   }
 
-  function startTest() {
+  async function startTest() {
     if (!user) {
       Alert.alert('No user created', 'Create a user before starting the test');
       return;
     }
     startStopwatch();
-    setIsTestRunning(true);
+    await beginTest();
   }
 
   function stopTest() {
@@ -42,9 +43,9 @@ export default function TestPage() {
         },
         {
           text: 'Yes',
-          onPress: () => {
-            setIsTestRunning(false);
+          onPress: async () => {
             stopStopwatch();
+            await endTest();
           },
         },
       ]
