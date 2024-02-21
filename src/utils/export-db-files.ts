@@ -2,6 +2,7 @@ import * as FileSystem from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
 import { Alert } from 'react-native';
 import { TableName, getSensorDataForUser } from '../db/sensor-interface';
+import { getActivityStatesForUser } from '@/db/activity-state-repository';
 
 /**
  * The function exports sensor data from a database for a specified user, converts it to CSV format,
@@ -29,6 +30,21 @@ export async function exportDatabaseFilesForUser(user: number): Promise<void> {
 
     await shareFile(filePath, tableName);
   }
+
+  // export activity state table
+  const activityStates = await getActivityStatesForUser(user);
+  if (!activityStates) {
+    Alert.alert(`No activity states for user: ${user}`);
+    return;
+  }
+  const csvString = convertDBToCSV(activityStates);
+  const filePath = await saveCSVToFile('activity-states', csvString, user);
+  if (!filePath) {
+    Alert.alert(`Error saving file for user: ${user}`);
+    return;
+  }
+
+  await shareFile(filePath, 'activity-states');
 }
 
 /**

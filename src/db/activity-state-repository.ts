@@ -1,6 +1,7 @@
 import { ActivityState } from '@/interfaces/ActivityState';
 import { db } from './db';
 import { ActivityStateDB } from './DBInterfaces';
+import { ResultSet } from 'expo-sqlite';
 
 export async function insertActivityState(
   activty: ActivityState,
@@ -77,6 +78,25 @@ export async function getActivityStateById(
     else return null;
   } catch (e) {
     console.warn('Could not get activity state: ', e);
+    throw e;
+  }
+}
+
+export async function getActivityStatesForUser(
+  user: number
+): Promise<{ [column: string]: unknown }[] | null> {
+  try {
+    let result: ResultSet = {} as ResultSet;
+    await db.transactionAsync(async tx => {
+      result = await tx.executeSqlAsync(
+        'SELECT * FROM activity_state WHERE user=?',
+        [user]
+      );
+    });
+
+    return result.rows.length > 0 ? result.rows : null;
+  } catch (e) {
+    console.warn(`Could not get activity states for user: ${user} - e`);
     throw e;
   }
 }
