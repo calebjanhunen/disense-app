@@ -1,17 +1,34 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Alert } from 'react-native';
 import { ActivityIndicator, Text, TextInput } from 'react-native-paper';
 
 import { Button as CustomBtn, PageView, Spacer } from '@/components';
 import { useUserData } from '@/hooks/useUserData';
 import { TestInfoContext } from '@/context/test-info-context';
+import { Dropdown } from 'react-native-element-dropdown';
 
 export default function UserSetup() {
-  const { user } = useContext(TestInfoContext);
-  const { saveUser, isSaving } = useUserData();
+  const { user, setUser } = useContext(TestInfoContext);
+  const { saveUser, isSaving, getAllUsers } = useUserData();
   const [weight, setWeight] = useState<string>('');
   const [height, setHeight] = useState<string>('');
   const [shoeSize, setShoeSize] = useState<string>('');
+  const [dropdownData, setDropdownData] = useState<
+    { label: string; value: string }[]
+  >([]);
+
+  useEffect(() => {
+    getUsers();
+  }, []);
+
+  async function getUsers() {
+    const users = await getAllUsers();
+    setDropdownData(prev => {
+      return users.map(user => {
+        return { label: `User ${user.id}`, value: user.id?.toString() };
+      });
+    });
+  }
 
   async function saveUserToDb() {
     if (!weight || !height || !shoeSize) {
@@ -75,6 +92,16 @@ export default function UserSetup() {
       )}
 
       <Spacer size='xxxl' />
+      <Text variant='headlineMedium' style={{ textAlign: 'center' }}>
+        Or select a created user
+      </Text>
+      <Dropdown
+        style={{ borderColor: 'black', borderWidth: 1 }}
+        data={dropdownData}
+        labelField='label'
+        valueField='value'
+        onChange={item => setUser(parseInt(item.value))}
+      />
     </PageView>
   );
 }

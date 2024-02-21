@@ -48,3 +48,26 @@ export async function getById(userId: number): Promise<User | null> {
     throw e;
   }
 }
+
+export async function getAllUsersFromDb(): Promise<User[]> {
+  try {
+    const users: User[] = [];
+    await db.transactionAsync(async tx => {
+      const result = await tx.executeSqlAsync('SELECT * from users');
+      if (result.rows.length > 0) {
+        for (const row of result.rows) {
+          users.push({
+            id: row['id'],
+            height: row['height'],
+            weight: row['weight'],
+            shoeSize: row['shoe_size'],
+          });
+        }
+      }
+    });
+    return users;
+  } catch (e) {
+    console.warn(e);
+    throw e;
+  }
+}

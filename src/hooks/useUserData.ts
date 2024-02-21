@@ -1,5 +1,5 @@
 import { TestInfoContext } from '@/context/test-info-context';
-import { insertUser } from '@/db/user-repository';
+import { getAllUsersFromDb, insertUser } from '@/db/user-repository';
 import { User } from '@/interfaces/User';
 import { handleError } from '@/utils/error-handler';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -10,6 +10,7 @@ interface IUseUserData {
   saveUser: (user: User) => Promise<void>;
   getCurrentUser: () => Promise<void>;
   removeCurrentUser: () => Promise<void>;
+  getAllUsers: () => Promise<User[]>;
   isSaving: boolean;
 }
 
@@ -53,5 +54,15 @@ export function useUserData(): IUseUserData {
     }
   }
 
-  return { getCurrentUser, saveUser, isSaving, removeCurrentUser };
+  async function getAllUsers(): Promise<User[]> {
+    try {
+      const users = await getAllUsersFromDb();
+      return users;
+    } catch (e) {
+      handleError('Could not get users.', e);
+      return [];
+    }
+  }
+
+  return { getCurrentUser, saveUser, isSaving, removeCurrentUser, getAllUsers };
 }

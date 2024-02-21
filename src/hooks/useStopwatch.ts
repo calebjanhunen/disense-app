@@ -34,7 +34,6 @@ export function useStopwatch(): IUseStopwatch {
   useEffect(() => {
     if (isRunning) {
       intervalRef.current = setInterval(() => {
-        console.log(startTime);
         setElapsedTime(Date.now() - (startTime ?? Date.now()));
       }, 1000);
     } else if (!isRunning && startTime != null) {
