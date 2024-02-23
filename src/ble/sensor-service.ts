@@ -96,16 +96,9 @@ export class SensorService {
               } else if (characteristic.uuid === this.spo2CharUuid) {
                 console.log('read spo2');
                 this.spo2Data = decodeByteArrForSPO2(byteArr);
-
-                // await this.writeToAcknowledgeCharacteristic('spo2');
+                await this.writeToAcknowledgeCharacteristic('spo2');
               }
-              this.spo2Data = [
-                {
-                  id: 1,
-                  bloodOxygen: 99,
-                  heartRate: 100,
-                },
-              ];
+
               if (this.thermistorData && this.fsrData && this.spo2Data) {
                 onReadSensors(this.thermistorData, this.fsrData, this.spo2Data);
                 this.thermistorData = null;
