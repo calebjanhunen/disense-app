@@ -6,6 +6,7 @@ import {
 } from 'react-native-ble-plx';
 import { PermissionManager } from './permission-manager';
 import { SensorService } from './sensor-service';
+import { handleError } from '@/utils/error-handler';
 
 export class MyBleManager {
   // private connectedDevice2: Device | null;
@@ -186,6 +187,12 @@ export class MyBleManager {
           setTimeout(retryConnect, 1000);
         } else {
           this.disconnectFromDevice();
+          handleError(
+            'Disense socks disconnected',
+            new Error(
+              'Failed to reconnect after 5 retries. Please reconnect manually'
+            )
+          );
         }
       }
     };
