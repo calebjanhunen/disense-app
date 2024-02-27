@@ -16,7 +16,6 @@ const data: Data[] = [
 ];
 
 interface Props {
-  isActivityRunning: boolean;
   currentActivityState: ActivityState | null;
   stopCurrentActivityAndStartNewActivity: (
     activity: ActivityState
@@ -24,7 +23,6 @@ interface Props {
 }
 
 export default function ActivitySelector({
-  isActivityRunning,
   currentActivityState,
   stopCurrentActivityAndStartNewActivity,
 }: Props) {
@@ -65,7 +63,7 @@ export default function ActivitySelector({
           }}
           mode='outlined'
           onPress={startSelectedActivity}
-          disabled={!isActivityRunning && !selectedActivityState}
+          disabled={!selectedActivityState}
         >
           Start Activity
         </Button>

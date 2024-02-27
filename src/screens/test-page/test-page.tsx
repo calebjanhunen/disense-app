@@ -8,6 +8,7 @@ import { useSensorData } from '@/hooks/useSensorData';
 import { useStopwatch } from '@/hooks/useStopwatch';
 import { useUserData } from '@/hooks/useUserData';
 import { SensorType } from '@/types/sensor-types';
+import { handleError } from '@/utils/error-handler';
 import * as ExportDBManager from '@/utils/export-db-files';
 import { Button, Text } from 'react-native-paper';
 import ActivitySelector from './components/activity-selector/activity-selector';
@@ -15,9 +16,9 @@ import SensorDataTable from './components/sensor-data-table/sensor-data-table';
 
 export default function TestPage() {
   const {
-    activityRunning,
     currentActivityState,
     stopCurrentActivityAndStartNewActivity,
+    endActivity,
   } = useActivityState();
   const { isTestRunning, beginTest, endTest, user } =
     useContext(TestInfoContext);
@@ -30,6 +31,13 @@ export default function TestPage() {
   }
 
   async function startTest() {
+    if (!currentActivityState) {
+      Alert.alert(
+        'No activity selected',
+        'Select an activity before starting the test'
+      );
+      return;
+    }
     if (!user) {
       Alert.alert('No user created', 'Create a user before starting the test');
       return;
@@ -50,6 +58,12 @@ export default function TestPage() {
         {
           text: 'Yes',
           onPress: async () => {
+            try {
+              await endActivity();
+            } catch (e) {
+              handleError('Could not end activity', e);
+              return;
+            }
             stopStopwatch();
             await endTest();
           },
@@ -115,7 +129,6 @@ export default function TestPage() {
         </Button>
         <Spacer size='sm' />
         <ActivitySelector
-          isActivityRunning={activityRunning}
           stopCurrentActivityAndStartNewActivity={
             stopCurrentActivityAndStartNewActivity
           }

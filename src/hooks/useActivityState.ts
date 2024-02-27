@@ -12,11 +12,11 @@ import { Alert } from 'react-native';
 
 interface IUseActivityState {
   getCurrentActivityFromAsyncStorage: () => Promise<void>;
-  activityRunning: boolean;
   currentActivityState: ActivityState | null;
   stopCurrentActivityAndStartNewActivity: (
     newActivity: ActivityState
   ) => Promise<void>;
+  endActivity: () => Promise<void>;
 }
 
 export function useActivityState(): IUseActivityState {
@@ -24,7 +24,6 @@ export function useActivityState(): IUseActivityState {
   const [currentActivityId, setCurrentActivityId] = useState<number | null>(
     null
   );
-  const [activityRunning, setActivityRunning] = useState<boolean>(false);
   const [currentActivityState, setCurrentActivityState] =
     useState<ActivityState | null>(null);
 
@@ -75,7 +74,6 @@ export function useActivityState(): IUseActivityState {
     const insertedId = await insertActivityState(activity, user);
     await saveCurrentActivityToAsyncStorage(insertedId);
     setCurrentActivityId(insertedId);
-    setActivityRunning(true);
     setCurrentActivityState(activity);
   }
 
@@ -85,7 +83,6 @@ export function useActivityState(): IUseActivityState {
     }
     await updateActivityStateById(currentActivityId, user);
     await AsyncStorage.removeItem('current_activity');
-    setActivityRunning(false);
     setCurrentActivityId(null);
     setCurrentActivityState(null);
   }
@@ -110,11 +107,9 @@ export function useActivityState(): IUseActivityState {
         );
         if (!result) {
           await AsyncStorage.removeItem('current_activity');
-          setActivityRunning(false);
           setCurrentActivityId(null);
         } else {
           setCurrentActivityId(parseInt(currentActivityId));
-          setActivityRunning(true);
           setCurrentActivityState(result.activityState);
         }
       }
@@ -126,7 +121,7 @@ export function useActivityState(): IUseActivityState {
   return {
     stopCurrentActivityAndStartNewActivity,
     getCurrentActivityFromAsyncStorage,
-    activityRunning,
     currentActivityState,
+    endActivity,
   };
 }
