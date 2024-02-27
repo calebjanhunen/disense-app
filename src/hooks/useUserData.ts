@@ -11,6 +11,7 @@ interface IUseUserData {
   getCurrentUser: () => Promise<void>;
   removeCurrentUser: () => Promise<void>;
   getAllUsers: () => Promise<User[]>;
+  setSelectedUser: (userId: number) => Promise<void>;
   isSaving: boolean;
 }
 
@@ -27,13 +28,17 @@ export function useUserData(): IUseUserData {
         return;
       }
       setUser(userId);
-      await AsyncStorage.setItem('current_user', userId.toString());
+      await saveUserToAsyncStorage(userId);
       Alert.alert('Success', `User ${userId} saved successfully`);
     } catch (e) {
       handleError('Error saving user', e);
     } finally {
       setIsSaving(false);
     }
+  }
+
+  async function saveUserToAsyncStorage(userId: number): Promise<void> {
+    await AsyncStorage.setItem('current_user', userId.toString());
   }
 
   async function getCurrentUser(): Promise<void> {
@@ -64,5 +69,21 @@ export function useUserData(): IUseUserData {
     }
   }
 
-  return { getCurrentUser, saveUser, isSaving, removeCurrentUser, getAllUsers };
+  async function setSelectedUser(userId: number): Promise<void> {
+    setUser(userId);
+    try {
+      await saveUserToAsyncStorage(userId);
+    } catch (e) {
+      handleError('Could not set user to selected user', e);
+    }
+  }
+
+  return {
+    getCurrentUser,
+    saveUser,
+    isSaving,
+    removeCurrentUser,
+    getAllUsers,
+    setSelectedUser,
+  };
 }
