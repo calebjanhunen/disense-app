@@ -1,9 +1,9 @@
-import { View, Text, Alert } from 'react-native';
-import React, { useEffect, useState } from 'react';
-import { Button } from 'react-native-paper';
-import { Dropdown } from 'react-native-element-dropdown';
-import { ActivityState } from '@/interfaces/ActivityState';
 import { useActivityState } from '@/hooks/useActivityState';
+import { ActivityState } from '@/interfaces/ActivityState';
+import React, { useState } from 'react';
+import { Alert, Text, View } from 'react-native';
+import { Dropdown } from 'react-native-element-dropdown';
+import { Button } from 'react-native-paper';
 
 interface Data {
   label: string;
@@ -17,36 +17,28 @@ const data: Data[] = [
 ];
 
 export default function ActivitySelector() {
-  const [activityState, setActivityState] = useState<ActivityState>();
+  const [selectedActivityState, setSelectedActivityState] =
+    useState<ActivityState | null>(null);
   const {
-    startActivity,
-    endActivity,
-    getCurrentActivity,
     activityRunning,
-    currentActivityLabel,
+    currentActivityState,
+    stopCurrentActivityAndStartNewActivity,
   } = useActivityState();
 
-  useEffect(() => {
-    getCurrentActivity();
-  }, []);
-
   async function startSelectedActivity() {
-    if (!activityState) {
+    if (!selectedActivityState) {
       Alert.alert('No activity state selected');
       return;
     }
-    await startActivity(activityState);
-  }
-
-  async function stopActivity() {
-    await endActivity();
+    setSelectedActivityState(null);
+    await stopCurrentActivityAndStartNewActivity(selectedActivityState);
   }
 
   return (
     <>
       <View style={{ flexDirection: 'row', gap: 10 }}>
         <Dropdown
-          disable={activityRunning}
+          // disable={activityRunning}
           placeholder='Select Activity'
           style={{
             flex: 1,
@@ -58,24 +50,23 @@ export default function ActivitySelector() {
           labelField='label'
           valueField='value'
           data={data}
-          onChange={item => setActivityState(item.value)}
-          value={activityState}
+          onChange={item => setSelectedActivityState(item.value)}
+          value={selectedActivityState}
         />
         <Button
           style={{
-            backgroundColor: activityRunning ? 'red' : 'white',
             flex: 0.5,
           }}
           mode='outlined'
-          onPress={activityRunning ? stopActivity : startSelectedActivity}
-          disabled={!activityRunning && !activityState}
+          onPress={startSelectedActivity}
+          disabled={!activityRunning && !selectedActivityState}
         >
-          {activityRunning ? 'Stop Activity' : 'Start Activity'}
+          Start Activity
         </Button>
       </View>
-      {currentActivityLabel && (
-        <Text>Current activity: {currentActivityLabel}</Text>
-      )}
+      <Text>
+        Current activity: {currentActivityState ? currentActivityState : 'None'}
+      </Text>
     </>
   );
 }
