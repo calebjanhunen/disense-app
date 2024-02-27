@@ -18,15 +18,12 @@ export async function bulkInsertIntoThermistorTable(
           'INSERT INTO thermistor_data (sensor_id, temperature, user) VALUES (?, ?, ?)',
           [id, temp, user]
         );
-        console.log('Inserted thermistor with id: ', id);
       }
     });
-    console.log('Thermistor transaction success');
   } catch (e) {
-    console.log('transaction error: ', e);
+    handleError('Could not save thermistor data', e);
     throw e;
   }
-  // console.log('Inserted into thermistor_data', result);
 }
 
 export async function bulkInsertIntoFSRTable(sensors: FSR[], user: number) {
@@ -38,15 +35,12 @@ export async function bulkInsertIntoFSRTable(sensors: FSR[], user: number) {
           'INSERT INTO fsr_data (sensor_id, force, user) VALUES (?, ?, ?)',
           [id, force, user]
         );
-        console.log('Inserted fsr with id: ', id);
       }
     });
-    console.log('FSR transaction success');
   } catch (e) {
-    console.log('transaction error: ', e);
+    handleError('Could not save fsr data', e);
     throw e;
   }
-  // console.log('Inserted into thermistor_data', result);
 }
 
 export async function bulkInsertIntoSPO2Table(
@@ -61,12 +55,10 @@ export async function bulkInsertIntoSPO2Table(
           'INSERT INTO spo2_data (sensor_id, heart_rate, blood_oxygen, user) VALUES (?, ?, ?, ?)',
           [id, heartRate, bloodOxygen, user]
         );
-        console.log('Inserted spo2 with id: ', id);
       }
     });
-    console.log('SPO2 transaction success');
   } catch (e) {
-    console.log('transaction error: ', e);
+    handleError('Could not save spo2 data', e);
     throw e;
   }
 }
@@ -103,7 +95,7 @@ export async function getThermistorDataForUser(
     });
     return data.rows.length === 0 ? null : data.rows;
   } catch (e) {
-    console.log('Error getting from thermistor table: ', e);
+    handleError('Error getting thermistor data', e);
   }
   return null;
 }
@@ -137,7 +129,6 @@ export async function getThermistorDataForUserV2(
 
     return thermisorData;
   } catch (e) {
-    console.log('Error getting from thermistor table: ', e);
     handleError('Could not get thermistor data', e);
     return [];
   }
@@ -161,7 +152,7 @@ export async function getFSRDataForUser(
     });
     return data.rows.length === 0 ? null : data.rows;
   } catch (e) {
-    console.log('Error getting from fsr table: ', e);
+    handleError('Error getting fsr data', e);
   }
   return null;
 }
@@ -195,7 +186,6 @@ export async function getFsrDataForUserV2(
 
     return fsrData;
   } catch (e) {
-    console.log('Error getting from fsr table: ', e);
     handleError('Could not get fsr data', e);
     return [];
   }
@@ -219,7 +209,7 @@ export async function getSpo2DataForUser(
     });
     return data.rows.length === 0 ? null : data.rows;
   } catch (e) {
-    console.log('Error getting from spo2 table: ', e);
+    handleError('Error getting spo2 data', e);
   }
   return null;
 }
@@ -233,7 +223,6 @@ export async function getSpo2DataForUserV2(
   const order = orderBy || 'id';
   const dir = direction || 'ASC';
   limit = limit || 10;
-  console.log(limit);
   try {
     const spo2Data: SensorDB[] = [];
     await db.transactionAsync(async (tx: SQLTransactionAsync) => {
@@ -254,7 +243,6 @@ export async function getSpo2DataForUserV2(
 
     return spo2Data;
   } catch (e) {
-    console.log('Error getting from spo2 table: ', e);
     handleError('Could not get spo2 data', e);
     return [];
   }

@@ -46,23 +46,25 @@ export class MyBleManager {
     const permissionsGranted =
       await this.permissionManager.requestPermissions();
     if (!permissionsGranted) {
-      console.log('Permissions error');
+      handleError(
+        'Permissions not granted',
+        new Error('Permissions for bluetooth not granted')
+      );
     }
     this.bleManager.startDeviceScan(
       null,
       null,
       async (error: BleError | null, device: Device | null) => {
         if (error) {
-          console.log('Error while scanning: ', error);
           this.stopScanning();
+          handleError('Error while scanning', error);
         }
         if (device?.name === 'Disense-1' && !this.connectedDevice1) {
-          console.log('Found disense-1');
           this.stopScanning();
           try {
             await this.connectToDevice(device);
           } catch (e) {
-            console.log('Error connecting: ', e);
+            handleError(`Error connecting to ${device.id}`, e);
           }
         }
 
@@ -86,15 +88,13 @@ export class MyBleManager {
     this.shouldReconnect = false;
     if (this.onDeviceDisconnectedCallback) this.onDeviceDisconnectedCallback();
     if (!this.connectedDevice1) {
-      console.log('device already disconnected');
       return;
     }
     try {
       await this.bleManager.cancelDeviceConnection(this.connectedDevice1.id);
       this.connectedDevice1 = null;
-      console.log('disconnected');
     } catch (e) {
-      console.log(e);
+      handleError('Error disconnecting from device', e);
     }
   }
 
@@ -103,10 +103,6 @@ export class MyBleManager {
    */
   stopScanning(): void {
     this.bleManager.stopDeviceScan();
-  }
-
-  getSensorService(): SensorService {
-    return this.sensorService;
   }
 
   /**
@@ -118,23 +114,13 @@ export class MyBleManager {
     if (!this.bleManager) {
       return;
     }
-    if (this.connectedDevice1) {
-      console.log('Device 1 already connected');
-    }
-    // TODO: Implement when 2nd sock is set up
-    // if (this.connectedDevice2) throw new Error('Device 2 already connected');
 
-    try {
-      await this.bleManager.connectToDevice(device.id);
-      this.connectedDevice1 =
-        await this.bleManager.discoverAllServicesAndCharacteristicsForDevice(
-          device.id
-        );
-      console.log('device connected');
-      this.setupDisconnectionListener(this.connectedDevice1);
-    } catch (e) {
-      console.log('Error connecting to device: ', e);
-    }
+    await this.bleManager.connectToDevice(device.id);
+    this.connectedDevice1 =
+      await this.bleManager.discoverAllServicesAndCharacteristicsForDevice(
+        device.id
+      );
+    this.setupDisconnectionListener(this.connectedDevice1);
   }
 
   private setupDisconnectionListener(device: Device): void {
@@ -142,12 +128,11 @@ export class MyBleManager {
       device.id,
       (error: BleError | null, device: Device | null) => {
         if (error) {
-          console.log('Error on device disconnect: ', error);
+          handleError('Error on device disconnect', error);
         }
         this.sensorService.removeReadCharacteristicCallbackSubscriptions();
         this.connectedDevice1 = null;
         // this.disconnectFromDevice();
-        console.log('Device disconnected: ', device?.id);
         if (device) {
           this.attemptReconnect(device);
         }
@@ -160,12 +145,9 @@ export class MyBleManager {
     let currAttempt = 0;
 
     const retryConnect = async () => {
-      console.log('Attempting reconnection');
-      console.log('should reconnect? ', this.shouldReconnect);
       if (!this.shouldReconnect) return;
 
       if (await this.bleManager.isDeviceConnected(device.id)) {
-        console.log('device already connected');
         return;
       }
 
@@ -175,14 +157,11 @@ export class MyBleManager {
           await this.bleManager.discoverAllServicesAndCharacteristicsForDevice(
             device.id
           );
-        console.log('device reconnected');
         if (this.onDeviceConnectCallback)
           this.onDeviceConnectCallback(this.connectedDevice1);
         currAttempt = 0;
       } catch (e) {
-        console.log('Error reconnecting to device: ', e);
         currAttempt++;
-        console.log(currAttempt);
         if (currAttempt < numAttempts) {
           setTimeout(retryConnect, 1000);
         } else {
