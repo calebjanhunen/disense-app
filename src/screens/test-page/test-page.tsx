@@ -1,16 +1,16 @@
-import { Alert, View } from 'react-native';
 import React, { useContext } from 'react';
+import { Alert, View } from 'react-native';
 
 import { PageView, Spacer } from '@/components';
-import { Button, Text } from 'react-native-paper';
 import { TestInfoContext } from '@/context/test-info-context';
-import { useStopwatch } from '@/hooks/useStopwatch';
-import SensorDataTable from './components/sensor-data-table/sensor-data-table';
-import { SensorType } from '@/types/sensor-types';
 import { useSensorData } from '@/hooks/useSensorData';
-import * as ExportDBManager from '@/utils/export-db-files';
+import { useStopwatch } from '@/hooks/useStopwatch';
 import { useUserData } from '@/hooks/useUserData';
+import { SensorType } from '@/types/sensor-types';
+import * as ExportDBManager from '@/utils/export-db-files';
+import { Button, Text } from 'react-native-paper';
 import ActivitySelector from './components/activity-selector/activity-selector';
+import SensorDataTable from './components/sensor-data-table/sensor-data-table';
 
 export default function TestPage() {
   const { isTestRunning, beginTest, endTest, user } =
