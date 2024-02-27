@@ -20,7 +20,7 @@ export async function exportDatabaseFilesForUser(user: number): Promise<void> {
   for (const tableName of sensorDataTableNames) {
     const sensorData = await getSensorData(tableName, user);
     if (!sensorData) continue;
-    console.log(sensorData);
+    // console.log(sensorData);
 
     const csv = convertDBToCSV(sensorData);
     const filePath = await saveCSVToFile(tableName, csv, user);
@@ -105,10 +105,10 @@ async function saveCSVToFile(
     await FileSystem.writeAsStringAsync(filePath, csvString, {
       encoding: FileSystem.EncodingType.UTF8,
     });
-    console.log(`Saved file to ${filePath}`);
+    // console.log(`Saved file to ${filePath}`);
     return filePath;
   } catch (e) {
-    console.log(`Error saving file: ${tableName} - `, e);
+    // console.log(`Error saving file: ${tableName} - `, e);
     if (e instanceof Error) {
       Alert.alert('Error saving file: ${tableName}', e.message);
     } else {

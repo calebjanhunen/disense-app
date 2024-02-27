@@ -12,6 +12,7 @@ import {
   fromBase64ToByteArr,
 } from './byte-array-manager';
 import base64 from 'react-native-base64';
+import { handleError } from '@/utils/error-handler';
 
 export class SensorService {
   // Constants
@@ -53,7 +54,10 @@ export class SensorService {
       service => service.uuid === this.serviceUuid
     );
     if (!sensorService) {
-      console.log('Service does not exist');
+      handleError(
+        'Error reading Sensor data.',
+        new Error(`Service with id: ${this.serviceUuid} does not exist`)
+      );
       return;
     }
 
@@ -75,26 +79,25 @@ export class SensorService {
               error: BleError | null,
               characteristic: Characteristic | null
             ) => {
-              if (error) {
-                console.log('error reading characteristic: ', error);
+              if (!characteristic || !characteristic.value) {
                 return;
               }
-              if (!characteristic || !characteristic.value) {
-                console.log('Characteristic does not exist');
+              if (error) {
+                handleError('Error reading sensor data', error);
                 return;
               }
 
+              // For now initialize sensor to 0 so the sensorData state variable gets updated even if spo2 data isn't read
+              this.spo2Data = [{ id: 1, heartRate: 0, bloodOxygen: 0 }];
+
               const byteArr = fromBase64ToByteArr(characteristic.value);
               if (characteristic.uuid === this.thermistorCharUuid) {
-                console.log('read thermistor');
                 this.thermistorData = decodeByteArrayForThermistor(byteArr);
                 await this.writeToAcknowledgeCharacteristic('thermistor');
               } else if (characteristic.uuid === this.fsrCharUuid) {
-                console.log('read fsr');
                 this.fsrData = decodeByteArrayForFSR(byteArr);
                 await this.writeToAcknowledgeCharacteristic('fsr');
               } else if (characteristic.uuid === this.spo2CharUuid) {
-                console.log('read spo2');
                 this.spo2Data = decodeByteArrForSPO2(byteArr);
                 await this.writeToAcknowledgeCharacteristic('spo2');
               }
@@ -114,21 +117,20 @@ export class SensorService {
 
   removeReadCharacteristicCallbackSubscriptions(): void {
     for (const callback of this.readCharacteristicCallbacks) {
-      callback.remove();
+      if (callback) callback.remove();
     }
   }
 
   private async writeToAcknowledgeCharacteristic(value: string): Promise<void> {
     try {
       if (!this.acknowledgmentCharacteristic) {
-        console.log('no acknowledgment characteristic');
         return;
       }
       await this.acknowledgmentCharacteristic.writeWithoutResponse(
         base64.encode(value)
       );
     } catch (e) {
-      console.log('Error writing characteristic', e);
+      handleError('Error sending acknowledgment characteristic', e);
     }
   }
 }
