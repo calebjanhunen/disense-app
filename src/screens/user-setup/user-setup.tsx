@@ -3,13 +3,13 @@ import { Alert } from 'react-native';
 import { ActivityIndicator, Text, TextInput } from 'react-native-paper';
 
 import { Button as CustomBtn, PageView, Spacer } from '@/components';
-import { useUserData } from '@/hooks/useUserData';
 import { TestInfoContext } from '@/context/test-info-context';
+import { useUserData } from '@/hooks/useUserData';
 import { Dropdown } from 'react-native-element-dropdown';
 
 export default function UserSetup() {
-  const { user, setUser } = useContext(TestInfoContext);
-  const { saveUser, isSaving, getAllUsers } = useUserData();
+  const { user } = useContext(TestInfoContext);
+  const { saveUser, isSaving, getAllUsers, setSelectedUser } = useUserData();
   const [weight, setWeight] = useState<string>('');
   const [height, setHeight] = useState<string>('');
   const [shoeSize, setShoeSize] = useState<string>('');
@@ -100,7 +100,7 @@ export default function UserSetup() {
         data={dropdownData}
         labelField='label'
         valueField='value'
-        onChange={item => setUser(parseInt(item.value))}
+        onChange={async item => await setSelectedUser(parseInt(item.value))}
       />
     </PageView>
   );

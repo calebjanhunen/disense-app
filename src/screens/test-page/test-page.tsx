@@ -1,18 +1,25 @@
-import { Alert, View } from 'react-native';
 import React, { useContext } from 'react';
+import { Alert, View } from 'react-native';
 
 import { PageView, Spacer } from '@/components';
-import { Button, Text } from 'react-native-paper';
 import { TestInfoContext } from '@/context/test-info-context';
-import { useStopwatch } from '@/hooks/useStopwatch';
-import SensorDataTable from './components/sensor-data-table/sensor-data-table';
-import { SensorType } from '@/types/sensor-types';
+import { useActivityState } from '@/hooks/useActivityState';
 import { useSensorData } from '@/hooks/useSensorData';
-import * as ExportDBManager from '@/utils/export-db-files';
+import { useStopwatch } from '@/hooks/useStopwatch';
 import { useUserData } from '@/hooks/useUserData';
+import { SensorType } from '@/types/sensor-types';
+import { handleError } from '@/utils/error-handler';
+import * as ExportDBManager from '@/utils/export-db-files';
+import { Button, Text } from 'react-native-paper';
 import ActivitySelector from './components/activity-selector/activity-selector';
+import SensorDataTable from './components/sensor-data-table/sensor-data-table';
 
 export default function TestPage() {
+  const {
+    currentActivityState,
+    stopCurrentActivityAndStartNewActivity,
+    endActivity,
+  } = useActivityState();
   const { isTestRunning, beginTest, endTest, user } =
     useContext(TestInfoContext);
   const { startStopwatch, timeDisplay, stopStopwatch } = useStopwatch();
@@ -24,6 +31,13 @@ export default function TestPage() {
   }
 
   async function startTest() {
+    if (!currentActivityState) {
+      Alert.alert(
+        'No activity selected',
+        'Select an activity before starting the test'
+      );
+      return;
+    }
     if (!user) {
       Alert.alert('No user created', 'Create a user before starting the test');
       return;
@@ -44,6 +58,12 @@ export default function TestPage() {
         {
           text: 'Yes',
           onPress: async () => {
+            try {
+              await endActivity();
+            } catch (e) {
+              handleError('Could not end activity', e);
+              return;
+            }
             stopStopwatch();
             await endTest();
           },
@@ -108,7 +128,12 @@ export default function TestPage() {
           Export data
         </Button>
         <Spacer size='sm' />
-        <ActivitySelector />
+        <ActivitySelector
+          stopCurrentActivityAndStartNewActivity={
+            stopCurrentActivityAndStartNewActivity
+          }
+          currentActivityState={currentActivityState}
+        />
         <Spacer size='xxl' />
         <Button mode='contained' onPress={isTestRunning ? stopTest : startTest}>
           {isTestRunning ? 'Stop Test' : 'Start Test'}

@@ -1,8 +1,8 @@
+import { handleError } from '@/utils/error-handler';
 import { ResultSet, SQLTransactionAsync } from 'expo-sqlite';
 import { FSR, SPO2Sensor, Thermistor } from '../interfaces/Sensor';
-import { db } from './db';
 import { SensorDB } from './DBInterfaces';
-import { handleError } from '@/utils/error-handler';
+import { db } from './db';
 
 export type TableName = 'thermistor' | 'fsr' | 'spo2';
 
@@ -92,7 +92,12 @@ export async function getThermistorDataForUser(
     let data: ResultSet = {} as ResultSet;
     await db.transactionAsync(async (tx: SQLTransactionAsync) => {
       data = await tx.executeSqlAsync(
-        'SELECT * from thermistor_data WHERE user=?',
+        `SELECT td.*, state.activity_state 
+        FROM thermistor_data td
+        LEFT JOIN activity_state state
+        ON td.created_at BETWEEN state.time_started AND state.time_ended
+        AND td.user = state.user
+        WHERE td.user=?`,
         [user]
       );
     });
@@ -144,9 +149,15 @@ export async function getFSRDataForUser(
   try {
     let data: ResultSet = {} as ResultSet;
     await db.transactionAsync(async (tx: SQLTransactionAsync) => {
-      data = await tx.executeSqlAsync('SELECT * from fsr_data WHERE user=?', [
-        user,
-      ]);
+      data = await tx.executeSqlAsync(
+        `SELECT fsr.*, state.activity_state
+        FROM fsr_data fsr
+        LEFT JOIN activity_state state
+        ON fsr.created_at BETWEEN state.time_started AND state.time_ended
+        AND fsr.user = state.user
+        WHERE fsr.user=?`,
+        [user]
+      );
     });
     return data.rows.length === 0 ? null : data.rows;
   } catch (e) {
@@ -196,9 +207,15 @@ export async function getSpo2DataForUser(
   try {
     let data: ResultSet = {} as ResultSet;
     await db.transactionAsync(async (tx: SQLTransactionAsync) => {
-      data = await tx.executeSqlAsync('SELECT * from spo2_data WHERE user=?', [
-        user,
-      ]);
+      data = await tx.executeSqlAsync(
+        `SELECT spo2.*, state.activity_state
+        FROM spo2_data spo2
+        LEFT JOIN activity_state state
+        ON spo2.created_at BETWEEN state.time_started AND state.time_ended
+        AND spo2.user = state.user
+        WHERE spo2.user=?`,
+        [user]
+      );
     });
     return data.rows.length === 0 ? null : data.rows;
   } catch (e) {
