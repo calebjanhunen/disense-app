@@ -1,4 +1,3 @@
-import { useActivityState } from '@/hooks/useActivityState';
 import { ActivityState } from '@/interfaces/ActivityState';
 import React, { useState } from 'react';
 import { Alert, Text, View } from 'react-native';
@@ -16,14 +15,21 @@ const data: Data[] = [
   { label: 'Running', value: 'running' },
 ];
 
-export default function ActivitySelector() {
+interface Props {
+  isActivityRunning: boolean;
+  currentActivityState: ActivityState | null;
+  stopCurrentActivityAndStartNewActivity: (
+    activity: ActivityState
+  ) => Promise<void>;
+}
+
+export default function ActivitySelector({
+  isActivityRunning,
+  currentActivityState,
+  stopCurrentActivityAndStartNewActivity,
+}: Props) {
   const [selectedActivityState, setSelectedActivityState] =
     useState<ActivityState | null>(null);
-  const {
-    activityRunning,
-    currentActivityState,
-    stopCurrentActivityAndStartNewActivity,
-  } = useActivityState();
 
   async function startSelectedActivity() {
     if (!selectedActivityState) {
@@ -59,7 +65,7 @@ export default function ActivitySelector() {
           }}
           mode='outlined'
           onPress={startSelectedActivity}
-          disabled={!activityRunning && !selectedActivityState}
+          disabled={!isActivityRunning && !selectedActivityState}
         >
           Start Activity
         </Button>

@@ -3,6 +3,7 @@ import { Alert, View } from 'react-native';
 
 import { PageView, Spacer } from '@/components';
 import { TestInfoContext } from '@/context/test-info-context';
+import { useActivityState } from '@/hooks/useActivityState';
 import { useSensorData } from '@/hooks/useSensorData';
 import { useStopwatch } from '@/hooks/useStopwatch';
 import { useUserData } from '@/hooks/useUserData';
@@ -13,6 +14,11 @@ import ActivitySelector from './components/activity-selector/activity-selector';
 import SensorDataTable from './components/sensor-data-table/sensor-data-table';
 
 export default function TestPage() {
+  const {
+    activityRunning,
+    currentActivityState,
+    stopCurrentActivityAndStartNewActivity,
+  } = useActivityState();
   const { isTestRunning, beginTest, endTest, user } =
     useContext(TestInfoContext);
   const { startStopwatch, timeDisplay, stopStopwatch } = useStopwatch();
@@ -108,7 +114,13 @@ export default function TestPage() {
           Export data
         </Button>
         <Spacer size='sm' />
-        <ActivitySelector />
+        <ActivitySelector
+          isActivityRunning={activityRunning}
+          stopCurrentActivityAndStartNewActivity={
+            stopCurrentActivityAndStartNewActivity
+          }
+          currentActivityState={currentActivityState}
+        />
         <Spacer size='xxl' />
         <Button mode='contained' onPress={isTestRunning ? stopTest : startTest}>
           {isTestRunning ? 'Stop Test' : 'Start Test'}
