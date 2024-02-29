@@ -26,26 +26,33 @@ export function BLEContextProvider({ children }: Props) {
   const bleManager = useMemo(() => new MyBleManager(sensorService), []);
   const [connectedDevice, setConnectedDevice] = useState<Device | null>(null);
   const [isConnecting, setIsConnecting] = useState<boolean>(false);
-  const { updateSensorData } = useSensorData();
+  const { updateThermistorAndFsrData, updateSpo2Data } = useSensorData();
   // console.log('ble context rerenderd');
 
   // TODO: Implement for 2nd sock when set up
   function onDeviceConnected(device1: Device): void {
     setConnectedDevice(device1);
     setIsConnecting(false);
-    sensorService.readSensorData(device1, onReadSensors);
+    sensorService.readSensorData(
+      device1,
+      onReadAnalogSensors,
+      onReadSpo2Sensor
+    );
   }
 
   function onDeviceDisconnected(): void {
     setConnectedDevice(null);
   }
 
-  function onReadSensors(
+  function onReadAnalogSensors(
     thermistorData: Thermistor[],
-    fsrData: FSR[],
-    spo2Data: SPO2Sensor[]
+    fsrData: FSR[]
   ): void {
-    updateSensorData(thermistorData, fsrData, spo2Data);
+    updateThermistorAndFsrData(thermistorData, fsrData);
+  }
+
+  function onReadSpo2Sensor(spo2Data: SPO2Sensor[]): void {
+    updateSpo2Data(spo2Data);
   }
 
   async function connectToDevice(): Promise<void> {

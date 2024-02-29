@@ -9,7 +9,7 @@ import SquareFsr from './components/square-fsr/square-fsr';
 import Thermistor from './components/thermistor/thermistor';
 
 export default function DeviceConnected(): React.ReactElement {
-  const { sensorData } = useSensorData();
+  const { sensorData, spo2Data } = useSensorData();
   const [imgSize, setImgSize] = useState<{ width: number; height: number }>({
     width: 0,
     height: 0,
@@ -25,8 +25,8 @@ export default function DeviceConnected(): React.ReactElement {
       <ConnectedDeviceHeader />
       <Spacer size='lg' />
       <Text>SPO2:</Text>
-      <Text>Heart Rate: {sensorData.spo2[0]?.heartRate} bpm</Text>
-      <Text>Blood oxygen: {sensorData.spo2[0]?.bloodOxygen}%</Text>
+      <Text>Heart Rate: {spo2Data[0]?.heartRate} bpm</Text>
+      <Text>Blood oxygen: {spo2Data[0]?.bloodOxygen}%</Text>
       <ImageBackground
         source={require('../../images/foot.png')}
         resizeMode='contain'

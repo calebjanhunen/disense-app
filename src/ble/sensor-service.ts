@@ -38,11 +38,11 @@ export class SensorService {
 
   async readSensorData(
     device: Device,
-    onReadSensors: (
+    onReadThermistorAndFsrData: (
       thermistorData: Thermistor[],
-      fsrData: FSR[],
-      spo2Data: SPO2Sensor[]
-    ) => void
+      fsrData: FSR[]
+    ) => void,
+    onReadSpo2Data: (spo2Data: SPO2Sensor[]) => void
   ) {
     // Set callbacks for when sensor data is read
 
@@ -102,10 +102,15 @@ export class SensorService {
                 await this.writeToAcknowledgeCharacteristic('spo2');
               }
 
-              if (this.thermistorData && this.fsrData && this.spo2Data) {
-                onReadSensors(this.thermistorData, this.fsrData, this.spo2Data);
+              if (this.thermistorData && this.fsrData) {
+                onReadThermistorAndFsrData(this.thermistorData, this.fsrData);
                 this.thermistorData = null;
                 this.fsrData = null;
+              }
+
+              if (this.spo2Data) {
+                console.log('read spo2: ', this.spo2Data);
+                onReadSpo2Data(this.spo2Data);
                 this.spo2Data = null;
               }
             }

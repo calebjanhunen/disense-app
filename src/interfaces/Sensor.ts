@@ -20,6 +20,11 @@ export interface Sensors {
   spo2: SPO2Sensor[];
 }
 
+export interface AnalogSensors {
+  thermistors: Thermistor[];
+  fsr: FSR[];
+}
+
 // export interface Sensors {
 //   thermMetatarsal1: Thermistor;
 //   thermMetatarsal5: Thermistor;
