@@ -10,7 +10,7 @@ import { Platform, SafeAreaView, StatusBar, StyleSheet } from 'react-native';
 import { PaperProvider } from 'react-native-paper';
 import { ThemeProvider } from 'styled-components';
 import { BLEContextProvider } from './context/ble-context';
-import { SensorContextProvider } from './context/sensor-context';
+import { SensorContextProvider } from './context/sensor-context/sensor-context';
 import { TestInfoProvider } from './context/test-info-context';
 import { createTables } from './db/db';
 import AppNavigation from './navigation/app-navigation';

@@ -19,3 +19,15 @@ export interface Sensors {
   fsr: FSR[];
   spo2: SPO2Sensor[];
 }
+
+// export interface Sensors {
+//   thermMetatarsal1: Thermistor;
+//   thermMetatarsal5: Thermistor;
+//   thermHeel: Thermistor;
+//   thermBigToe: Thermistor;
+//   fsrMetatarsal1: FSR;
+//   fsrMetatarsal5: FSR;
+//   fsrHeel: FSR;
+//   fsrBigToe: FSR;
+//   spo2: SPO2Sensor;
+// }

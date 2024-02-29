@@ -1,22 +1,20 @@
-import React, {
-  Dispatch,
-  SetStateAction,
-  createContext,
-  useContext,
-  useEffect,
-  useState,
-} from 'react';
-import { FSR, SPO2Sensor, Sensors, Thermistor } from '../interfaces/Sensor';
-import { TestInfoContext } from './test-info-context';
+import React, { createContext, useContext, useEffect, useState } from 'react';
+
 import {
   bulkInsertIntoFSRTable,
   bulkInsertIntoSPO2Table,
   bulkInsertIntoThermistorTable,
-} from '../db/sensor-interface';
+} from '@/db/sensor-interface';
+import { FSR, SPO2Sensor, Sensors, Thermistor } from '@/interfaces/Sensor';
+import { TestInfoContext } from '../test-info-context';
 
 interface ISensorContext {
   sensorData: Sensors;
-  setSensorData: Dispatch<SetStateAction<Sensors>>;
+  updateSensorData: (
+    thermistorData: Thermistor[],
+    fsrData: FSR[],
+    spo2Data: SPO2Sensor[]
+  ) => void;
 }
 
 interface Props {
@@ -56,11 +54,35 @@ export function SensorContextProvider({ children }: Props) {
     await bulkInsertIntoSPO2Table(spo2Data, user);
   }
 
+  function updateSensorData(
+    thermistorData: Thermistor[],
+    fsrData: FSR[],
+    spo2Data: SPO2Sensor[]
+  ): void {
+    const tempSensorData: Sensors = {
+      thermistors: new Array(4),
+      spo2: new Array(1),
+      fsr: new Array(4),
+    };
+    // Loop through all sensor data and insert into array ensuring it increases with id:
+    // arr[0] = id: 1, arr[1] = id: 2, ....
+    for (const thermistor of thermistorData) {
+      tempSensorData.thermistors[thermistor.id - 1] = thermistor;
+    }
+    for (const fsr of fsrData) {
+      tempSensorData.fsr[fsr.id - 1] = fsr;
+    }
+    for (const spo2 of spo2Data) {
+      tempSensorData.spo2[spo2.id - 1] = spo2;
+    }
+    setSensorData(tempSensorData);
+  }
+
   return (
     <SensorContext.Provider
       value={{
         sensorData,
-        setSensorData,
+        updateSensorData,
       }}
     >
       {children}

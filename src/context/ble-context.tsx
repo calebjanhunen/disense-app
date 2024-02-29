@@ -1,9 +1,10 @@
 import React, { createContext, useContext, useMemo, useState } from 'react';
-import { MyBleManager } from '../ble/ble-manager';
 import { Device } from 'react-native-ble-plx';
-import { FSR, SPO2Sensor, Thermistor } from '../interfaces/Sensor';
-import { SensorService } from '../ble/sensor-service';
-import { useSensorData } from './sensor-context';
+
+import { MyBleManager } from '@/ble/ble-manager';
+import { SensorService } from '@/ble/sensor-service';
+import { FSR, SPO2Sensor, Thermistor } from '@/interfaces/Sensor';
+import { useSensorData } from './sensor-context/sensor-context';
 
 interface IBLEContext {
   connectToDevice(): Promise<void>;
@@ -25,7 +26,7 @@ export function BLEContextProvider({ children }: Props) {
   const bleManager = useMemo(() => new MyBleManager(sensorService), []);
   const [connectedDevice, setConnectedDevice] = useState<Device | null>(null);
   const [isConnecting, setIsConnecting] = useState<boolean>(false);
-  const { setSensorData } = useSensorData();
+  const { updateSensorData } = useSensorData();
   // console.log('ble context rerenderd');
 
   // TODO: Implement for 2nd sock when set up
@@ -44,11 +45,7 @@ export function BLEContextProvider({ children }: Props) {
     fsrData: FSR[],
     spo2Data: SPO2Sensor[]
   ): void {
-    setSensorData({
-      thermistors: thermistorData,
-      fsr: fsrData,
-      spo2: spo2Data,
-    });
+    updateSensorData(thermistorData, fsrData, spo2Data);
   }
 
   async function connectToDevice(): Promise<void> {
