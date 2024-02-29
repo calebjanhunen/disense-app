@@ -6,6 +6,5 @@ import DeviceConnected from './device-connected';
 export default function Home(): React.ReactElement {
   const { connectedDevice } = useBLE();
 
-  // return connectedDevice ? <DeviceConnected /> : <ConnectDevice />;
-  return <DeviceConnected />;
+  return connectedDevice ? <DeviceConnected /> : <ConnectDevice />;
 }

@@ -1,4 +1,4 @@
-import { Thermistor } from '@/interfaces/Sensor';
+import { Thermistor as IThermistor } from '@/interfaces/Sensor';
 import React from 'react';
 import { Text } from 'react-native-paper';
 import { ThermistorContainer } from './thermistor.styles';
@@ -8,7 +8,7 @@ interface Props {
   left: number;
   height: number;
   width: number;
-  sensor: Thermistor;
+  sensor: IThermistor;
 }
 
 export default function Thermistor({
@@ -20,7 +20,7 @@ export default function Thermistor({
 }: Props) {
   return (
     <ThermistorContainer height={height} width={width} top={top} left={left}>
-      <Text variant='labelLarge'>{sensor.temp}°C</Text>
+      <Text variant='labelLarge'>{sensor?.temp}°C</Text>
     </ThermistorContainer>
   );
 }

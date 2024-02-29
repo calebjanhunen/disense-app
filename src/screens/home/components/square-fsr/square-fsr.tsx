@@ -15,7 +15,7 @@ export default function SquareFsr({ top, left, height, width, sensor }: Props) {
   return (
     <SquareFsrContainer width={width} height={height} top={top} left={left}>
       <Text variant='labelLarge' style={{ color: 'white' }}>
-        {sensor.force}N
+        {sensor?.force}N
       </Text>
     </SquareFsrContainer>
   );

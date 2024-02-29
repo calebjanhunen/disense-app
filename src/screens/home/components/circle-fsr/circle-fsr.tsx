@@ -15,7 +15,7 @@ export default function CircleFsr({ top, left, height, width, sensor }: Props) {
   return (
     <CircleFsrContainer height={height} width={width} top={top} left={left}>
       <Text variant='labelLarge' style={{ color: 'white' }}>
-        {sensor.force}N
+        {sensor?.force}N
       </Text>
     </CircleFsrContainer>
   );

@@ -25,8 +25,8 @@ export default function DeviceConnected(): React.ReactElement {
       <ConnectedDeviceHeader />
       <Spacer size='lg' />
       <Text>SPO2:</Text>
-      <Text>Heart Rate: {sensorData.spo2[0].heartRate} bpm</Text>
-      <Text>Blood oxygen: {sensorData.spo2[0].bloodOxygen}%</Text>
+      <Text>Heart Rate: {sensorData.spo2[0]?.heartRate} bpm</Text>
+      <Text>Blood oxygen: {sensorData.spo2[0]?.bloodOxygen}%</Text>
       <ImageBackground
         source={require('../../images/foot.png')}
         resizeMode='contain'
