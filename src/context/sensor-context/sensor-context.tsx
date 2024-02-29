@@ -46,7 +46,6 @@ export function SensorContextProvider({ children }: Props) {
   }, [sensorData]);
 
   useEffect(() => {
-    console.log('save spo2 data: ', spo2Data);
     spo2Data.length > 0 &&
       spo2Data[0].bloodOxygen !== 0 &&
       insertSpo2Data(spo2Data);
