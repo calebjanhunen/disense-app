@@ -1,3 +1,4 @@
+import { FSR } from '@/interfaces/Sensor';
 import React from 'react';
 import { Text } from 'react-native-paper';
 import { CircleFsrContainer } from './circle-fsr.styles';
@@ -7,14 +8,14 @@ interface Props {
   left: number;
   height: number;
   width: number;
-  value: number;
+  sensor: FSR;
 }
 
-export default function CircleFsr({ top, left, height, width, value }: Props) {
+export default function CircleFsr({ top, left, height, width, sensor }: Props) {
   return (
     <CircleFsrContainer height={height} width={width} top={top} left={left}>
       <Text variant='labelLarge' style={{ color: 'white' }}>
-        {value}N
+        {sensor.force}N
       </Text>
     </CircleFsrContainer>
   );
