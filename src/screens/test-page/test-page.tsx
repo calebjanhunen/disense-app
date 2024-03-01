@@ -13,6 +13,8 @@ import * as ExportDBManager from '@/utils/export-db-files';
 import { Button, Text } from 'react-native-paper';
 import ActivitySelector from './components/activity-selector/activity-selector';
 import SensorDataTable from './components/sensor-data-table/sensor-data-table';
+import { useLocation } from '@/hooks/useLocation';
+import LocationSelector from './components/location-selector/location-selector';
 
 export default function TestPage() {
   const {
@@ -20,6 +22,11 @@ export default function TestPage() {
     stopCurrentActivityAndStartNewActivity,
     endActivity,
   } = useActivityState();
+  const {
+    currentLocation,
+    stopCurrentLocationAndStartNewLocation,
+    endLocation,
+  } = useLocation();
   const { isTestRunning, beginTest, endTest, user } =
     useContext(TestInfoContext);
   const { startStopwatch, timeDisplay, stopStopwatch } = useStopwatch();
@@ -35,6 +42,14 @@ export default function TestPage() {
       Alert.alert(
         'No activity selected',
         'Select an activity before starting the test'
+      );
+      return;
+    }
+
+    if (!currentLocation) {
+      Alert.alert(
+        'No location selected',
+        'Select a location before starting the test'
       );
       return;
     }
@@ -62,6 +77,13 @@ export default function TestPage() {
               await endActivity();
             } catch (e) {
               handleError('Could not end activity', e);
+              return;
+            }
+
+            try {
+              await endLocation();
+            } catch (e) {
+              handleError('Could not end location', e);
               return;
             }
             stopStopwatch();
@@ -133,6 +155,13 @@ export default function TestPage() {
             stopCurrentActivityAndStartNewActivity
           }
           currentActivityState={currentActivityState}
+        />
+        <Spacer size='xxs' />
+        <LocationSelector
+          stopCurrentLocationAndStartNewLocation={
+            stopCurrentLocationAndStartNewLocation
+          }
+          currentLocation={currentLocation}
         />
         <Spacer size='xxl' />
         <Button mode='contained' onPress={isTestRunning ? stopTest : startTest}>

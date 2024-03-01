@@ -47,26 +47,24 @@ export default function ActivitySelector({
   }
 
   return (
-    <>
-      <View style={{ flexDirection: 'row', gap: 10 }}>
-        <Dropdown
-          placeholder='Select Activity'
-          style={{
-            flex: 1,
-            borderRadius: 20,
-            padding: 6,
-            borderColor: 'black',
-            borderWidth: 1,
-          }}
-          labelField='label'
-          valueField='value'
-          data={data}
-          onChange={item => startSelectedActivity(item.value)}
-        />
-      </View>
+    <View>
+      <Dropdown
+        placeholder='Select Activity'
+        style={{
+          flex: 1,
+          borderRadius: 20,
+          padding: 20,
+          borderColor: 'black',
+          borderWidth: 1,
+        }}
+        labelField='label'
+        valueField='value'
+        data={data}
+        onChange={item => startSelectedActivity(item.value)}
+      />
       <Text>
         Current activity: {currActivityDisp ? currActivityDisp : 'None'}
       </Text>
-    </>
+    </View>
   );
 }
