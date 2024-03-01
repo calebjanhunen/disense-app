@@ -9,10 +9,12 @@ interface Data {
   value: ActivityState;
 }
 const data: Data[] = [
-  { label: 'Sitting', value: 'sitting' },
+  { label: 'Laying down', value: 'laying_down' },
+  { label: 'Sitting (feet on the ground)', value: 'sitting_feet_on_ground' },
+  { label: 'Sitting (feet up)', value: 'sitting_feet_up' },
   { label: 'Standing', value: 'standing' },
   { label: 'Walking', value: 'walking' },
-  { label: 'Running', value: 'running' },
+  { label: 'Jogging', value: 'jogging' },
 ];
 
 interface Props {
