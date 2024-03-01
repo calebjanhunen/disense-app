@@ -1,8 +1,7 @@
 import { ActivityState } from '@/interfaces/ActivityState';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Alert, Text, View } from 'react-native';
 import { Dropdown } from 'react-native-element-dropdown';
-import { Button } from 'react-native-paper';
 
 interface Data {
   label: string;
@@ -28,23 +27,29 @@ export default function ActivitySelector({
   currentActivityState,
   stopCurrentActivityAndStartNewActivity,
 }: Props) {
-  const [selectedActivityState, setSelectedActivityState] =
-    useState<ActivityState | null>(null);
+  const [currActivityDisp, setCurrActivityDisp] = useState<string>('');
 
-  async function startSelectedActivity() {
-    if (!selectedActivityState) {
+  /* The `useEffect` hook is responsible for updating the displayed current
+ activity based on the `currentActivityState` prop. */
+  useEffect(() => {
+    const currActivity: Data | undefined = data.find(
+      activity => activity.value === currentActivityState
+    );
+    setCurrActivityDisp(currActivity ? currActivity.label : '');
+  }, [currentActivityState]);
+
+  async function startSelectedActivity(selectedActivity: ActivityState) {
+    if (!selectedActivity) {
       Alert.alert('No activity state selected');
       return;
     }
-    setSelectedActivityState(null);
-    await stopCurrentActivityAndStartNewActivity(selectedActivityState);
+    await stopCurrentActivityAndStartNewActivity(selectedActivity);
   }
 
   return (
     <>
       <View style={{ flexDirection: 'row', gap: 10 }}>
         <Dropdown
-          // disable={activityRunning}
           placeholder='Select Activity'
           style={{
             flex: 1,
@@ -56,22 +61,11 @@ export default function ActivitySelector({
           labelField='label'
           valueField='value'
           data={data}
-          onChange={item => setSelectedActivityState(item.value)}
-          value={selectedActivityState}
+          onChange={item => startSelectedActivity(item.value)}
         />
-        <Button
-          style={{
-            flex: 0.5,
-          }}
-          mode='outlined'
-          onPress={startSelectedActivity}
-          disabled={!selectedActivityState}
-        >
-          Start Activity
-        </Button>
       </View>
       <Text>
-        Current activity: {currentActivityState ? currentActivityState : 'None'}
+        Current activity: {currActivityDisp ? currActivityDisp : 'None'}
       </Text>
     </>
   );
