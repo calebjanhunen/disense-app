@@ -84,11 +84,14 @@ export async function getThermistorDataForUser(
     let data: ResultSet = {} as ResultSet;
     await db.transactionAsync(async (tx: SQLTransactionAsync) => {
       data = await tx.executeSqlAsync(
-        `SELECT td.*, state.activity_state 
+        `SELECT td.*, state.activity_state, l.location
         FROM thermistor_data td
         LEFT JOIN activity_state state
         ON td.created_at BETWEEN state.time_started AND state.time_ended
         AND td.user = state.user
+        LEFT JOIN location l
+        ON td.created_at BETWEEN l.time_started AND l.time_ended
+        AND td.user = l.user
         WHERE td.user=?`,
         [user]
       );
@@ -141,11 +144,14 @@ export async function getFSRDataForUser(
     let data: ResultSet = {} as ResultSet;
     await db.transactionAsync(async (tx: SQLTransactionAsync) => {
       data = await tx.executeSqlAsync(
-        `SELECT fsr.*, state.activity_state
+        `SELECT fsr.*, state.activity_state, l.location
         FROM fsr_data fsr
         LEFT JOIN activity_state state
         ON fsr.created_at BETWEEN state.time_started AND state.time_ended
         AND fsr.user = state.user
+        LEFT JOIN location l
+        ON fsr.created_at BETWEEN l.time_started AND l.time_ended
+        AND fsr.user = l.user
         WHERE fsr.user=?`,
         [user]
       );
@@ -198,11 +204,14 @@ export async function getSpo2DataForUser(
     let data: ResultSet = {} as ResultSet;
     await db.transactionAsync(async (tx: SQLTransactionAsync) => {
       data = await tx.executeSqlAsync(
-        `SELECT spo2.*, state.activity_state
+        `SELECT spo2.*, state.activity_state, l.location
         FROM spo2_data spo2
         LEFT JOIN activity_state state
         ON spo2.created_at BETWEEN state.time_started AND state.time_ended
         AND spo2.user = state.user
+        LEFT JOIN location l
+        ON spo2.created_at BETWEEN l.time_started AND l.time_ended
+        AND spo2.user = l.user
         WHERE spo2.user=?`,
         [user]
       );
