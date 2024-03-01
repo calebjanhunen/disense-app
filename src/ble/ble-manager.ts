@@ -120,7 +120,7 @@ export class MyBleManager {
       await this.bleManager.discoverAllServicesAndCharacteristicsForDevice(
         device.id
       );
-    this.setupDisconnectionListener(this.connectedDevice1);
+    // this.setupDisconnectionListener(this.connectedDevice1);
   }
 
   private setupDisconnectionListener(device: Device): void {

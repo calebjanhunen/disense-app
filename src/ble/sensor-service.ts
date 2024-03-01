@@ -68,54 +68,51 @@ export class SensorService {
     );
 
     // Loop through characteristics and read data from sensor characteristics
-    let i = 0;
     for (const characteristic of characteristics) {
       if (characteristic.isNotifiable) {
-        this.readCharacteristicCallbacks[i] =
-          device.monitorCharacteristicForService(
-            sensorService.uuid,
-            characteristic.uuid,
-            async (
-              error: BleError | null,
-              characteristic: Characteristic | null
-            ) => {
-              if (!characteristic || !characteristic.value) {
-                return;
-              }
-              if (error) {
-                handleError('Error reading sensor data', error);
-                return;
-              }
-
-              // For now initialize sensor to 0 so the sensorData state variable gets updated even if spo2 data isn't read
-              this.spo2Data = [{ id: 1, heartRate: 0, bloodOxygen: 0 }];
-
-              const byteArr = fromBase64ToByteArr(characteristic.value);
-              if (characteristic.uuid === this.thermistorCharUuid) {
-                this.thermistorData = decodeByteArrayForThermistor(byteArr);
-                await this.writeToAcknowledgeCharacteristic('thermistor');
-              } else if (characteristic.uuid === this.fsrCharUuid) {
-                this.fsrData = decodeByteArrayForFSR(byteArr);
-                await this.writeToAcknowledgeCharacteristic('fsr');
-              } else if (characteristic.uuid === this.spo2CharUuid) {
-                this.spo2Data = decodeByteArrForSPO2(byteArr);
-                await this.writeToAcknowledgeCharacteristic('spo2');
-              }
-
-              if (this.thermistorData && this.fsrData) {
-                onReadThermistorAndFsrData(this.thermistorData, this.fsrData);
-                this.thermistorData = null;
-                this.fsrData = null;
-              }
-
-              if (this.spo2Data) {
-                console.log('read spo2: ', this.spo2Data);
-                onReadSpo2Data(this.spo2Data);
-                this.spo2Data = null;
-              }
+        // this.readCharacteristicCallbacks[i] =
+        device.monitorCharacteristicForService(
+          sensorService.uuid,
+          characteristic.uuid,
+          async (
+            error: BleError | null,
+            characteristic: Characteristic | null
+          ) => {
+            if (!characteristic || !characteristic.value) {
+              return;
             }
-          );
-        i++;
+            if (error) {
+              handleError('Error reading sensor data', error);
+              return;
+            }
+
+            // For now initialize sensor to 0 so the sensorData state variable gets updated even if spo2 data isn't read
+            this.spo2Data = [{ id: 1, heartRate: 0, bloodOxygen: 0 }];
+
+            const byteArr = fromBase64ToByteArr(characteristic.value);
+            if (characteristic.uuid === this.thermistorCharUuid) {
+              this.thermistorData = decodeByteArrayForThermistor(byteArr);
+              await this.writeToAcknowledgeCharacteristic('thermistor');
+            } else if (characteristic.uuid === this.fsrCharUuid) {
+              this.fsrData = decodeByteArrayForFSR(byteArr);
+              await this.writeToAcknowledgeCharacteristic('fsr');
+            } else if (characteristic.uuid === this.spo2CharUuid) {
+              this.spo2Data = decodeByteArrForSPO2(byteArr);
+              await this.writeToAcknowledgeCharacteristic('spo2');
+            }
+
+            if (this.thermistorData && this.fsrData) {
+              onReadThermistorAndFsrData(this.thermistorData, this.fsrData);
+              this.thermistorData = null;
+              this.fsrData = null;
+            }
+
+            if (this.spo2Data) {
+              onReadSpo2Data(this.spo2Data);
+              this.spo2Data = null;
+            }
+          }
+        );
       }
     }
   }
