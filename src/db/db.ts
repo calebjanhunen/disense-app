@@ -94,6 +94,23 @@ export async function createTables() {
       ],
       false
     );
+
+    await db.execAsync(
+      [
+        {
+          sql: `CREATE TABLE IF NOT EXISTS location (
+                id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                location VARCHAR(255) NOT NULL,
+                time_started TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                time_ended TIMESTAMP,
+                user INTEGER,
+                FOREIGN KEY (user) REFERENCES users(id) ON DELETE CASCADE
+              );`,
+          args: [],
+        },
+      ],
+      false
+    );
   } catch (e) {
     console.log('ERror creating table: ', e);
   }
