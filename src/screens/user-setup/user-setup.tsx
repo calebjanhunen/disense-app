@@ -1,11 +1,12 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { Alert } from 'react-native';
+import { Alert, View } from 'react-native';
+import { Dropdown } from 'react-native-element-dropdown';
 import { ActivityIndicator, Text, TextInput } from 'react-native-paper';
 
 import { Button as CustomBtn, PageView, Spacer } from '@/components';
 import { TestInfoContext } from '@/context/test-info-context';
 import { useUserData } from '@/hooks/useUserData';
-import { Dropdown } from 'react-native-element-dropdown';
+import PopupMenu from './components/popup-menu/popup-menu';
 
 export default function UserSetup() {
   const { user } = useContext(TestInfoContext);
@@ -47,8 +48,16 @@ export default function UserSetup() {
 
   return (
     <PageView>
-      <Spacer size='xl' />
-      <Text variant='titleLarge'>User Information:</Text>
+      <View
+        style={{
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+        }}
+      >
+        <Text variant='titleLarge'>User Information:</Text>
+        <PopupMenu users={dropdownData} />
+      </View>
       <Spacer size='xl' />
       <TextInput
         keyboardType='number-pad'

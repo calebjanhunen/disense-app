@@ -12,6 +12,7 @@ interface IUseUserData {
   removeCurrentUser: () => Promise<void>;
   getAllUsers: () => Promise<User[]>;
   setSelectedUser: (userId: number) => Promise<void>;
+  deleteAllDataForSelectedUser: (userId: number) => Promise<void>;
   isSaving: boolean;
 }
 
@@ -78,6 +79,14 @@ export function useUserData(): IUseUserData {
     }
   }
 
+  async function deleteAllDataForSelectedUser(userId: number): Promise<void> {
+    try {
+      console.log('deleted');
+    } catch (e) {
+      handleError(`Could not delete data for user: ${userId}`, e);
+    }
+  }
+
   return {
     getCurrentUser,
     saveUser,
@@ -85,5 +94,6 @@ export function useUserData(): IUseUserData {
     removeCurrentUser,
     getAllUsers,
     setSelectedUser,
+    deleteAllDataForSelectedUser,
   };
 }

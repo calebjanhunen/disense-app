@@ -8,6 +8,7 @@ import {
 } from '@expo-google-fonts/inter';
 import { Platform, SafeAreaView, StatusBar, StyleSheet } from 'react-native';
 import { PaperProvider } from 'react-native-paper';
+import { MenuProvider } from 'react-native-popup-menu';
 import { ThemeProvider } from 'styled-components';
 import { BLEContextProvider } from './context/ble-context';
 import { SensorContextProvider } from './context/sensor-context/sensor-context';
@@ -41,7 +42,9 @@ export default function App(): React.ReactElement | null {
           <PaperProvider>
             <ThemeProvider theme={theme}>
               <SafeAreaView style={styles.AndroidSafeArea}>
-                <AppNavigation />
+                <MenuProvider>
+                  <AppNavigation />
+                </MenuProvider>
                 {/* <StatusBar barStyle="light-content" /> */}
               </SafeAreaView>
             </ThemeProvider>
