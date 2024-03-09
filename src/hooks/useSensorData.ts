@@ -26,6 +26,7 @@ export function useSensorData(): IUseSensorData {
     }
     let data;
     setSensorData([]);
+    setNoDataText('');
     if (sensorType === 'thermistor') {
       data = await getThermistorDataForUserV2(user, 'created_at', 'DESC', 20);
     } else if (sensorType === 'fsr') {
