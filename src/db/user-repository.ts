@@ -1,6 +1,11 @@
 import { User } from '@/interfaces/User';
 import { ResultSet } from 'expo-sqlite';
+import { deleteActivityStatesForUser } from './activity-state-repository';
 import { db } from './db';
+import { deleteFsrDataForUser } from './fsr-repository';
+import { deleteLocationsForUser } from './location-repository';
+import { deleteSpo2DataForUser } from './spo2-repository';
+import { deleteThermistorDataForUser } from './thermistor-repository';
 
 export async function insertUser(user: User): Promise<number | undefined> {
   try {
@@ -66,6 +71,24 @@ export async function getAllUsersFromDb(): Promise<User[]> {
       }
     });
     return users;
+  } catch (e) {
+    console.warn(e);
+    throw e;
+  }
+}
+
+export async function deleteAllDataForUser(userId: number): Promise<void> {
+  try {
+    const user = await getById(userId);
+    if (!user) throw new Error('User does not exist');
+
+    await db.transactionAsync(async tx => {
+      await deleteThermistorDataForUser(userId);
+      await deleteFsrDataForUser(userId);
+      await deleteSpo2DataForUser(userId);
+      await deleteActivityStatesForUser(userId);
+      await deleteLocationsForUser(userId);
+    });
   } catch (e) {
     console.warn(e);
     throw e;

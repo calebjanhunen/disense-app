@@ -1,6 +1,6 @@
 import { Location } from '@/interfaces/Location';
-import { db } from './db';
 import { LocationDB } from './DBInterfaces';
+import { db } from './db';
 
 export async function insertLocation(
   location: Location,
@@ -75,6 +75,17 @@ export async function getLocationById(
     else return null;
   } catch (e) {
     console.warn('Could not get location: ', e); //TODO: Log to error logger
+    throw e;
+  }
+}
+
+export async function deleteLocationsForUser(user: number): Promise<void> {
+  try {
+    await db.transactionAsync(async tx => {
+      await tx.executeSqlAsync('DELETE FROM location WHERE user=?', [user]);
+    });
+  } catch (e) {
+    console.warn(e);
     throw e;
   }
 }
