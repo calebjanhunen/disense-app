@@ -2,6 +2,8 @@ import * as FileSystem from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
 import { Alert } from 'react-native';
 import { TableName, getSensorDataForUser } from '../db/sensor-interface';
+import { getAllUsersForExporting } from '@/db/user-repository';
+import { handleError } from './error-handler';
 
 /**
  * The function exports sensor data from a database for a specified user, converts it to CSV format,
@@ -30,6 +32,21 @@ export async function exportDatabaseFilesForUser(user: number): Promise<void> {
 
     await shareFile(filePath, tableName);
   }
+}
+
+export async function exportAllUsers(): Promise<void> {
+  const users = await getAllUsersForExporting();
+  if (!users) {
+    handleError('No Users', new Error('There are no saved users to export'));
+    return;
+  }
+  const usersCsv = convertDBToCSV(users);
+  const filePath = await saveUserCSVToFile(usersCsv);
+  if (!filePath) {
+    handleError('Error saving file.', new Error('Error saving users.csv'));
+    return;
+  }
+  await shareFile(filePath, 'users');
 }
 
 /**
@@ -113,6 +130,26 @@ async function saveCSVToFile(
       Alert.alert('Error saving file: ${tableName}', e.message);
     } else {
       Alert.alert('Error saving file: ${tableName}', 'Uknown Error');
+    }
+  }
+}
+
+async function saveUserCSVToFile(csvString: string): Promise<string | void> {
+  try {
+    const folderPath = `${FileSystem.documentDirectory}`;
+    await FileSystem.makeDirectoryAsync(folderPath, { intermediates: true });
+    const filePath = `${folderPath}users.csv`;
+    await FileSystem.writeAsStringAsync(filePath, csvString, {
+      encoding: FileSystem.EncodingType.UTF8,
+    });
+    // console.log(`Saved file to ${filePath}`);
+    return filePath;
+  } catch (e) {
+    // console.log(`Error saving file: ${tableName} - `, e);
+    if (e instanceof Error) {
+      Alert.alert('Error saving file: users.csv', e.message);
+    } else {
+      Alert.alert('Error saving file: users.csv', 'Uknown Error');
     }
   }
 }

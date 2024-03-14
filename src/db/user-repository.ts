@@ -71,3 +71,20 @@ export async function getAllUsersFromDb(): Promise<User[]> {
     throw e;
   }
 }
+
+export async function getAllUsersForExporting(): Promise<
+  { [column: string]: unknown }[] | null
+> {
+  try {
+    let users: ResultSet = {} as ResultSet;
+    await db.transactionAsync(async tx => {
+      users = await tx.executeSqlAsync(
+        'SELECT id, created_at, weight, height, shoe_size from users'
+      );
+    });
+    return users.rows.length === 0 ? null : users.rows;
+  } catch (e) {
+    console.warn(e);
+    throw e;
+  }
+}

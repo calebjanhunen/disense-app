@@ -17,6 +17,7 @@ import { createTables } from './db/db';
 import { useAppUpdates } from './hooks/useAppUpdates';
 import AppNavigation from './navigation/app-navigation';
 import { theme } from './theme/theme';
+import { MenuProvider } from 'react-native-popup-menu';
 
 export default function App(): React.ReactElement | null {
   const [fontLoaded] = useFonts({
@@ -45,7 +46,9 @@ export default function App(): React.ReactElement | null {
           <PaperProvider>
             <ThemeProvider theme={theme}>
               <SafeAreaView style={styles.AndroidSafeArea}>
-                <AppNavigation />
+                <MenuProvider>
+                  <AppNavigation />
+                </MenuProvider>
                 {/* <StatusBar barStyle="light-content" /> */}
               </SafeAreaView>
             </ThemeProvider>
