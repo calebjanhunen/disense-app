@@ -9,10 +9,12 @@ import {
 import { Platform, SafeAreaView, StatusBar, StyleSheet } from 'react-native';
 import { PaperProvider } from 'react-native-paper';
 import { ThemeProvider } from 'styled-components';
+
 import { BLEContextProvider } from './context/ble-context';
 import { SensorContextProvider } from './context/sensor-context/sensor-context';
 import { TestInfoProvider } from './context/test-info-context';
 import { createTables } from './db/db';
+import { useAppUpdates } from './hooks/useAppUpdates';
 import AppNavigation from './navigation/app-navigation';
 import { theme } from './theme/theme';
 
@@ -22,6 +24,8 @@ export default function App(): React.ReactElement | null {
     Inter_600SemiBold,
     Inter_700Bold,
   });
+  useAppUpdates();
+
   useEffect(() => {
     initDB();
   }, []);
