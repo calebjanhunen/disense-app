@@ -6,7 +6,7 @@ import {
   Inter_700Bold,
   useFonts,
 } from '@expo-google-fonts/inter';
-import { Platform, SafeAreaView, StatusBar, StyleSheet } from 'react-native';
+import { StatusBar } from 'react-native';
 import 'react-native-gesture-handler';
 import { PaperProvider } from 'react-native-paper';
 import { ThemeProvider } from 'styled-components';
@@ -33,7 +33,6 @@ export default function App(): React.ReactElement | null {
     initDB();
   }, []);
 
-  // console.log(process.env);
   if (!fontLoaded) {
     return null;
   }
@@ -48,12 +47,10 @@ export default function App(): React.ReactElement | null {
           <BLEContextProvider>
             <PaperProvider>
               <ThemeProvider theme={theme}>
-                <SafeAreaView style={styles.AndroidSafeArea}>
-                  <MenuProvider>
-                    <AppNavigation />
-                  </MenuProvider>
-                  {/* <StatusBar barStyle="light-content" /> */}
-                </SafeAreaView>
+                <MenuProvider>
+                  <AppNavigation />
+                  <StatusBar barStyle='default' />
+                </MenuProvider>
               </ThemeProvider>
             </PaperProvider>
           </BLEContextProvider>
@@ -62,11 +59,3 @@ export default function App(): React.ReactElement | null {
     </GestureHandlerRootView>
   );
 }
-
-const styles = StyleSheet.create({
-  AndroidSafeArea: {
-    flex: 1,
-    backgroundColor: 'white',
-    paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
-  },
-});

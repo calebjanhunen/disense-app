@@ -10,6 +10,7 @@ const CustomView = styled(View)`
   padding: 0 16px;
   flex: 1;
   background-color: ${props => props.theme.colors.white};
+  padding-top: 10px;
 `;
 
 export default function PageView({ children }: Props): React.ReactElement {
