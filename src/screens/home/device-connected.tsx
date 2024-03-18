@@ -1,5 +1,4 @@
 import React from 'react';
-import { Text } from 'react-native';
 
 import { PageView } from '@/components';
 import { useSensorData } from '@/context/sensor-context/sensor-context';
@@ -15,8 +14,6 @@ export default function DeviceConnected({
   return (
     <PageView>
       <ConnectedDeviceHeader />
-
-      <Text>DeviceConnected</Text>
       <Button
         onPress={() =>
           navigation.navigate('ThermistorInfo', {
@@ -34,6 +31,16 @@ export default function DeviceConnected({
         }
       >
         View Fsr Info
+      </Button>
+
+      <Button
+        onPress={() =>
+          navigation.navigate('Spo2Info', {
+            spo2Data: spo2Data,
+          })
+        }
+      >
+        View Spo2 Info
       </Button>
     </PageView>
   );

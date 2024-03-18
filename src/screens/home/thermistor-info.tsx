@@ -1,11 +1,8 @@
-import { ThermistorInfoScreenProps } from '@/types/navigation-types';
 import React, { useState } from 'react';
 import { ImageBackground, LayoutChangeEvent } from 'react-native';
-import { Text } from 'react-native-paper';
-import { PageView, Spacer } from '../../components';
-import { useSensorData } from '../../context/sensor-context/sensor-context';
-import CircleFsr from './components/circle-fsr/circle-fsr';
-import SquareFsr from './components/square-fsr/square-fsr';
+
+import { PageView, Spacer } from '@/components';
+import { ThermistorInfoScreenProps } from '@/types/navigation-types';
 import Thermistor from './components/thermistor/thermistor';
 
 export default function ThermistorInfo({
@@ -25,9 +22,6 @@ export default function ThermistorInfo({
   return (
     <PageView>
       <Spacer size='lg' />
-      {/* <Text>SPO2:</Text>
-      <Text>Heart Rate: {spo2Data[0]?.heartRate} bpm</Text>
-      <Text>Blood oxygen: {spo2Data[0]?.bloodOxygen}%</Text> */}
       <ImageBackground
         source={require('../../images/foot.png')}
         resizeMode='contain'
@@ -37,13 +31,6 @@ export default function ThermistorInfo({
         onLayout={onImageLayout}
       >
         {/*Heel*/}
-        {/* <SquareFsr
-          height={imgSize.height * 0.14}
-          width={imgSize.height * 0.14}
-          top={imgSize.height * 0.83}
-          left={imgSize.width * 0.45}
-          sensor={sensorData.fsr[2]}
-        /> */}
         <Thermistor
           height={imgSize.height * 0.05}
           width={imgSize.height * 0.16}
@@ -53,13 +40,6 @@ export default function ThermistorInfo({
         />
 
         {/* 1st Metatarsal */}
-        {/* <CircleFsr
-          height={imgSize.height * 0.098}
-          width={imgSize.height * 0.098}
-          top={imgSize.height * 0.28}
-          left={imgSize.width * 0.64}
-          sensor={sensorData.fsr[0]}
-        /> */}
         <Thermistor
           height={imgSize.height * 0.05}
           width={imgSize.height * 0.11}
@@ -69,13 +49,6 @@ export default function ThermistorInfo({
         />
 
         {/* 5th Metatarsal */}
-        {/* <CircleFsr
-          height={imgSize.height * 0.098}
-          width={imgSize.height * 0.098}
-          top={imgSize.height * 0.28}
-          left={imgSize.width * 0.33}
-          sensor={sensorData.fsr[1]}
-        /> */}
         <Thermistor
           height={imgSize.height * 0.05}
           width={imgSize.height * 0.11}
@@ -85,13 +58,6 @@ export default function ThermistorInfo({
         />
 
         {/* Big Toe */}
-        {/* <CircleFsr
-          height={imgSize.height * 0.098}
-          width={imgSize.height * 0.098}
-          top={imgSize.height * 0.09}
-          left={imgSize.width * 0.76}
-          sensor={sensorData.fsr[3]}
-        /> */}
         <Thermistor
           height={imgSize.height * 0.04}
           width={imgSize.height * 0.08}

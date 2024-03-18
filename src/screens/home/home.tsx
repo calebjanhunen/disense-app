@@ -3,7 +3,6 @@ import React from 'react';
 import { useBLE } from '../../context/ble-context';
 import ConnectDevice from './connect-device';
 import DeviceConnected from './device-connected';
-import DeviceConnected2 from './device-connected2';
 
 export default function Home(): React.ReactElement {
   const { connectedDevice } = useBLE();
