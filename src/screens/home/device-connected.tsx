@@ -26,6 +26,15 @@ export default function DeviceConnected({
       >
         View Thermistor Info
       </Button>
+      <Button
+        onPress={() =>
+          navigation.navigate('FsrInfo', {
+            fsrData: sensorData.fsr,
+          })
+        }
+      >
+        View Fsr Info
+      </Button>
     </PageView>
   );
 }
