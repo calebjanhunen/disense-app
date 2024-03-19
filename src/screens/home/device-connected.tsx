@@ -4,6 +4,7 @@ import { PageView } from '@/components';
 import { useSensorData } from '@/context/sensor-context/sensor-context';
 import { DeviceConnectedScreenProps } from '@/types/navigation-types';
 import { View } from 'react-native';
+import { Text } from 'react-native-paper';
 import BiomarkerOverview from './components/biomarker-overview/biomarker-overview';
 import ConnectedDeviceHeader from './components/connected-device-header/connected-device-header';
 
@@ -17,7 +18,7 @@ export default function DeviceConnected({
       <ConnectedDeviceHeader />
       <View
         style={{
-          gap: 60,
+          gap: 40,
           flex: 1,
           justifyContent: 'center',
         }}
@@ -29,18 +30,41 @@ export default function DeviceConnected({
             })
           }
           icon='thermometer-outline'
+          text='Temperature'
         />
         <BiomarkerOverview
           onPress={() =>
             navigation.navigate('FsrInfo', { fsrData: sensorData.fsr })
           }
+          text='Pressure'
         />
         <BiomarkerOverview
           onPress={() =>
             navigation.navigate('Spo2Info', { spo2Data: spo2Data })
           }
           icon='water-sharp'
+          text='Blood Oxygen'
         />
+      </View>
+      <View
+        style={{
+          flex: 0.1,
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: 6,
+        }}
+      >
+        <Text
+          variant='headlineLarge'
+          style={{
+            textAlign: 'center',
+            fontWeight: 'bold',
+          }}
+        >
+          Overall:
+        </Text>
+        <Text variant='headlineSmall'>Healthy</Text>
       </View>
     </PageView>
   );
