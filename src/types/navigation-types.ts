@@ -3,9 +3,9 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 export type HomeScreenStackParamList = {
   DeviceConnected: undefined;
-  ThermistorInfo: { thermistorData: Thermistor[] };
-  FsrInfo: { fsrData: FSR[] };
-  Spo2Info: { spo2Data: SPO2Sensor[] };
+  'Temperature Information': { thermistorData: Thermistor[] };
+  'Pressure Information': { fsrData: FSR[] };
+  'Blood Oxygen Information': { spo2Data: SPO2Sensor[] };
 };
 
 export type DeviceConnectedScreenProps = NativeStackScreenProps<
@@ -15,15 +15,15 @@ export type DeviceConnectedScreenProps = NativeStackScreenProps<
 
 export type ThermistorInfoScreenProps = NativeStackScreenProps<
   HomeScreenStackParamList,
-  'ThermistorInfo'
+  'Temperature Information'
 >;
 
 export type FsrInfoScreenProps = NativeStackScreenProps<
   HomeScreenStackParamList,
-  'FsrInfo'
+  'Pressure Information'
 >;
 
 export type Spo2InfoScreenProps = NativeStackScreenProps<
   HomeScreenStackParamList,
-  'Spo2Info'
+  'Blood Oxygen Information'
 >;

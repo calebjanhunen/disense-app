@@ -17,9 +17,9 @@ export default function HomeScreenNavigation() {
         options={{ headerShown: false }}
         component={DeviceConnected}
       />
-      <Stack.Screen name='ThermistorInfo' component={ThermistorInfo} />
-      <Stack.Screen name='FsrInfo' component={FsrInfo} />
-      <Stack.Screen name='Spo2Info' component={Spo2Info} />
+      <Stack.Screen name='Temperature Information' component={ThermistorInfo} />
+      <Stack.Screen name='Pressure Information' component={FsrInfo} />
+      <Stack.Screen name='Blood Oxygen Information' component={Spo2Info} />
     </Stack.Navigator>
   );
 }

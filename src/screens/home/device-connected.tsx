@@ -25,7 +25,7 @@ export default function DeviceConnected({
       >
         <BiomarkerOverview
           onPress={() =>
-            navigation.navigate('ThermistorInfo', {
+            navigation.navigate('Temperature Information', {
               thermistorData: sensorData.thermistors,
             })
           }
@@ -34,13 +34,17 @@ export default function DeviceConnected({
         />
         <BiomarkerOverview
           onPress={() =>
-            navigation.navigate('FsrInfo', { fsrData: sensorData.fsr })
+            navigation.navigate('Pressure Information', {
+              fsrData: sensorData.fsr,
+            })
           }
           text='Pressure'
         />
         <BiomarkerOverview
           onPress={() =>
-            navigation.navigate('Spo2Info', { spo2Data: spo2Data })
+            navigation.navigate('Blood Oxygen Information', {
+              spo2Data: spo2Data,
+            })
           }
           icon='water-sharp'
           text='Blood Oxygen'
