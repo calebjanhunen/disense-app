@@ -6,10 +6,13 @@ import {
   Inter_700Bold,
   useFonts,
 } from '@expo-google-fonts/inter';
-import { Platform, SafeAreaView, StatusBar, StyleSheet } from 'react-native';
+import { StatusBar } from 'react-native';
+import 'react-native-gesture-handler';
 import { PaperProvider } from 'react-native-paper';
 import { ThemeProvider } from 'styled-components';
 
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { MenuProvider } from 'react-native-popup-menu';
 import { BLEContextProvider } from './context/ble-context';
 import { SensorContextProvider } from './context/sensor-context/sensor-context';
 import { TestInfoProvider } from './context/test-info-context';
@@ -17,7 +20,6 @@ import { createTables } from './db/db';
 import { useAppUpdates } from './hooks/useAppUpdates';
 import AppNavigation from './navigation/app-navigation';
 import { theme } from './theme/theme';
-import { MenuProvider } from 'react-native-popup-menu';
 
 export default function App(): React.ReactElement | null {
   const [fontLoaded] = useFonts({
@@ -31,7 +33,6 @@ export default function App(): React.ReactElement | null {
     initDB();
   }, []);
 
-  // console.log(process.env);
   if (!fontLoaded) {
     return null;
   }
@@ -40,29 +41,21 @@ export default function App(): React.ReactElement | null {
     await createTables();
   }
   return (
-    <TestInfoProvider>
-      <SensorContextProvider>
-        <BLEContextProvider>
-          <PaperProvider>
-            <ThemeProvider theme={theme}>
-              <SafeAreaView style={styles.AndroidSafeArea}>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <TestInfoProvider>
+        <SensorContextProvider>
+          <BLEContextProvider>
+            <PaperProvider>
+              <ThemeProvider theme={theme}>
                 <MenuProvider>
                   <AppNavigation />
+                  <StatusBar barStyle='default' />
                 </MenuProvider>
-                {/* <StatusBar barStyle="light-content" /> */}
-              </SafeAreaView>
-            </ThemeProvider>
-          </PaperProvider>
-        </BLEContextProvider>
-      </SensorContextProvider>
-    </TestInfoProvider>
+              </ThemeProvider>
+            </PaperProvider>
+          </BLEContextProvider>
+        </SensorContextProvider>
+      </TestInfoProvider>
+    </GestureHandlerRootView>
   );
 }
-
-const styles = StyleSheet.create({
-  AndroidSafeArea: {
-    flex: 1,
-    backgroundColor: 'white',
-    paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
-  },
-});

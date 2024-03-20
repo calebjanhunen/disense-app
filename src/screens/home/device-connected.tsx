@@ -1,107 +1,75 @@
-import React, { useState } from 'react';
-import { ImageBackground, LayoutChangeEvent } from 'react-native';
+import React from 'react';
+
+import { PageView } from '@/components';
+import { useSensorData } from '@/context/sensor-context/sensor-context';
+import { DeviceConnectedScreenProps } from '@/types/navigation-types';
+import { View } from 'react-native';
 import { Text } from 'react-native-paper';
-import { PageView, Spacer } from '../../components';
-import { useSensorData } from '../../context/sensor-context/sensor-context';
-import CircleFsr from './components/circle-fsr/circle-fsr';
+import BiomarkerOverview from './components/biomarker-overview/biomarker-overview';
 import ConnectedDeviceHeader from './components/connected-device-header/connected-device-header';
-import SquareFsr from './components/square-fsr/square-fsr';
-import Thermistor from './components/thermistor/thermistor';
 
-export default function DeviceConnected(): React.ReactElement {
+export default function DeviceConnected({
+  navigation,
+}: DeviceConnectedScreenProps) {
   const { sensorData, spo2Data } = useSensorData();
-  const [imgSize, setImgSize] = useState<{ width: number; height: number }>({
-    width: 0,
-    height: 0,
-  });
-
-  function onImageLayout(event: LayoutChangeEvent) {
-    const { width, height } = event.nativeEvent.layout;
-    setImgSize({ width, height });
-  }
 
   return (
     <PageView>
       <ConnectedDeviceHeader />
-      <Spacer size='lg' />
-      <Text>SPO2:</Text>
-      <Text>Heart Rate: {spo2Data[0]?.heartRate} bpm</Text>
-      <Text>Blood oxygen: {spo2Data[0]?.bloodOxygen}%</Text>
-      <ImageBackground
-        source={require('../../images/foot.png')}
-        resizeMode='contain'
+      <View
         style={{
+          gap: 40,
           flex: 1,
+          justifyContent: 'center',
         }}
-        onLayout={onImageLayout}
       >
-        {/*Heel*/}
-        <SquareFsr
-          height={imgSize.height * 0.14}
-          width={imgSize.height * 0.14}
-          top={imgSize.height * 0.83}
-          left={imgSize.width * 0.45}
-          sensor={sensorData.fsr[2]}
+        <BiomarkerOverview
+          onPress={() =>
+            navigation.navigate('Temperature Information', {
+              thermistorData: sensorData.thermistors,
+            })
+          }
+          icon='thermometer-outline'
+          text='Temperature'
         />
-        <Thermistor
-          height={imgSize.height * 0.05}
-          width={imgSize.height * 0.16}
-          top={imgSize.height * 0.91}
-          left={imgSize.width * 0.33}
-          sensor={sensorData.thermistors[2]}
+        <BiomarkerOverview
+          onPress={() =>
+            navigation.navigate('Pressure Information', {
+              fsrData: sensorData.fsr,
+            })
+          }
+          text='Pressure'
         />
-
-        {/* 1st Metatarsal */}
-        <CircleFsr
-          height={imgSize.height * 0.098}
-          width={imgSize.height * 0.098}
-          top={imgSize.height * 0.28}
-          left={imgSize.width * 0.64}
-          sensor={sensorData.fsr[0]}
+        <BiomarkerOverview
+          onPress={() =>
+            navigation.navigate('Blood Oxygen Information', {
+              spo2Data: spo2Data,
+            })
+          }
+          icon='water-sharp'
+          text='Blood Oxygen'
         />
-        {/* 379.4285 */}
-        <Thermistor
-          height={imgSize.height * 0.05}
-          width={imgSize.height * 0.11}
-          top={imgSize.height * 0.34}
-          left={imgSize.width * 0.55}
-          sensor={sensorData.thermistors[0]}
-        />
-
-        {/* 5th Metatarsal */}
-        <CircleFsr
-          height={imgSize.height * 0.098}
-          width={imgSize.height * 0.098}
-          top={imgSize.height * 0.28}
-          left={imgSize.width * 0.33}
-          sensor={sensorData.fsr[1]}
-        />
-        <Thermistor
-          height={imgSize.height * 0.05}
-          width={imgSize.height * 0.11}
-          top={imgSize.height * 0.34}
-          left={imgSize.width * 0.24}
-          sensor={sensorData.thermistors[1]}
-        />
-
-        {/* Big Toe */}
-        <CircleFsr
-          height={imgSize.height * 0.098}
-          width={imgSize.height * 0.098}
-          top={imgSize.height * 0.09}
-          left={imgSize.width * 0.76}
-          sensor={sensorData.fsr[3]}
-        />
-        <Thermistor
-          height={imgSize.height * 0.04}
-          width={imgSize.height * 0.08}
-          top={imgSize.height * 0.14}
-          left={imgSize.width * 0.7}
-          sensor={sensorData.thermistors[3]}
-        />
-      </ImageBackground>
-
-      <Spacer size='lg' />
+      </View>
+      <View
+        style={{
+          flex: 0.1,
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: 6,
+        }}
+      >
+        <Text
+          variant='headlineLarge'
+          style={{
+            textAlign: 'center',
+            fontWeight: 'bold',
+          }}
+        >
+          Overall:
+        </Text>
+        <Text variant='headlineSmall'>Healthy</Text>
+      </View>
     </PageView>
   );
 }
