@@ -9,6 +9,7 @@ export function checkThermistorsForUlcerRisk(
 ): Thermistor[] {
   const atRiskThermistors: Thermistor[] = [];
   for (let i = 0; i < thermistorData.length; i++) {
+    let count = 0; // num of thermistors
     for (let j = 0; j < thermistorData.length; j++) {
       const therm1F = CtoF(thermistorData[i].temp);
       const therm2F = CtoF(thermistorData[j].temp);
@@ -18,9 +19,14 @@ export function checkThermistorsForUlcerRisk(
           therm1F - therm2F > thresholdVal &&
           !atRiskThermistors.includes(thermistorData[i])
         ) {
-          atRiskThermistors.push(thermistorData[i]);
+          count++;
         }
       }
+    }
+
+    // Only pushes to atRiskThermistors if there is 1 thermistor higher than the other 3
+    if (count === 3) {
+      atRiskThermistors.push(thermistorData[i]);
     }
   }
 
