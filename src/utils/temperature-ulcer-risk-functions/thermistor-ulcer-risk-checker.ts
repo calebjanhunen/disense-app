@@ -1,5 +1,5 @@
 import { Thermistor } from '@/interfaces/Sensor';
-import { CtoF } from './celsius-to-fahrenheit';
+import { CtoF } from '../celsius-to-fahrenheit';
 
 //temperature difference in fahrenheit
 const thresholdVal = 4;

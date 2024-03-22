@@ -1,5 +1,5 @@
 import { Thermistor } from '@/interfaces/Sensor';
-import { checkThermistorsForUlcerRisk } from '@/utils/thermistor-ulcer-risk-checker';
+import { checkThermistorsForUlcerRisk } from '@/utils/temperature-ulcer-risk-functions/thermistor-ulcer-risk-checker';
 
 describe('checkThermistorsForUlcerRisk function', () => {
   test('result should contain 1 thermistor if it is > 4 degrees higher than the other 3 thermistors', () => {

@@ -1,6 +1,6 @@
 import { FSR } from '@/interfaces/Sensor';
-import * as forceToPressureCalculation from '@/utils/pressure-calculations/force-to-pressure';
-import { checkPressureForUlcerRisk } from '@/utils/pressure-calculations/pressure-ulcer-risk-checker';
+import * as forceToPressureCalculation from '@/utils/pressure-ulcer-risk-functions/force-to-pressure';
+import { checkPressureForUlcerRisk } from '@/utils/pressure-ulcer-risk-functions/pressure-ulcer-risk-checker';
 
 describe('checkPressureForUlcerRisk function', () => {
   test('should return false if average pressure is below threshold', () => {

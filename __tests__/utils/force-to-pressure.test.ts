@@ -1,6 +1,6 @@
 import { FSR } from '@/interfaces/Sensor';
-import { forceToPressureInKiloPascals } from '@/utils/pressure-calculations/force-to-pressure';
-import * as shoeSizeToArea from '@/utils/pressure-calculations/shoe-size-to-area';
+import { forceToPressureInKiloPascals } from '@/utils/pressure-ulcer-risk-functions/force-to-pressure';
+import * as shoeSizeToArea from '@/utils/pressure-ulcer-risk-functions/shoe-size-to-area';
 
 describe('forceToPressureInKiloPascals function', () => {
   test('should convert force to pressure successfully', () => {
