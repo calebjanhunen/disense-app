@@ -57,7 +57,7 @@ export default function ThermistorInfo({
             top: imgSize.height * 0.13 - 14,
           }}
         >
-          26.7°C
+          37.2°C
         </Text>
 
         {/* 1st Metatarsal */}
@@ -79,7 +79,7 @@ export default function ThermistorInfo({
             top: imgSize.height * 0.36 - 14,
           }}
         >
-          26.7°C
+          37.8°C
         </Text>
 
         {/* 5th Metatarsal */}
@@ -106,7 +106,7 @@ export default function ThermistorInfo({
             top: imgSize.height * 0.36 + 45,
           }}
         >
-          26.7°C
+          37.1°C
         </Text>
 
         {/* Heel */}
@@ -128,7 +128,7 @@ export default function ThermistorInfo({
             top: imgSize.height * 0.8 - 14,
           }}
         >
-          26.7°C
+          36.1°C
         </Text>
       </View>
       <Spacer size='lg' />
