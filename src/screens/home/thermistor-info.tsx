@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
-import { ImageBackground, LayoutChangeEvent } from 'react-native';
+import { Image, LayoutChangeEvent, View } from 'react-native';
 
 import { PageView, Spacer } from '@/components';
 import { ThermistorInfoScreenProps } from '@/types/navigation-types';
-import Thermistor from './components/thermistor/thermistor';
+import { Text } from 'react-native-paper';
+
+const lineColor: string = 'grey';
 
 export default function ThermistorInfo({
   route,
@@ -21,52 +23,114 @@ export default function ThermistorInfo({
 
   return (
     <PageView>
-      <Spacer size='lg' />
-      <ImageBackground
-        source={require('../../images/foot.png')}
-        resizeMode='contain'
+      <View
         style={{
           flex: 1,
+          position: 'relative',
         }}
-        onLayout={onImageLayout}
       >
-        {/*Heel*/}
-        <Thermistor
-          height={imgSize.height * 0.05}
-          width={imgSize.height * 0.16}
-          top={imgSize.height * 0.91}
-          left={imgSize.width * 0.33}
-          sensor={thermistorData[2]}
+        <Image
+          source={require('../../images/foot.png')}
+          resizeMode='contain'
+          style={{
+            width: '60%',
+            height: '80%',
+          }}
+          onLayout={onImageLayout}
         />
+        {/* Big Toe */}
+        <View
+          style={{
+            height: 2,
+            width: 100,
+            left: imgSize.width * 0.86,
+            top: imgSize.height * 0.13,
+            backgroundColor: lineColor,
+            position: 'absolute',
+          }}
+        ></View>
+        <Text
+          variant='titleLarge'
+          style={{
+            position: 'absolute',
+            left: imgSize.width * 0.86 + 100 + 10,
+            top: imgSize.height * 0.13 - 14,
+          }}
+        >
+          26.7°C
+        </Text>
 
         {/* 1st Metatarsal */}
-        <Thermistor
-          height={imgSize.height * 0.05}
-          width={imgSize.height * 0.11}
-          top={imgSize.height * 0.34}
-          left={imgSize.width * 0.55}
-          sensor={thermistorData[0]}
-        />
+        <View
+          style={{
+            height: 2,
+            width: 133,
+            left: imgSize.width * 0.7,
+            top: imgSize.height * 0.36,
+            backgroundColor: lineColor,
+            position: 'absolute',
+          }}
+        ></View>
+        <Text
+          variant='titleLarge'
+          style={{
+            position: 'absolute',
+            left: imgSize.width * 0.7 + 133 + 10,
+            top: imgSize.height * 0.36 - 14,
+          }}
+        >
+          26.7°C
+        </Text>
 
         {/* 5th Metatarsal */}
-        <Thermistor
-          height={imgSize.height * 0.05}
-          width={imgSize.height * 0.11}
-          top={imgSize.height * 0.34}
-          left={imgSize.width * 0.24}
-          sensor={thermistorData[1]}
-        />
+        <View
+          style={{
+            height: 60,
+            width: 244,
+            left: imgSize.width * 0.2,
+            top: imgSize.height * 0.36,
+            // backgroundColor: lineColor,
+            borderWidth: 2,
+            borderBottomColor: lineColor,
+            borderLeftColor: lineColor,
+            borderRightColor: 'transparent',
+            borderTopColor: 'transparent',
+            position: 'absolute',
+          }}
+        ></View>
+        <Text
+          variant='titleLarge'
+          style={{
+            position: 'absolute',
+            left: imgSize.width * 0.2 + 244 + 10,
+            top: imgSize.height * 0.36 + 45,
+          }}
+        >
+          26.7°C
+        </Text>
 
-        {/* Big Toe */}
-        <Thermistor
-          height={imgSize.height * 0.04}
-          width={imgSize.height * 0.08}
-          top={imgSize.height * 0.14}
-          left={imgSize.width * 0.7}
-          sensor={thermistorData[3]}
-        />
-      </ImageBackground>
-
+        {/* Heel */}
+        <View
+          style={{
+            height: 2,
+            width: 180,
+            left: imgSize.width * 0.45,
+            top: imgSize.height * 0.8,
+            backgroundColor: lineColor,
+            position: 'absolute',
+          }}
+        ></View>
+        <Text
+          variant='titleLarge'
+          style={{
+            position: 'absolute',
+            left: imgSize.width * 0.45 + 180 + 10,
+            top: imgSize.height * 0.8 - 14,
+          }}
+        >
+          26.7°C
+        </Text>
+      </View>
       <Spacer size='lg' />
     </PageView>
   );
