@@ -100,7 +100,7 @@ export function SensorContextProvider({ children }: Props) {
     setSensorData(tempSensorData);
 
     const atRiskThermistors = checkThermistorsForUlcerRisk(thermistorData);
-    console.log(atRiskThermistors);
+    // console.log(atRiskThermistors);
     // const isPressureAtRisk = checkPressureForUlcerRisk(fsrData);
   }
 

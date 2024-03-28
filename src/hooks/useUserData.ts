@@ -1,5 +1,6 @@
 import { TestInfoContext } from '@/context/test-info-context';
-import { getAllUsersFromDb, insertUser } from '@/db/user-repository';
+import { UserContext } from '@/context/user-context';
+import { getAllUsersFromDb, getById, insertUser } from '@/db/user-repository';
 import { User } from '@/interfaces/User';
 import { handleError } from '@/utils/error-handler';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -8,26 +9,29 @@ import { Alert } from 'react-native';
 
 interface IUseUserData {
   saveUser: (user: User) => Promise<void>;
-  getCurrentUser: () => Promise<void>;
-  removeCurrentUser: () => Promise<void>;
+  getCurrentUserFromAsyncStorage: () => Promise<void>;
+  removeCurrentUserFromAsyncStorage: () => Promise<void>;
   getAllUsers: () => Promise<User[]>;
   setSelectedUser: (userId: number) => Promise<void>;
   isSaving: boolean;
+  user: User | null;
 }
 
 export function useUserData(): IUseUserData {
-  const { setUser } = useContext(TestInfoContext);
+  const { setUser: setUserForTesting } = useContext(TestInfoContext);
+  const { setUser, user } = useContext(UserContext);
   const [isSaving, setIsSaving] = useState<boolean>(false);
 
-  async function saveUser(user: User): Promise<void> {
+  async function saveUser(newUser: User): Promise<void> {
     setIsSaving(true);
     try {
-      const userId = await insertUser(user);
+      const userId = await insertUser(newUser);
       if (!userId) {
         handleError('Error saving user. ', 'Could not save user');
         return;
       }
-      setUser(userId);
+      setUserForTesting(userId);
+      setUser(newUser);
       await saveUserToAsyncStorage(userId);
       Alert.alert('Success', `User ${userId} saved successfully`);
     } catch (e) {
@@ -41,19 +45,29 @@ export function useUserData(): IUseUserData {
     await AsyncStorage.setItem('current_user', userId.toString());
   }
 
-  async function getCurrentUser(): Promise<void> {
+  async function getCurrentUserFromAsyncStorage(): Promise<void> {
     try {
       const currentUser = await AsyncStorage.getItem('current_user');
-      if (currentUser) setUser(parseInt(currentUser));
+      if (!currentUser) {
+        return;
+      }
+      setUserForTesting(parseInt(currentUser));
+
+      const user = await getById(parseInt(currentUser));
+      if (!user) {
+        throw new Error(`User with id: ${currentUser} does not exist`);
+      }
+      setUser(user);
     } catch (e) {
       handleError('Error getting current user.', e);
     }
   }
 
-  async function removeCurrentUser(): Promise<void> {
+  async function removeCurrentUserFromAsyncStorage(): Promise<void> {
     try {
       await AsyncStorage.removeItem('current_user');
-      setUser(0);
+      setUserForTesting(0);
+      setUser(null);
     } catch (e) {
       handleError('Could not remove current user.', e);
     }
@@ -70,7 +84,17 @@ export function useUserData(): IUseUserData {
   }
 
   async function setSelectedUser(userId: number): Promise<void> {
-    setUser(userId);
+    try {
+      const user = await getById(userId);
+      if (user) {
+        setUser(user);
+      } else {
+        throw new Error(`User with id: ${userId} does not exist`);
+      }
+    } catch (e) {
+      handleError(`Could not find user with id: ${userId}`, e);
+    }
+    setUserForTesting(userId);
     try {
       await saveUserToAsyncStorage(userId);
     } catch (e) {
@@ -79,11 +103,12 @@ export function useUserData(): IUseUserData {
   }
 
   return {
-    getCurrentUser,
+    getCurrentUserFromAsyncStorage,
     saveUser,
     isSaving,
-    removeCurrentUser,
+    removeCurrentUserFromAsyncStorage,
     getAllUsers,
     setSelectedUser,
+    user,
   };
 }

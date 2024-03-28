@@ -9,8 +9,9 @@ import { Dropdown } from 'react-native-element-dropdown';
 import PopupMenu from './components/popup-menu/popup-menu';
 
 export default function UserSetup() {
-  const { user } = useContext(TestInfoContext);
-  const { saveUser, isSaving, getAllUsers, setSelectedUser } = useUserData();
+  const { user: userForTesting } = useContext(TestInfoContext);
+  const { saveUser, isSaving, getAllUsers, setSelectedUser, user } =
+    useUserData();
   const [weight, setWeight] = useState<string>('');
   const [height, setHeight] = useState<string>('');
   const [shoeSize, setShoeSize] = useState<string>('');
@@ -79,7 +80,9 @@ export default function UserSetup() {
         backgroundColor='secondary'
         textColor='primary'
         onPress={saveUserToDb}
-        disabled={!weight || !height || !shoeSize || isSaving || user !== 0}
+        disabled={
+          !weight || !height || !shoeSize || isSaving || userForTesting !== 0
+        }
       >
         {isSaving ? (
           <ActivityIndicator size='large' color='white' />
@@ -88,7 +91,7 @@ export default function UserSetup() {
         )}
       </CustomBtn>
       <Spacer size='xxxs' />
-      {user !== 0 && (
+      {userForTesting !== 0 && (
         <Text style={{ textAlign: 'center', color: 'red' }}>
           Finish current test before creating another user.
         </Text>

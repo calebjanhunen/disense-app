@@ -31,7 +31,7 @@ export default function TestPage() {
     useContext(TestInfoContext);
   const { startStopwatch, timeDisplay, stopStopwatch } = useStopwatch();
   const { sensorData, getSensorData, noDataText } = useSensorData();
-  const { removeCurrentUser } = useUserData();
+  const { removeCurrentUserFromAsyncStorage } = useUserData();
 
   async function getSensorDataForTable(sensorType: SensorType) {
     await getSensorData(sensorType);
@@ -106,7 +106,7 @@ export default function TestPage() {
           text: 'Yes',
           onPress: async () => {
             await ExportDBManager.exportDatabaseFilesForUser(user);
-            await removeCurrentUser();
+            await removeCurrentUserFromAsyncStorage();
           },
         },
       ]

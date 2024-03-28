@@ -20,6 +20,7 @@ import { createTables } from './db/db';
 import { useAppUpdates } from './hooks/useAppUpdates';
 import AppNavigation from './navigation/app-navigation';
 import { theme } from './theme/theme';
+import { UserProvider } from './context/user-context';
 
 export default function App(): React.ReactElement | null {
   const [fontLoaded] = useFonts({
@@ -42,20 +43,22 @@ export default function App(): React.ReactElement | null {
   }
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <TestInfoProvider>
-        <SensorContextProvider>
-          <BLEContextProvider>
-            <PaperProvider>
-              <ThemeProvider theme={theme}>
-                <MenuProvider>
-                  <AppNavigation />
-                  <StatusBar barStyle='default' />
-                </MenuProvider>
-              </ThemeProvider>
-            </PaperProvider>
-          </BLEContextProvider>
-        </SensorContextProvider>
-      </TestInfoProvider>
+      <UserProvider>
+        <TestInfoProvider>
+          <SensorContextProvider>
+            <BLEContextProvider>
+              <PaperProvider>
+                <ThemeProvider theme={theme}>
+                  <MenuProvider>
+                    <AppNavigation />
+                    <StatusBar barStyle='default' />
+                  </MenuProvider>
+                </ThemeProvider>
+              </PaperProvider>
+            </BLEContextProvider>
+          </SensorContextProvider>
+        </TestInfoProvider>
+      </UserProvider>
     </GestureHandlerRootView>
   );
 }

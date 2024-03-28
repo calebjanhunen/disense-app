@@ -11,10 +11,10 @@ import { useUserData } from '@/hooks/useUserData';
 const Tab = createBottomTabNavigator();
 
 export default function AppNavigation() {
-  const { getCurrentUser } = useUserData();
+  const { getCurrentUserFromAsyncStorage } = useUserData();
 
   useEffect(() => {
-    getCurrentUser();
+    getCurrentUserFromAsyncStorage();
   }, []);
 
   return (
