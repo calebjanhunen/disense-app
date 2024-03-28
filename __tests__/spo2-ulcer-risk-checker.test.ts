@@ -7,20 +7,20 @@ describe('checkSpo2ForUlcerRisk function', () => {
 
     const result = checkSpo2ForUlcerRisk(spo2Data);
 
-    expect(result).toStrictEqual(spo2Data);
+    expect(result).toStrictEqual(true);
   });
   test('should return array of size 0 if the sensor is equal to the threshold', () => {
     const spo2Data: SPO2Sensor[] = [{ id: 1, heartRate: 70, bloodOxygen: 94 }];
 
     const result = checkSpo2ForUlcerRisk(spo2Data);
 
-    expect(result).toStrictEqual([]);
+    expect(result).toStrictEqual(false);
   });
   test('should return array of size 0 if the sensor is greater than the threshold', () => {
     const spo2Data: SPO2Sensor[] = [{ id: 1, heartRate: 70, bloodOxygen: 99 }];
 
     const result = checkSpo2ForUlcerRisk(spo2Data);
 
-    expect(result).toStrictEqual([]);
+    expect(result).toStrictEqual(false);
   });
 });
