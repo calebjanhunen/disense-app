@@ -44,22 +44,10 @@ export function SensorContextProvider({ children }: Props) {
   const [isPressureAtRisk, setIsPressureAtRisk] = useState<boolean>(false);
   const [isSpo2AtRisk, setIsSpo2AtRisk] = useState<boolean>(false);
   const [sensorData, setSensorData] = useState<AnalogSensors>({
-    thermistors: [
-      { id: 1, temp: 37.7 },
-      { id: 2, temp: 33.9 },
-      { id: 3, temp: 33.9 },
-      { id: 4, temp: 33.9 },
-    ],
-    fsr: [
-      { id: 1, force: 800 },
-      { id: 2, force: 820 },
-      { id: 3, force: 910 },
-      { id: 4, force: 739 },
-    ],
+    thermistors: [],
+    fsr: [],
   });
-  const [spo2Data, setSpo2Data] = useState<SPO2Sensor[]>([
-    { id: 1, heartRate: 70, bloodOxygen: 93 },
-  ]);
+  const [spo2Data, setSpo2Data] = useState<SPO2Sensor[]>([]);
   const { user: userForTesting, isTestRunning } = useContext(TestInfoContext);
 
   useEffect(() => {
@@ -74,11 +62,6 @@ export function SensorContextProvider({ children }: Props) {
       spo2Data[0].bloodOxygen !== 0 &&
       insertSpo2Data(spo2Data);
   }, [spo2Data]);
-
-  useEffect(() => {
-    updateThermistorAndFsrData(sensorData.thermistors, sensorData.fsr);
-    updateSpo2Data(spo2Data);
-  }, []);
 
   async function insertThermistorData(
     thermistorData: Thermistor[]
@@ -138,3 +121,20 @@ export function SensorContextProvider({ children }: Props) {
     </SensorContext.Provider>
   );
 }
+
+/** For development (fake data):
+ * thermistors: [
+      { id: 1, temp: 37.7 },
+      { id: 2, temp: 33.9 },
+      { id: 3, temp: 33.9 },
+      { id: 4, temp: 33.9 },
+    ],
+    fsr: [
+      { id: 1, force: 800 },
+      { id: 2, force: 820 },
+      { id: 3, force: 910 },
+      { id: 4, force: 739 },
+    ],
+
+    { id: 1, heartRate: 70, bloodOxygen: 93 },
+ */
