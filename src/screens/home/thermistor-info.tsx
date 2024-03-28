@@ -57,7 +57,7 @@ export default function ThermistorInfo({
             top: imgSize.height * 0.13 - 14,
           }}
         >
-          37.2°C
+          {thermistorData[3]?.temp || 'NaN'}°C
         </Text>
 
         {/* 1st Metatarsal */}
@@ -79,7 +79,7 @@ export default function ThermistorInfo({
             top: imgSize.height * 0.36 - 14,
           }}
         >
-          37.8°C
+          {thermistorData[0]?.temp || 'NaN'}°C
         </Text>
 
         {/* 5th Metatarsal */}
@@ -106,7 +106,7 @@ export default function ThermistorInfo({
             top: imgSize.height * 0.36 + 45,
           }}
         >
-          37.1°C
+          {thermistorData[1]?.temp || 'NaN'}°C
         </Text>
 
         {/* Heel */}
@@ -128,7 +128,7 @@ export default function ThermistorInfo({
             top: imgSize.height * 0.8 - 14,
           }}
         >
-          36.1°C
+          {thermistorData[2]?.temp || 'NaN'}°C
         </Text>
       </View>
       <Spacer size='lg' />

@@ -37,7 +37,7 @@ export default function Spo2Info({ route }: Spo2InfoScreenProps) {
               variant='displayLarge'
               style={{ fontWeight: 'bold', color: 'green' }}
             >
-              66
+              {spo2Data[0]?.heartRate || 'NaN'}
             </Text>
             <View>
               <Ionicons name='heart' color='red' size={20} />
@@ -50,7 +50,7 @@ export default function Spo2Info({ route }: Spo2InfoScreenProps) {
               variant='displayLarge'
               style={{ fontWeight: 'bold', color: 'green' }}
             >
-              97
+              {spo2Data[0]?.bloodOxygen || 'NaN'}
             </Text>
             <View>
               <Ionicons name='water-sharp' color='red' size={20} />
@@ -58,51 +58,6 @@ export default function Spo2Info({ route }: Spo2InfoScreenProps) {
             </View>
           </View>
         </View>
-        {/* <View
-          style={{
-            flexDirection: 'row',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: 40,
-          }}
-        >
-          <Text variant='headlineSmall'>Heart Rate</Text>
-          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-            <Text
-              variant='displayLarge'
-              style={{ fontWeight: 'bold', color: 'green' }}
-            >
-              66
-            </Text>
-            <View>
-              <Ionicons name='heart' color='red' size={20} />
-              <Text variant='labelLarge'>{spo2Data[0]?.heartRate} BPM</Text>
-            </View>
-          </View>
-        </View>
-
-        <View
-          style={{
-            flexDirection: 'row',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: 40,
-          }}
-        >
-          <Text variant='headlineSmall'>Blood Oxygen</Text>
-          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-            <Text
-              variant='displayLarge'
-              style={{ fontWeight: 'bold', color: 'green' }}
-            >
-              97
-            </Text>
-            <View>
-              <Ionicons name='water-sharp' color='red' size={20} />
-              <Text variant='labelLarge'>{spo2Data[0]?.heartRate} %</Text>
-            </View>
-          </View>
-        </View> */}
       </View>
     </PageView>
   );

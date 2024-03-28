@@ -57,7 +57,7 @@ export default function FsrInfo({
             top: imgSize.height * 0.13 - 14,
           }}
         >
-          623N
+          {fsrData[3]?.force || 'NaN'}N
         </Text>
 
         {/* 1st Metatarsal */}
@@ -79,7 +79,7 @@ export default function FsrInfo({
             top: imgSize.height * 0.36 - 14,
           }}
         >
-          851N
+          {fsrData[0]?.force || 'NaN'}N
         </Text>
 
         {/* 5th Metatarsal */}
@@ -105,7 +105,7 @@ export default function FsrInfo({
             top: imgSize.height * 0.36 + 45,
           }}
         >
-          823N
+          {fsrData[1]?.force || 'NaN'}N
         </Text>
 
         {/* Heel */}
@@ -127,7 +127,7 @@ export default function FsrInfo({
             top: imgSize.height * 0.8 - 14,
           }}
         >
-          889N
+          {fsrData[2]?.force || 'NaN'}N
         </Text>
       </View>
       <Spacer size='lg' />
