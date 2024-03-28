@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { PageView } from '@/components';
 import { useSensorData } from '@/context/sensor-context/sensor-context';
@@ -11,7 +11,47 @@ import ConnectedDeviceHeader from './components/connected-device-header/connecte
 export default function DeviceConnected({
   navigation,
 }: DeviceConnectedScreenProps) {
-  const { sensorData, spo2Data } = useSensorData();
+  const {
+    sensorData,
+    spo2Data,
+    atRiskThermistors,
+    isPressureAtRisk,
+    isSpo2AtRisk,
+  } = useSensorData();
+  const [thermistorRiskLevel, setThermistorRiskLevel] = useState<0 | 1 | 2>(0);
+  const [pressureRiskLevel, setPressureRiskLevel] = useState<0 | 1 | 2>(0);
+  const [spo2RiskLevel, setSpo2RiskLevel] = useState<0 | 1 | 2>(0);
+
+  useEffect(() => {
+    if (atRiskThermistors.length === 0) {
+      setThermistorRiskLevel(0);
+    } else if (atRiskThermistors.length > 0 && atRiskThermistors.length < 3) {
+      setThermistorRiskLevel(1);
+    } else {
+      setThermistorRiskLevel(2);
+    }
+  }, [atRiskThermistors]);
+
+  useEffect(() => {
+    isPressureAtRisk && setPressureRiskLevel(2);
+  }, [isPressureAtRisk]);
+
+  useEffect(() => {
+    isSpo2AtRisk && setSpo2RiskLevel(2);
+  }, [isSpo2AtRisk]);
+
+  function calculateTotalRiskLevel(): string {
+    const totalRiskLevel =
+      spo2RiskLevel + pressureRiskLevel + thermistorRiskLevel;
+    if (totalRiskLevel === 0) {
+      return 'Healthy';
+    } else if (totalRiskLevel > 0 && totalRiskLevel < 3) {
+      return 'Moderate Risk';
+    } else if (totalRiskLevel > 2) {
+      return 'High Risk';
+    }
+    return 'Healthy';
+  }
 
   return (
     <PageView>
@@ -31,6 +71,7 @@ export default function DeviceConnected({
           }
           icon='thermometer-outline'
           text='Temperature'
+          riskLevel={thermistorRiskLevel}
         />
         <BiomarkerOverview
           onPress={() =>
@@ -39,6 +80,7 @@ export default function DeviceConnected({
             })
           }
           text='Pressure'
+          riskLevel={pressureRiskLevel}
         />
         <BiomarkerOverview
           onPress={() =>
@@ -48,6 +90,7 @@ export default function DeviceConnected({
           }
           icon='water-sharp'
           text='Blood Oxygen'
+          riskLevel={spo2RiskLevel}
         />
       </View>
       <View
@@ -68,7 +111,7 @@ export default function DeviceConnected({
         >
           Overall:
         </Text>
-        <Text variant='headlineSmall'>Healthy</Text>
+        <Text variant='headlineSmall'>{calculateTotalRiskLevel()}</Text>
       </View>
     </PageView>
   );

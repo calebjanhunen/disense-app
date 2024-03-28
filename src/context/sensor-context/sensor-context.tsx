@@ -45,7 +45,7 @@ export function SensorContextProvider({ children }: Props) {
   const [isSpo2AtRisk, setIsSpo2AtRisk] = useState<boolean>(false);
   const [sensorData, setSensorData] = useState<AnalogSensors>({
     thermistors: [
-      { id: 1, temp: 36.7 },
+      { id: 1, temp: 37.7 },
       { id: 2, temp: 33.9 },
       { id: 3, temp: 33.9 },
       { id: 4, temp: 33.9 },
@@ -58,7 +58,7 @@ export function SensorContextProvider({ children }: Props) {
     ],
   });
   const [spo2Data, setSpo2Data] = useState<SPO2Sensor[]>([
-    { id: 1, heartRate: 70, bloodOxygen: 94 },
+    { id: 1, heartRate: 70, bloodOxygen: 93 },
   ]);
   const { user: userForTesting, isTestRunning } = useContext(TestInfoContext);
 
@@ -98,7 +98,6 @@ export function SensorContextProvider({ children }: Props) {
     thermistorData: Thermistor[],
     fsrData: FSR[]
   ): void {
-    console.log(user);
     const tempSensorData: AnalogSensors = {
       thermistors: new Array(4),
       fsr: new Array(4),
@@ -116,8 +115,6 @@ export function SensorContextProvider({ children }: Props) {
     setAtRiskThermistors(checkThermistorsForUlcerRisk(thermistorData));
     if (user)
       setIsPressureAtRisk(checkPressureForUlcerRisk(fsrData, user?.shoeSize));
-
-    console.log(atRiskThermistors, isPressureAtRisk);
   }
 
   function updateSpo2Data(spo2Data: SPO2Sensor[]): void {

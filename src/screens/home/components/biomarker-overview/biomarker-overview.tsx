@@ -8,11 +8,17 @@ interface Props {
   onPress: () => void;
   icon?: keyof typeof Ionicons.glyphMap;
   text: 'Temperature' | 'Blood Oxygen' | 'Pressure';
+  riskLevel: 0 | 1 | 2;
 }
 
-export default function BiomarkerOverview({ onPress, icon, text }: Props) {
+export default function BiomarkerOverview({
+  onPress,
+  icon,
+  text,
+  riskLevel,
+}: Props) {
   return (
-    <Container onPress={onPress}>
+    <Container onPress={onPress} riskLevel={riskLevel}>
       <Left>
         {icon ? <Ionicons name={icon} size={60} /> : <PressureIcon />}
 
