@@ -100,12 +100,13 @@ export function SensorContextProvider({ children }: Props) {
     setSensorData(tempSensorData);
 
     const atRiskThermistors = checkThermistorsForUlcerRisk(thermistorData);
-    const isPressureAtRisk = checkPressureForUlcerRisk(fsrData,);
+    console.log(atRiskThermistors);
+    // const isPressureAtRisk = checkPressureForUlcerRisk(fsrData);
   }
 
   function updateSpo2Data(spo2Data: SPO2Sensor[]): void {
     setSpo2Data(spo2Data);
-    const atRiskThermistors = checkSpo2ForUlcerRisk(spo2Data);
+    const isSpo2AtRisk = checkSpo2ForUlcerRisk(spo2Data);
   }
 
   return (

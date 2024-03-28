@@ -41,7 +41,7 @@ export default function Spo2Info({ route }: Spo2InfoScreenProps) {
             </Text>
             <View>
               <Ionicons name='heart' color='red' size={20} />
-              <Text variant='labelLarge'>{spo2Data[0]?.heartRate} BPM</Text>
+              <Text variant='labelLarge'>BPM</Text>
             </View>
           </View>
 
@@ -54,7 +54,7 @@ export default function Spo2Info({ route }: Spo2InfoScreenProps) {
             </Text>
             <View>
               <Ionicons name='water-sharp' color='red' size={20} />
-              <Text variant='labelLarge'>{spo2Data[0]?.heartRate} %</Text>
+              <Text variant='labelLarge'>%</Text>
             </View>
           </View>
         </View>
