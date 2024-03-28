@@ -15,6 +15,7 @@ import { TestInfoContext } from '../test-info-context';
 import { checkThermistorsForUlcerRisk } from '@/utils/temperature-ulcer-risk-functions/thermistor-ulcer-risk-checker';
 import { checkPressureForUlcerRisk } from '@/utils/pressure-ulcer-risk-functions/pressure-ulcer-risk-checker';
 import { checkSpo2ForUlcerRisk } from '@/utils/spo2-ulcer-risk-functions/spo2-ulcer-risk-checker';
+import { useUserData } from '@/hooks/useUserData';
 
 interface ISensorContext {
   sensorData: AnalogSensors;
@@ -24,6 +25,9 @@ interface ISensorContext {
     fsrData: FSR[]
   ) => void;
   updateSpo2Data: (spo2Data: SPO2Sensor[]) => void;
+  atRiskThermistors: Thermistor[];
+  isPressureAtRisk: boolean;
+  isSpo2AtRisk: boolean;
 }
 
 interface Props {
@@ -35,6 +39,10 @@ const SensorContext = createContext<ISensorContext>({} as ISensorContext);
 export const useSensorData = () => useContext(SensorContext);
 
 export function SensorContextProvider({ children }: Props) {
+  const { user } = useUserData();
+  const [atRiskThermistors, setAtRiskThermistors] = useState<Thermistor[]>([]);
+  const [isPressureAtRisk, setIsPressureAtRisk] = useState<boolean>(false);
+  const [isSpo2AtRisk, setIsSpo2AtRisk] = useState<boolean>(false);
   const [sensorData, setSensorData] = useState<AnalogSensors>({
     thermistors: [
       { id: 1, temp: 36.7 },
@@ -50,9 +58,9 @@ export function SensorContextProvider({ children }: Props) {
     ],
   });
   const [spo2Data, setSpo2Data] = useState<SPO2Sensor[]>([
-    { id: 1, heartRate: 70, bloodOxygen: 93 },
+    { id: 1, heartRate: 70, bloodOxygen: 94 },
   ]);
-  const { user, isTestRunning } = useContext(TestInfoContext);
+  const { user: userForTesting, isTestRunning } = useContext(TestInfoContext);
 
   useEffect(() => {
     if (isTestRunning) {
@@ -67,24 +75,30 @@ export function SensorContextProvider({ children }: Props) {
       insertSpo2Data(spo2Data);
   }, [spo2Data]);
 
+  useEffect(() => {
+    updateThermistorAndFsrData(sensorData.thermistors, sensorData.fsr);
+    updateSpo2Data(spo2Data);
+  }, []);
+
   async function insertThermistorData(
     thermistorData: Thermistor[]
   ): Promise<void> {
-    await bulkInsertIntoThermistorTable(thermistorData, user);
+    await bulkInsertIntoThermistorTable(thermistorData, userForTesting);
   }
 
   async function insertFsrData(fsrData: FSR[]): Promise<void> {
-    await bulkInsertIntoFSRTable(fsrData, user);
+    await bulkInsertIntoFSRTable(fsrData, userForTesting);
   }
 
   async function insertSpo2Data(spo2Data: SPO2Sensor[]): Promise<void> {
-    await bulkInsertIntoSPO2Table(spo2Data, user);
+    await bulkInsertIntoSPO2Table(spo2Data, userForTesting);
   }
 
   function updateThermistorAndFsrData(
     thermistorData: Thermistor[],
     fsrData: FSR[]
   ): void {
+    console.log(user);
     const tempSensorData: AnalogSensors = {
       thermistors: new Array(4),
       fsr: new Array(4),
@@ -99,14 +113,16 @@ export function SensorContextProvider({ children }: Props) {
     }
     setSensorData(tempSensorData);
 
-    const atRiskThermistors = checkThermistorsForUlcerRisk(thermistorData);
-    // console.log(atRiskThermistors);
-    // const isPressureAtRisk = checkPressureForUlcerRisk(fsrData);
+    setAtRiskThermistors(checkThermistorsForUlcerRisk(thermistorData));
+    if (user)
+      setIsPressureAtRisk(checkPressureForUlcerRisk(fsrData, user?.shoeSize));
+
+    console.log(atRiskThermistors, isPressureAtRisk);
   }
 
   function updateSpo2Data(spo2Data: SPO2Sensor[]): void {
     setSpo2Data(spo2Data);
-    const isSpo2AtRisk = checkSpo2ForUlcerRisk(spo2Data);
+    setIsSpo2AtRisk(checkSpo2ForUlcerRisk(spo2Data));
   }
 
   return (
@@ -116,6 +132,9 @@ export function SensorContextProvider({ children }: Props) {
         spo2Data,
         updateThermistorAndFsrData,
         updateSpo2Data,
+        atRiskThermistors,
+        isPressureAtRisk,
+        isSpo2AtRisk,
       }}
     >
       {children}
