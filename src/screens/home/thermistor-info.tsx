@@ -2,15 +2,13 @@ import React, { useState } from 'react';
 import { Image, LayoutChangeEvent, View } from 'react-native';
 
 import { PageView, Spacer } from '@/components';
-import { ThermistorInfoScreenProps } from '@/types/navigation-types';
 import { Text } from 'react-native-paper';
+import { useSensorData } from '@/context/sensor-context/sensor-context';
 
 const lineColor: string = 'grey';
 
-export default function ThermistorInfo({
-  route,
-}: ThermistorInfoScreenProps): React.ReactElement {
-  const { thermistorData } = route.params;
+export default function ThermistorInfo(): React.ReactElement {
+  const { sensorData, atRiskThermistors } = useSensorData();
   const [imgSize, setImgSize] = useState<{ width: number; height: number }>({
     width: 0,
     height: 0,
@@ -55,9 +53,13 @@ export default function ThermistorInfo({
             position: 'absolute',
             left: imgSize.width * 0.86 + 100 + 10,
             top: imgSize.height * 0.13 - 14,
+            color:
+              sensorData.thermistors[3]?.id === atRiskThermistors[0]?.id
+                ? 'red'
+                : 'black',
           }}
         >
-          {thermistorData[3]?.temp || 'NaN'}°C
+          {sensorData.thermistors[3]?.temp || 'NaN'}°C
         </Text>
 
         {/* 1st Metatarsal */}
@@ -77,9 +79,13 @@ export default function ThermistorInfo({
             position: 'absolute',
             left: imgSize.width * 0.7 + 133 + 10,
             top: imgSize.height * 0.36 - 14,
+            color:
+              sensorData.thermistors[0]?.id === atRiskThermistors[0]?.id
+                ? 'red'
+                : 'black',
           }}
         >
-          {thermistorData[0]?.temp || 'NaN'}°C
+          {sensorData.thermistors[0]?.temp || 'NaN'}°C
         </Text>
 
         {/* 5th Metatarsal */}
@@ -104,9 +110,13 @@ export default function ThermistorInfo({
             position: 'absolute',
             left: imgSize.width * 0.2 + 244 + 10,
             top: imgSize.height * 0.36 + 45,
+            color:
+              sensorData.thermistors[1]?.id === atRiskThermistors[0]?.id
+                ? 'red'
+                : 'black',
           }}
         >
-          {thermistorData[1]?.temp || 'NaN'}°C
+          {sensorData.thermistors[1]?.temp || 'NaN'}°C
         </Text>
 
         {/* Heel */}
@@ -126,9 +136,13 @@ export default function ThermistorInfo({
             position: 'absolute',
             left: imgSize.width * 0.45 + 180 + 10,
             top: imgSize.height * 0.8 - 14,
+            color:
+              sensorData.thermistors[2]?.id === atRiskThermistors[0]?.id
+                ? 'red'
+                : 'black',
           }}
         >
-          {thermistorData[2]?.temp || 'NaN'}°C
+          {sensorData.thermistors[2]?.temp || 'NaN'}°C
         </Text>
       </View>
       <Spacer size='lg' />

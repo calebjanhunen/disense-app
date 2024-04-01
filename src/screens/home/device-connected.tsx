@@ -23,21 +23,27 @@ export default function DeviceConnected({
   const [spo2RiskLevel, setSpo2RiskLevel] = useState<0 | 1 | 2>(0);
 
   useEffect(() => {
-    if (atRiskThermistors.length === 0) {
-      setThermistorRiskLevel(0);
-    } else if (atRiskThermistors.length > 0 && atRiskThermistors.length < 3) {
-      setThermistorRiskLevel(1);
-    } else {
+    if (atRiskThermistors.length > 0) {
       setThermistorRiskLevel(2);
+    } else {
+      setThermistorRiskLevel(0);
     }
   }, [atRiskThermistors]);
 
   useEffect(() => {
-    isPressureAtRisk && setPressureRiskLevel(2);
+    if (isPressureAtRisk) {
+      setPressureRiskLevel(2);
+    } else {
+      setPressureRiskLevel(0);
+    }
   }, [isPressureAtRisk]);
 
   useEffect(() => {
-    isSpo2AtRisk && setSpo2RiskLevel(2);
+    if (isSpo2AtRisk) {
+      setSpo2RiskLevel(2);
+    } else {
+      setSpo2RiskLevel(0);
+    }
   }, [isSpo2AtRisk]);
 
   function calculateTotalRiskLevel(): string {

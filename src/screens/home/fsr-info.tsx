@@ -2,19 +2,18 @@ import React, { useState } from 'react';
 import { Image, LayoutChangeEvent, View } from 'react-native';
 
 import { PageView, Spacer } from '@/components';
-import { FsrInfoScreenProps } from '@/types/navigation-types';
 import { Text } from 'react-native-paper';
+import { useSensorData } from '@/context/sensor-context/sensor-context';
 
 const lineColor = 'grey';
 
-export default function FsrInfo({
-  route,
-}: FsrInfoScreenProps): React.ReactElement {
-  const { fsrData } = route.params;
+export default function FsrInfo(): React.ReactElement {
+  const { sensorData } = useSensorData();
   const [imgSize, setImgSize] = useState<{ width: number; height: number }>({
     width: 0,
     height: 0,
   });
+  console.log(sensorData.fsr);
 
   function onImageLayout(event: LayoutChangeEvent) {
     const { width, height } = event.nativeEvent.layout;
@@ -57,7 +56,7 @@ export default function FsrInfo({
             top: imgSize.height * 0.13 - 14,
           }}
         >
-          {fsrData[3]?.force || 'NaN'}N
+          {sensorData.fsr[3]?.force}N
         </Text>
 
         {/* 1st Metatarsal */}
@@ -79,7 +78,7 @@ export default function FsrInfo({
             top: imgSize.height * 0.36 - 14,
           }}
         >
-          {fsrData[0]?.force || 'NaN'}N
+          {sensorData.fsr[0]?.force}N
         </Text>
 
         {/* 5th Metatarsal */}
@@ -105,7 +104,7 @@ export default function FsrInfo({
             top: imgSize.height * 0.36 + 45,
           }}
         >
-          {fsrData[1]?.force || 'NaN'}N
+          {sensorData.fsr[1]?.force}N
         </Text>
 
         {/* Heel */}
@@ -127,7 +126,7 @@ export default function FsrInfo({
             top: imgSize.height * 0.8 - 14,
           }}
         >
-          {fsrData[2]?.force || 'NaN'}N
+          {sensorData.fsr[2]?.force}N
         </Text>
       </View>
       <Spacer size='lg' />

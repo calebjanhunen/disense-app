@@ -1,13 +1,13 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
 import React from 'react';
 
-import { PageView, Spacer } from '@/components';
-import { Spo2InfoScreenProps } from '@/types/navigation-types';
+import { PageView } from '@/components';
 import { View } from 'react-native';
 import { Text } from 'react-native-paper';
+import { useSensorData } from '@/context/sensor-context/sensor-context';
 
-export default function Spo2Info({ route }: Spo2InfoScreenProps) {
-  const { spo2Data } = route.params;
+export default function Spo2Info() {
+  const { spo2Data } = useSensorData();
 
   return (
     <PageView>
@@ -37,7 +37,7 @@ export default function Spo2Info({ route }: Spo2InfoScreenProps) {
               variant='displayLarge'
               style={{ fontWeight: 'bold', color: 'green' }}
             >
-              {spo2Data[0]?.heartRate || 'NaN'}
+              {spo2Data[0]?.heartRate}
             </Text>
             <View>
               <Ionicons name='heart' color='red' size={20} />
@@ -50,7 +50,7 @@ export default function Spo2Info({ route }: Spo2InfoScreenProps) {
               variant='displayLarge'
               style={{ fontWeight: 'bold', color: 'green' }}
             >
-              {spo2Data[0]?.bloodOxygen || 'NaN'}
+              {spo2Data[0]?.bloodOxygen}
             </Text>
             <View>
               <Ionicons name='water-sharp' color='red' size={20} />
