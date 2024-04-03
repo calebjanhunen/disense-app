@@ -13,7 +13,6 @@ export default function FsrInfo(): React.ReactElement {
     width: 0,
     height: 0,
   });
-  console.log(sensorData.fsr);
 
   function onImageLayout(event: LayoutChangeEvent) {
     const { width, height } = event.nativeEvent.layout;
